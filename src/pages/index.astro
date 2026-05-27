@@ -35,7 +35,9 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
     
     <header class="site-header">
       <div class="header-container">
-        <div class="logo">F.M.R</div>
+        <a href="/" class="logo">
+          <img src="/favicon.svg" alt="Fareed M. Rifaideen Logo" />
+        </a>
         <nav>
           <a href="mailto:fareed.rifaideen@gmail.com" class="contact-btn">Let's Talk</a>
         </nav>
@@ -93,6 +95,7 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
       <div class="container footer-content">
         <p>© {new Date().getFullYear()} Fareed M. Rifaideen. All rights reserved.</p>
         <div class="social-links">
+          <a href="https://wa.me/947775962" target="_blank" rel="noopener noreferrer">WhatsApp</a>
           <a href="https://www.linkedin.com/in/fareed03" target="_blank" rel="noopener noreferrer">LinkedIn</a>
           <a href="https://github.com/fareed-rifaideen-ecom" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
@@ -188,12 +191,11 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
     align-items: center;
   }
 
-  .logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.5rem;
-    color: #fff;
-    letter-spacing: -0.02em;
+  /* Updated Logo Image Styling */
+  .logo img {
+    height: 35px; /* Adjust this number if your logo looks too big or too small */
+    width: auto;
+    display: block;
   }
 
   .contact-btn {
