@@ -49,21 +49,23 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
       </div>
     </header>
 
-    <section class="hero">
-      <div class="container">
-        <h1>Fareed M. Rifaideen</h1>
-        <h2>Full-Stack Digital Marketer & Web Developer</h2>
-      </div>
-    </section>
-
-    <section class="profile-section">
-      <div class="profile-container">
+    <section class="cinematic-hero">
+      <div class="cinematic-container">
         
-        <div class="profile-image-wrapper">
-          <Image src={profileImg} alt="Fareed Profile" class="profile-img" /> 
+        <div class="intro-text">
+          <h1>Fareed M.<br/>Rifaideen</h1>
+          <h2>Full-Stack Digital Marketer & Web Developer</h2>
         </div>
 
-        <div class="profile-text-wrapper">
+        <div class="scroll-icon-wrapper">
+          <img src="/scroll-icon.svg" alt="Scroll Down" class="scroll-icon" />
+        </div>
+
+        <div class="portrait-wrapper">
+          <Image src={profileImg} alt="Fareed Profile" class="portrait-img" /> 
+        </div>
+
+        <div class="bio-text">
           <p class="bio">
             Drawing on a foundational background in financial operations and resource allocation, I engineer digital marketing strategies that are both technically robust and highly cost-effective.
           </p>
@@ -127,42 +129,48 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
 
       let mm = gsap.matchMedia();
 
-      // Desktop Animations
+      // Desktop Cinematic Animation
       mm.add("(min-width: 768px)", () => {
         let tl = gsap.timeline({
           scrollTrigger: {
-            trigger: ".profile-section",
+            trigger: ".cinematic-hero",
             pin: true,
-            scrub: 1,
+            scrub: 1.5, 
             start: "top top",
-            end: "+=150%"
+            end: "+=300%" 
           }
         });
 
-        tl.to(".profile-image-wrapper", { x: "-35vw", ease: "none" })
-          .to(".profile-text-wrapper", { x: "25vw", opacity: 1, ease: "none" }, "<");
+        // Act 1 to 2: Fade out text/icon, Center the face
+        tl.to(".intro-text", { opacity: 0, x: -50, duration: 1 }, 0)
+          .to(".scroll-icon-wrapper", { opacity: 0, y: 20, duration: 0.5 }, 0)
+          .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
+
+        // Act 2 to 3: Move face left, fade in Bio
+        tl.to(".portrait-wrapper", { x: "-25vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
+          .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
       });
 
-      // Mobile Animations (Scrubbed Parallax)
+      // Mobile Cinematic Animation 
       mm.add("(max-width: 767px)", () => {
         let mobileTl = gsap.timeline({
           scrollTrigger: {
-            trigger: ".profile-section",
-            start: "top 75%", 
-            end: "top 25%",   
-            scrub: 1,         
+            trigger: ".cinematic-hero",
+            pin: true,
+            scrub: 1.5,
+            start: "top top",
+            end: "+=250%" 
           }
         });
 
-        mobileTl.fromTo(".profile-image-wrapper", 
-          { opacity: 0, y: 80 }, 
-          { opacity: 1, y: 0, ease: "none" }
-        )
-        .fromTo(".profile-text-wrapper", 
-          { opacity: 0, y: 80 }, 
-          { opacity: 1, y: 0, ease: "none" },
-          "<0.2" 
-        );
+        // Act 1 to 2: Fade out text/icon, Center face
+        mobileTl.to(".intro-text", { opacity: 0, y: 30, duration: 1 }, 0)
+          .to(".scroll-icon-wrapper", { opacity: 0, duration: 0.5 }, 0)
+          .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
+
+        // Act 2 to 3: Move face left (keeping full brightness), fade in right-aligned Bio
+        mobileTl.to(".portrait-wrapper", { x: "-35vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
+          .to(".bio-text", { opacity: 1, y: 0, duration: 1, ease: "power1.out" }, 1.5);
       });
 
       // Project Cards Cascade Animation 
@@ -202,6 +210,7 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
     padding: 0 2rem;
   }
 
+  /* Header */
   .site-header {
     position: fixed;
     top: 0;
@@ -251,77 +260,118 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
     color: #000;
   }
 
-  .hero {
+  /* Cinematic Unified Section */
+  .cinematic-hero {
     height: 100vh;
+    width: 100vw;
+    background-color: var(--bg-color);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cinematic-container {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    margin: 0 auto;
     display: flex;
     align-items: center;
   }
 
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(3rem, 8vw, 6rem);
-    letter-spacing: -0.04em;
-    margin: 0;
-    line-height: 1;
+  /* Act 1: Intro Text */
+  .intro-text {
+    position: absolute;
+    left: 2rem;
+    z-index: 10;
   }
 
-  h2 {
+  .intro-text h1 {
     font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: clamp(1.2rem, 3vw, 2rem);
+    font-weight: 800;
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    letter-spacing: -0.02em;
+    margin: 0;
+    line-height: 1.1;
+  }
+
+  .intro-text h2 {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-weight: 400;
+    font-size: clamp(1rem, 2vw, 1.5rem);
     color: var(--text-secondary);
     margin-top: 1rem;
   }
 
-  .profile-section {
+  /* Scroll Icon */
+  .scroll-icon-wrapper {
+    position: absolute;
+    bottom: 3rem;
+    left: 2rem; 
+    z-index: 10;
+  }
+
+  .scroll-icon {
+    width: 30px;
+    height: auto;
+    opacity: 0.7;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+  }
+
+  /* Act 2: Portrait */
+  .portrait-wrapper {
+    position: absolute;
     height: 100vh;
+    width: 100vw;
+    top: 0;
+    left: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
-  }
-
-  .profile-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .profile-image-wrapper {
-    position: absolute;
-    width: 400px;
-    height: 500px;
-    z-index: 2;
-    filter: grayscale(100%) contrast(1.1);
-  }
-
-  .profile-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .profile-text-wrapper {
-    position: absolute;
-    width: 500px;
-    opacity: 0; 
     z-index: 1;
+    transform: translateX(35vw);
+  }
+
+  .portrait-img {
+    height: 100%;
+    width: 100%;
+    max-width: 800px;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  /* Act 3: Bio Text */
+  .bio-text {
+    position: absolute;
+    right: 2rem;
+    width: 450px;
+    z-index: 10;
+    opacity: 0; 
+    transform: translateX(50px); 
   }
 
   .bio {
     color: var(--text-secondary);
     font-size: 1.2rem;
-    line-height: 1.6;
+    line-height: 1.7;
     margin-bottom: 1.5rem;
   }
 
+  /* Projects */
   .projects-section {
     padding: 10rem 0 5rem 0;
     background-color: var(--bg-color);
+    position: relative;
+    z-index: 20; 
   }
 
   .section-title {
@@ -381,6 +431,7 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
     border-color: var(--text-primary);
   }
 
+  /* Footer */
   .site-footer {
     border-top: 1px solid #1a1a1a;
     padding: 3rem 0;
@@ -420,6 +471,7 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
     color: var(--text-secondary);
   }
 
+  /* Mobile Layout Adjustments */
   @media (max-width: 768px) {
     .nav-links {
       gap: 0.5rem;
@@ -430,21 +482,46 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
       font-size: 0.75rem;
     }
 
-    .profile-container {
-      flex-direction: column;
+    .intro-text {
+      bottom: 15%;
+      left: 1.5rem;
     }
     
-    .profile-image-wrapper {
-      position: relative;
-      width: 90%;
-      height: 400px;
-      margin-bottom: 2rem;
+    .intro-text h1 {
+      font-size: clamp(2.5rem, 12vw, 4rem); 
     }
 
-    .profile-text-wrapper {
-      position: relative;
-      width: 90%;
-      transform: translateY(30px);
+    .intro-text h2 {
+      font-size: 0.9rem;
+    }
+
+    .scroll-icon-wrapper {
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 3%;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translate(-50%, 0); }
+      40% { transform: translate(-50%, -10px); }
+      60% { transform: translate(-50%, -5px); }
+    }
+
+    .portrait-wrapper {
+      transform: translateX(35vw); 
+    }
+
+    .bio-text {
+      width: 75%;
+      right: 1.5rem;
+      left: auto;
+      text-align: right; 
+      transform: translateY(30px); 
+    }
+    
+    .bio {
+      font-size: 1rem;
+      line-height: 1.5;
     }
 
     .footer-content {
