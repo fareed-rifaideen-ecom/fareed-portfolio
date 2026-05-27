@@ -6,7 +6,6 @@ import '@fontsource/hanken-grotesk/600.css';
 import { getCollection } from 'astro:content';
 
 const allProjects = await getCollection('projects');
-// Sort projects by the 'order' number we set in the markdown
 allProjects.sort((a, b) => a.data.order - b.data.order);
 ---
 
@@ -34,6 +33,15 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
   </head>
   <body>
     
+    <header class="site-header">
+      <div class="header-container">
+        <div class="logo">F.M.R</div>
+        <nav>
+          <a href="mailto:fareed.rifaideen@gmail.com" class="contact-btn">Let's Talk</a>
+        </nav>
+      </div>
+    </header>
+
     <section class="hero">
       <div class="container">
         <h1>Fareed M. Rifaideen</h1>
@@ -81,6 +89,16 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
       </div>
     </section>
 
+    <footer class="site-footer">
+      <div class="container footer-content">
+        <p>© {new Date().getFullYear()} Fareed M. Rifaideen. All rights reserved.</p>
+        <div class="social-links">
+          <a href="https://www.linkedin.com/in/fareed03" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href="https://github.com/fareed-rifaideen-ecom" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </div>
+    </footer>
+
     <script>
       import gsap from 'gsap';
       import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -88,7 +106,6 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
 
       gsap.registerPlugin(ScrollTrigger);
 
-      // Initialize Smooth Scrolling
       const lenis = new Lenis({
         duration: 1.2,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -100,27 +117,23 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
       }
       requestAnimationFrame(raf);
 
-      // Animation Logic: Desktop vs Mobile
       let mm = gsap.matchMedia();
 
-      // Desktop Animation (Horizontal Slide)
       mm.add("(min-width: 768px)", () => {
         let tl = gsap.timeline({
           scrollTrigger: {
             trigger: ".profile-section",
-            pin: true,           // Pins the section to the screen
-            scrub: 1,            // Ties animation to scroll speed
-            start: "top top",    // Starts when section hits top of viewport
-            end: "+=150%"        // Ends after scrolling 150% of viewport height
+            pin: true,
+            scrub: 1,
+            start: "top top",
+            end: "+=150%"
           }
         });
 
-        // The image slides left, the text slides right
         tl.to(".profile-image-wrapper", { x: "-35vw", ease: "none" })
           .to(".profile-text-wrapper", { x: "25vw", opacity: 1, ease: "none" }, "<");
       });
 
-      // Mobile Animation (Vertical Fade In)
       mm.add("(max-width: 767px)", () => {
         gsap.to(".profile-text-wrapper", {
           opacity: 1,
@@ -147,7 +160,7 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
     color: var(--text-primary);
     font-family: 'Hanken Grotesk', sans-serif;
     margin: 0;
-    overflow-x: hidden; /* Prevents side-scrolling bugs */
+    overflow-x: hidden;
   }
 
   .container {
@@ -156,9 +169,55 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
     padding: 0 2rem;
   }
 
+  /* Header Styling */
+  .site-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 2rem 0;
+    z-index: 100;
+    mix-blend-mode: difference;
+  }
+
+  .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  .contact-btn {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid #fff;
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+  }
+
+  .contact-btn:hover {
+    background-color: #fff;
+    color: #000;
+  }
+
   /* Hero Styling */
   .hero {
-    height: 100vh; /* Takes up full screen height */
+    height: 100vh;
     display: flex;
     align-items: center;
   }
@@ -166,7 +225,7 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
   h1 {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: clamp(3rem, 8vw, 6rem); /* Responsive huge text */
+    font-size: clamp(3rem, 8vw, 6rem);
     letter-spacing: -0.04em;
     margin: 0;
     line-height: 1;
@@ -198,13 +257,12 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
     justify-content: center;
   }
 
-  /* Image setup */
   .profile-image-wrapper {
     position: absolute;
     width: 400px;
     height: 500px;
     z-index: 2;
-    filter: grayscale(100%) contrast(1.1); /* Forces greyscale */
+    filter: grayscale(100%) contrast(1.1);
   }
 
   .profile-img {
@@ -213,7 +271,6 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
     object-fit: cover;
   }
 
-  /* Text setup (starts hidden for animation) */
   .profile-text-wrapper {
     position: absolute;
     width: 500px;
@@ -230,7 +287,7 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
 
   /* Projects Section Styling */
   .projects-section {
-    padding: 10rem 0;
+    padding: 10rem 0 5rem 0;
     background-color: var(--bg-color);
   }
 
@@ -291,6 +348,46 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
     border-color: var(--text-primary);
   }
 
+  /* Footer Styling */
+  .site-footer {
+    border-top: 1px solid #1a1a1a;
+    padding: 3rem 0;
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .footer-content p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin: 0;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .social-links a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+  }
+
+  .social-links a:hover {
+    color: var(--text-secondary);
+  }
+
   /* Mobile Adjustments */
   @media (max-width: 768px) {
     .profile-container {
@@ -307,7 +404,12 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
     .profile-text-wrapper {
       position: relative;
       width: 90%;
-      transform: translateY(30px); /* Starts slightly lower for mobile fade */
+      transform: translateY(30px);
+    }
+
+    .footer-content {
+      flex-direction: column;
+      text-align: center;
     }
   }
 </style>
