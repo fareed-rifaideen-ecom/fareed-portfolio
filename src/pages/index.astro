@@ -5,7 +5,7 @@ import '@fontsource/hanken-grotesk/400.css';
 import '@fontsource/hanken-grotesk/600.css';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
-import profileImg from '../assets/profile.jpg'; // Pulling the local asset for optimization
+import profileImg from '../assets/profile.jpg'; 
 
 const allProjects = await getCollection('projects');
 allProjects.sort((a, b) => a.data.order - b.data.order);
@@ -42,7 +42,8 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
         <a href="/" class="logo">
           <img src="/favicon.svg" alt="Fareed M. Rifaideen Logo" />
         </a>
-        <nav>
+        <nav class="nav-links">
+          <a href="https://wa.me/9717775962" class="contact-btn" target="_blank" rel="noopener noreferrer">WhatsApp</a>
           <a href="mailto:fareed.rifaideen@gmail.com" class="contact-btn">Let's Talk</a>
         </nav>
       </div>
@@ -99,7 +100,7 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
       <div class="container footer-content">
         <p>© {new Date().getFullYear()} Fareed M. Rifaideen. All rights reserved.</p>
         <div class="social-links">
-          <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          <a href="https://wa.me/9717775962" target="_blank" rel="noopener noreferrer">WhatsApp</a>
           <a href="https://www.linkedin.com/in/fareed03" target="_blank" rel="noopener noreferrer">LinkedIn</a>
           <a href="https://github.com/fareed-rifaideen-ecom" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
@@ -142,37 +143,33 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
           .to(".profile-text-wrapper", { x: "25vw", opacity: 1, ease: "none" }, "<");
       });
 
-      // Mobile Animations
+      // Mobile Animations (Scrubbed Parallax)
       mm.add("(max-width: 767px)", () => {
-        // Image slides up and fades in
-        gsap.from(".profile-image-wrapper", {
-          opacity: 0,
-          y: 50,
-          duration: 1,
+        let mobileTl = gsap.timeline({
           scrollTrigger: {
             trigger: ".profile-section",
-            start: "top 80%",
+            start: "top 75%", 
+            end: "top 25%",   
+            scrub: 1,         
           }
         });
 
-        // Text slides up and fades in shortly after
-        gsap.to(".profile-text-wrapper", {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          delay: 0.2,
-          scrollTrigger: {
-            trigger: ".profile-section",
-            start: "top 75%",
-          }
-        });
+        mobileTl.fromTo(".profile-image-wrapper", 
+          { opacity: 0, y: 80 }, 
+          { opacity: 1, y: 0, ease: "none" }
+        )
+        .fromTo(".profile-text-wrapper", 
+          { opacity: 0, y: 80 }, 
+          { opacity: 1, y: 0, ease: "none" },
+          "<0.2" 
+        );
       });
 
-      // Project Cards Cascade Animation (Works on Desktop and Mobile)
+      // Project Cards Cascade Animation 
       gsap.from(".project-card", {
         opacity: 0,
         y: 40,
-        stagger: 0.2, // This makes them animate one after the other
+        stagger: 0.2, 
         duration: 0.8,
         ease: "power2.out",
         scrollTrigger: {
@@ -227,6 +224,12 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
     height: 35px;
     width: auto;
     display: block;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
   }
 
   .contact-btn {
@@ -418,6 +421,15 @@ allProjects.sort((a, b) => a.data.order - b.data.order);
   }
 
   @media (max-width: 768px) {
+    .nav-links {
+      gap: 0.5rem;
+    }
+
+    .contact-btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+    }
+
     .profile-container {
       flex-direction: column;
     }
