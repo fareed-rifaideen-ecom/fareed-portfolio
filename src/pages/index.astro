@@ -1,0 +1,297 @@
+---
+import '@fontsource/syne/700.css';
+import '@fontsource/syne/800.css';
+import '@fontsource/hanken-grotesk/400.css';
+import '@fontsource/hanken-grotesk/600.css';
+import { getCollection } from 'astro:content';
+
+const allProjects = await getCollection('projects');
+// Sort projects by the 'order' number we set in the markdown
+allProjects.sort((a, b) => a.data.order - b.data.order);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Fareed M. Rifaideen | Portfolio</title>
+  </head>
+  <body>
+    
+    <section class="hero">
+      <div class="container">
+        <h1>Fareed M. Rifaideen</h1>
+        <h2>Full-Stack Digital Marketer & Web Developer</h2>
+      </div>
+    </section>
+
+    <section class="profile-section">
+      <div class="profile-container">
+        
+        <div class="profile-image-wrapper">
+          <img src="/profile.jpg" alt="Fareed Profile" class="profile-img" /> 
+        </div>
+
+        <div class="profile-text-wrapper">
+          <p class="bio">
+            Drawing on a foundational background in financial operations and resource allocation, I engineer digital marketing strategies that are both technically robust and highly cost-effective.
+          </p>
+          <p class="bio">
+            As a Certified Digital Marketing Professional (CDMP), I specialize in the intersection of technical SEO, bespoke WordPress and WooCommerce development, and precision Meta Ads.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="projects-section">
+      <div class="container">
+        <h2 class="section-title">Featured Projects</h2>
+        
+        <div class="projects-grid">
+          {allProjects.map((project) => (
+            <div class="project-card">
+              <h3>{project.data.title}</h3>
+              <p>{project.data.summary}</p>
+              
+              <div class="tech-tags">
+                {project.data.techStack.map((tech) => (
+                  <span class="tag">{tech}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <script>
+      import gsap from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      import Lenis from '@studio-freight/lenis';
+
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Initialize Smooth Scrolling
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+
+      // Animation Logic: Desktop vs Mobile
+      let mm = gsap.matchMedia();
+
+      // Desktop Animation (Horizontal Slide)
+      mm.add("(min-width: 768px)", () => {
+        let tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".profile-section",
+            pin: true,           // Pins the section to the screen
+            scrub: 1,            // Ties animation to scroll speed
+            start: "top top",    // Starts when section hits top of viewport
+            end: "+=150%"        // Ends after scrolling 150% of viewport height
+          }
+        });
+
+        // The image slides left, the text slides right
+        tl.to(".profile-image-wrapper", { x: "-35vw", ease: "none" })
+          .to(".profile-text-wrapper", { x: "25vw", opacity: 1, ease: "none" }, "<");
+      });
+
+      // Mobile Animation (Vertical Fade In)
+      mm.add("(max-width: 767px)", () => {
+        gsap.to(".profile-text-wrapper", {
+          opacity: 1,
+          y: 0,
+          scrollTrigger: {
+            trigger: ".profile-text-wrapper",
+            start: "top 80%",
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg-color: #050505;
+    --text-primary: #F5F5F5;
+    --text-secondary: #A3A3A3;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: 'Hanken Grotesk', sans-serif;
+    margin: 0;
+    overflow-x: hidden; /* Prevents side-scrolling bugs */
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* Hero Styling */
+  .hero {
+    height: 100vh; /* Takes up full screen height */
+    display: flex;
+    align-items: center;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3rem, 8vw, 6rem); /* Responsive huge text */
+    letter-spacing: -0.04em;
+    margin: 0;
+    line-height: 1;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.2rem, 3vw, 2rem);
+    color: var(--text-secondary);
+    margin-top: 1rem;
+  }
+
+  /* Profile Section Styling */
+  .profile-section {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .profile-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Image setup */
+  .profile-image-wrapper {
+    position: absolute;
+    width: 400px;
+    height: 500px;
+    z-index: 2;
+    filter: grayscale(100%) contrast(1.1); /* Forces greyscale */
+  }
+
+  .profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Text setup (starts hidden for animation) */
+  .profile-text-wrapper {
+    position: absolute;
+    width: 500px;
+    opacity: 0; 
+    z-index: 1;
+  }
+
+  .bio {
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Projects Section Styling */
+  .projects-section {
+    padding: 10rem 0;
+    background-color: var(--bg-color);
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem;
+    margin-bottom: 4rem;
+    color: var(--text-primary);
+  }
+
+  .projects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .project-card {
+    border-top: 1px solid #333;
+    padding-top: 2rem;
+  }
+
+  .project-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    color: var(--text-primary);
+    margin: 0 0 1rem 0;
+  }
+
+  .project-card p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0;
+  }
+
+  .tech-tags {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 1rem;
+    border: 1px solid #333;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+  }
+
+  .tag:hover {
+    color: var(--text-primary);
+    border-color: var(--text-primary);
+  }
+
+  /* Mobile Adjustments */
+  @media (max-width: 768px) {
+    .profile-container {
+      flex-direction: column;
+    }
+    
+    .profile-image-wrapper {
+      position: relative;
+      width: 90%;
+      height: 400px;
+      margin-bottom: 2rem;
+    }
+
+    .profile-text-wrapper {
+      position: relative;
+      width: 90%;
+      transform: translateY(30px); /* Starts slightly lower for mobile fade */
+    }
+  }
+</style>
