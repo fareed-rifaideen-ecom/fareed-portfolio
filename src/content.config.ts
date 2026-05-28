@@ -2,7 +2,6 @@ import { z, defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders'; 
 
 const projectsCollection = defineCollection({
-  // This loader tells Astro exactly where to look for your markdown files
   loader: glob({ pattern: "*.md", base: "./src/content/projects" }),
   schema: z.object({
     title: z.string(),
@@ -12,6 +11,40 @@ const projectsCollection = defineCollection({
   }),
 });
 
+const experienceCollection = defineCollection({
+  loader: glob({ pattern: "*.md", base: "./src/content/experience" }),
+  schema: z.object({
+    title: z.string(),
+    company: z.string(),
+    date: z.string(),
+    problemStatement: z.string(),
+    order: z.number(),
+  }),
+});
+
+const educationCollection = defineCollection({
+  loader: glob({ pattern: "*.md", base: "./src/content/education" }),
+  schema: z.object({
+    degree: z.string(),
+    institution: z.string(),
+    date: z.string(),
+    order: z.number(),
+  }),
+});
+
+// NEW: Ethos Collection
+const ethosCollection = defineCollection({
+  loader: glob({ pattern: "*.md", base: "./src/content/ethos" }),
+  schema: z.object({
+    title: z.string(),
+    buttonText: z.string(),
+    buttonLink: z.string(),
+  }),
+});
+
 export const collections = {
   'projects': projectsCollection,
+  'experience': experienceCollection,
+  'education': educationCollection,
+  'ethos': ethosCollection,
 };
