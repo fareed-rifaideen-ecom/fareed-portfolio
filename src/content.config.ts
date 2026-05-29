@@ -8,6 +8,8 @@ const projectsCollection = defineCollection({
     summary: z.string(),
     techStack: z.array(z.string()),
     order: z.number(), 
+    image: z.string(),   // NEW: For the 3D Card Back
+    liveUrl: z.string(), // NEW: For the "View Project" button
   }),
 });
 
@@ -32,7 +34,6 @@ const educationCollection = defineCollection({
   }),
 });
 
-// NEW: Ethos Collection
 const ethosCollection = defineCollection({
   loader: glob({ pattern: "*.md", base: "./src/content/ethos" }),
   schema: z.object({

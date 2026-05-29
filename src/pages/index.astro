@@ -6,20 +6,19 @@ import '@fontsource/hanken-grotesk/600.css';
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import profileImg from '../assets/profile.jpg'; 
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/navigation';
 
-// Fetch and sort Projects
 const allProjects = await getCollection('projects');
 allProjects.sort((a, b) => a.data.order - b.data.order);
 
-// Fetch and sort Experience Timeline
 const allExperience = await getCollection('experience');
 allExperience.sort((a, b) => a.data.order - b.data.order);
 
-// Fetch and sort Education
 const allEducation = await getCollection('education');
 allEducation.sort((a, b) => a.data.order - b.data.order);
 
-// Fetch Ethos Markdown
 const ethosEntries = await getCollection('ethos');
 const ethosData = ethosEntries[0];
 const { Content: EthosContent } = await render(ethosData);
@@ -29,14 +28,11 @@ const { Content: EthosContent } = await render(ethosData);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
     <title>Fareed M. Rifaideen | Full-Stack Digital Marketer & Web Developer</title>
     <meta name="title" content="Fareed M. Rifaideen | Full-Stack Digital Marketer & Web Developer" />
     <meta name="description" content="Architecting high-performance digital ecosystems through technical SEO, bespoke WordPress development, and precision Meta Ads." />
     <meta name="author" content="Fareed M. Rifaideen" />
-
     <link rel="canonical" href="https://fareed-rifaideen.netlify.app/" />
   </head>
   <body>
@@ -57,7 +53,7 @@ const { Content: EthosContent } = await render(ethosData);
       <div class="cinematic-container">
         <div class="intro-text">
           <h1>Fareed M.<br/>Rifaideen</h1>
-          <h2>Full-Stack Digital Marketer & Web Developer</h2>
+          <h2 class="dynamic-subtitle">Full-Stack Digital Marketer & Web Developer</h2>
         </div>
         <div class="scroll-icon-wrapper">
           <img src="/scroll-Icon.svg" alt="Scroll Down" class="scroll-icon" />
@@ -67,30 +63,47 @@ const { Content: EthosContent } = await render(ethosData);
         </div>
         <div class="bio-text">
           <p class="bio">
-            Drawing on a foundational background in financial operations and resource allocation, I engineer digital marketing strategies that are both technically robust and highly cost-effective.
+            I build digital marketing systems that make sense for the bottom line. With ten years of experience in financial operations, I treat marketing budgets like business investments.
           </p>
           <p class="bio">
-            As a Certified Digital Marketing Professional (CDMP), I specialize in the intersection of technical SEO, bespoke WordPress and WooCommerce development, and precision Meta Ads.
+            As a Full-Stack Marketer and Web Developer, I combine technical SEO, custom WordPress development, and targeted ads to build digital spaces that solve problems and generate real returns.
           </p>
         </div>
       </div>
     </section>
 
     <section class="projects-section">
+      <div class="ambient-glow"></div>
       <div class="container">
         <h2 class="section-title">Featured Projects</h2>
-        <div class="projects-grid">
-          {allProjects.map((project) => (
-            <div class="project-card">
-              <h3>{project.data.title}</h3>
-              <p>{project.data.summary}</p>
-              <div class="tech-tags">
-                {project.data.techStack.map((tech) => (
-                  <span class="tag">{tech}</span>
-                ))}
+        
+        <div class="swiper projects-swiper">
+          <div class="swiper-wrapper">
+            {allProjects.map((project) => (
+              <div class="swiper-slide project-card-wrapper">
+                <div class="flip-card-inner">
+                  
+                  <div class="flip-card-front glass-panel">
+                    <h3>{project.data.title}</h3>
+                    <p>{project.data.summary}</p>
+                    <div class="tech-tags">
+                      {project.data.techStack.map((tech) => (
+                        <span class="tag">{tech}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div class="flip-card-back glass-panel">
+                    <img src={project.data.image} alt={`${project.data.title} Logo`} class="project-logo" />
+                    <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer" class="contact-btn view-project-btn">View Live Project</a>
+                  </div>
+
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div class="swiper-button-prev custom-arrow"></div>
+          <div class="swiper-button-next custom-arrow"></div>
         </div>
       </div>
     </section>
@@ -102,20 +115,21 @@ const { Content: EthosContent } = await render(ethosData);
           <div class="timeline-line">
             <div class="timeline-line-progress"></div>
           </div>
-
-          {allExperience.map((job) => (
-            <div class="timeline-item">
-              <div class="timeline-dot"></div>
-              <div class="timeline-content">
-                <span class="timeline-date">{job.data.date}</span>
-                <h3>{job.data.title}</h3>
-                <h4>{job.data.company}</h4>
-                <div class="timeline-hover-summary">
-                  <p class="problem-statement">{job.data.problemStatement}</p>
+          <div class="timeline-items-wrapper">
+            {allExperience.map((job) => (
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <span class="timeline-date">{job.data.date}</span>
+                  <h3>{job.data.title}</h3>
+                  <h4>{job.data.company}</h4>
+                  <div class="timeline-hover-summary">
+                    <p class="problem-statement">{job.data.problemStatement}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -123,7 +137,6 @@ const { Content: EthosContent } = await render(ethosData);
     <section class="bento-section">
       <div class="container">
         <h2 class="section-title">Arsenal & Education</h2>
-        
         <div class="bento-grid">
           <div class="bento-card skills-card">
             <h3>Technical Stack</h3>
@@ -177,34 +190,27 @@ const { Content: EthosContent } = await render(ethosData);
       </div>
     </footer>
 
-    <!-- Cinematic Contact Modal -->
     <div class="modal-overlay" id="contactModal">
       <div class="modal-box">
         <button class="modal-close" id="closeModal">✕</button>
         <h3 class="modal-title">Start a Conversation</h3>
         <p class="modal-desc">Tell me about the problem you are trying to solve.</p>
-        
-        <!-- Netlify Form Integration -->
         <form name="project-inquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="brutalist-form">
           <p class="hidden">
             <label>Don’t fill this out if you're human: <input name="bot-field" /></label>
           </p>
-          
           <div class="input-group">
             <input type="text" name="name" id="name" required placeholder=" " />
             <label for="name">Your Name</label>
           </div>
-          
           <div class="input-group">
             <input type="email" name="email" id="email" required placeholder=" " />
             <label for="email">Email Address</label>
           </div>
-          
           <div class="input-group">
             <textarea name="message" id="message" rows="4" required placeholder=" "></textarea>
             <label for="message">Project Details</label>
           </div>
-          
           <button type="submit" class="contact-btn submit-btn">Send Inquiry</button>
         </form>
       </div>
@@ -214,9 +220,12 @@ const { Content: EthosContent } = await render(ethosData);
       import gsap from 'gsap';
       import { ScrollTrigger } from 'gsap/ScrollTrigger';
       import Lenis from '@studio-freight/lenis';
+      import Swiper from 'swiper';
+      import { EffectCoverflow, Navigation } from 'swiper/modules';
 
       gsap.registerPlugin(ScrollTrigger);
 
+      // --- Smooth Scrolling ---
       const lenis = new Lenis({
         duration: 1.2,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -228,17 +237,34 @@ const { Content: EthosContent } = await render(ethosData);
       }
       requestAnimationFrame(raf);
 
+      // --- Swiper 3D Carousel Setup (Infinite Loop & Ring Style) ---
+      new Swiper('.projects-swiper', {
+        modules: [EffectCoverflow, Navigation],
+        effect: 'coverflow',
+        grabCursor: true,
+        centeredSlides: true,
+        slidesPerView: 'auto',
+        loop: true, // Makes it infinitely swipeable
+        coverflowEffect: {
+          rotate: 45,      // Steeper angle for ring effect
+          stretch: 0,      
+          depth: 250,      // Pushes side cards further back in 3D space
+          modifier: 1,   
+          slideShadows: true, // Automatically darkens side cards
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+      });
+
       let mm = gsap.matchMedia();
 
-      // Desktop Animations
+      // --- Desktop GSAP ---
       mm.add("(min-width: 768px)", () => {
         let tl = gsap.timeline({
           scrollTrigger: {
-            trigger: ".cinematic-hero",
-            pin: true,
-            scrub: 1.5, 
-            start: "top top",
-            end: "+=300%" 
+            trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" 
           }
         });
         tl.to(".intro-text", { opacity: 0, x: -50, duration: 1 }, 0)
@@ -248,15 +274,11 @@ const { Content: EthosContent } = await render(ethosData);
           .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
       });
 
-      // Mobile Animations
+      // --- Mobile GSAP ---
       mm.add("(max-width: 767px)", () => {
         let mobileTl = gsap.timeline({
           scrollTrigger: {
-            trigger: ".cinematic-hero",
-            pin: true,
-            scrub: 1.5,
-            start: "top top",
-            end: "+=250%" 
+            trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=250%" 
           }
         });
         mobileTl.to(".intro-text", { opacity: 0, y: 30, duration: 1 }, 0)
@@ -265,32 +287,30 @@ const { Content: EthosContent } = await render(ethosData);
         mobileTl.to(".portrait-wrapper", { x: "-35vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
           .to(".bio-text", { opacity: 1, y: 0, duration: 1, ease: "power1.out" }, 1.5);
 
+        // Mobile Scroll Auto-Focus for Timeline
         gsap.utils.toArray(".timeline-item").forEach((item) => {
           ScrollTrigger.create({
-            trigger: item as Element, 
-            start: "top 60%", 
-            end: "bottom 40%", 
-            toggleClass: "is-active", 
+            trigger: item, start: "top 60%", end: "bottom 40%", toggleClass: "is-active", 
           });
         });
       });
 
-      // Shared Scroll Animations
+      // --- Shared GSAP Animations ---
       gsap.to(".timeline-line-progress", {
         height: "100%", ease: "none",
         scrollTrigger: { trigger: ".timeline", start: "top center", end: "bottom center", scrub: true }
       });
 
       gsap.utils.toArray(".timeline-item").forEach((item) => {
-        gsap.from(item as Element, {
+        gsap.from(item, {
           opacity: 0, y: 40, duration: 0.8, ease: "power2.out",
-          scrollTrigger: { trigger: item as Element, start: "top 85%" }
+          scrollTrigger: { trigger: item, start: "top 85%" }
         });
       });
 
-      gsap.from(".project-card", {
-        opacity: 0, y: 40, stagger: 0.2, duration: 0.8, ease: "power2.out",
-        scrollTrigger: { trigger: ".projects-grid", start: "top 85%" }
+      gsap.from(".projects-swiper", {
+        opacity: 0, y: 40, duration: 0.8, ease: "power2.out",
+        scrollTrigger: { trigger: ".projects-section", start: "top 85%" }
       });
 
       gsap.from(".bento-card", {
@@ -303,14 +323,14 @@ const { Content: EthosContent } = await render(ethosData);
         scrollTrigger: { trigger: ".ethos-section", start: "top 85%" }
       });
 
-      // --- NEW: Modal Logic ---
+      // --- Contact Modal Logic ---
       const modal = document.getElementById("contactModal");
       const openBtns = document.querySelectorAll(".modal-trigger");
       const closeBtn = document.getElementById("closeModal");
 
-      const openModal = (e: Event) => {
+      const openModal = (e) => {
         e.preventDefault();
-        lenis.stop(); // Stops background scrolling
+        lenis.stop(); 
         gsap.to(modal, { opacity: 1, pointerEvents: "auto", duration: 0.4, ease: "power2.out" });
         gsap.fromTo(".modal-box", 
           { y: 50, opacity: 0 }, 
@@ -320,14 +340,37 @@ const { Content: EthosContent } = await render(ethosData);
 
       const closeModal = () => {
         gsap.to(modal, { opacity: 0, pointerEvents: "none", duration: 0.4, ease: "power2.in" });
-        lenis.start(); // Resumes scrolling
+        lenis.start(); 
       };
 
       openBtns.forEach(btn => btn.addEventListener("click", openModal));
       closeBtn?.addEventListener("click", closeModal);
-      modal?.addEventListener("click", (e) => {
-        if (e.target === modal) closeModal(); // Close when clicking the blurred background
-      });
+      modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+      // --- Dynamic Rotating Subtitle ---
+      const subtitles = [
+        "Full-Stack Digital Marketer & Web Developer",
+        "Technical SEO Specialist",
+        "Bespoke WordPress Architect",
+        "Precision Paid Media Strategist",
+        "Data-Driven Growth Engineer"
+      ];
+      let subIndex = 0;
+      const dynamicSubtitle = document.querySelector(".dynamic-subtitle");
+
+      if (dynamicSubtitle) {
+        gsap.delayedCall(3, function changeText() {
+          gsap.to(dynamicSubtitle, {
+            y: -15, opacity: 0, duration: 0.5, ease: "power2.in",
+            onComplete: () => {
+              subIndex = (subIndex + 1) % subtitles.length;
+              dynamicSubtitle.textContent = subtitles[subIndex];
+              gsap.fromTo(dynamicSubtitle, { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" });
+              gsap.delayedCall(3, changeText);
+            }
+          });
+        });
+      }
     </script>
   </body>
 </html>
@@ -339,15 +382,8 @@ const { Content: EthosContent } = await render(ethosData);
     --text-secondary: #A3A3A3;
     --accent: #fff;
   }
-
-  body {
-    background-color: var(--bg-color);
-    color: var(--text-primary);
-    font-family: 'Hanken Grotesk', sans-serif;
-    margin: 0;
-    overflow-x: hidden;
-  }
-  .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+  body { background-color: var(--bg-color); color: var(--text-primary); font-family: 'Hanken Grotesk', sans-serif; margin: 0; overflow-x: hidden; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
 
   /* Header */
   .site-header { position: fixed; top: 0; width: 100%; padding: 2rem 0; z-index: 100; mix-blend-mode: difference; }
@@ -367,6 +403,7 @@ const { Content: EthosContent } = await render(ethosData);
   .intro-text { position: absolute; left: 2rem; z-index: 10; }
   .intro-text h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3rem, 7vw, 6.5rem); letter-spacing: -0.02em; margin: 0; line-height: 1.1; }
   .intro-text h2 { font-family: 'Hanken Grotesk', sans-serif; font-weight: 400; font-size: clamp(1rem, 2vw, 1.5rem); color: var(--text-secondary); margin-top: 1rem; }
+  .dynamic-subtitle { display: block; min-height: 3rem; }
   .scroll-icon-wrapper { position: absolute; bottom: 3rem; left: 2rem; z-index: 10; }
   .scroll-icon { width: 30px; height: auto; opacity: 0.7; animation: bounce 2s infinite; }
   @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
@@ -374,59 +411,93 @@ const { Content: EthosContent } = await render(ethosData);
   .portrait-img { height: 100%; width: 100%; max-width: 800px; object-fit: cover; object-position: center; }
   .bio-text { position: absolute; right: 2rem; width: 450px; z-index: 10; opacity: 0; transform: translateX(50px); }
   .bio { color: var(--text-secondary); font-size: 1.2rem; line-height: 1.7; margin-bottom: 1.5rem; }
-
-  /* Shared Titles */
   .section-title { font-family: 'Syne', sans-serif; font-size: 3rem; margin-bottom: 4rem; color: var(--text-primary); }
 
-  /* Projects Section */
-  .projects-section { padding: 8rem 0 5rem 0; background-color: var(--bg-color); z-index: 20; position: relative;}
-  .projects-grid { display: flex; flex-direction: column; gap: 3rem; }
-  .project-card { border-top: 1px solid #333; padding-top: 2rem; }
-  .project-card h3 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--text-primary); margin: 0 0 1rem 0; }
-  .project-card p { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.6; max-width: 800px; margin: 0; }
-  .tech-tags { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
-  .tag {
-    font-family: 'Hanken Grotesk', sans-serif; font-size: 0.85rem; font-weight: 600; text-transform: uppercase;
-    letter-spacing: 0.05em; padding: 0.5rem 1rem; border: 1px solid #333; color: var(--text-secondary); transition: all 0.3s ease;
+  /* --- 3D Swiper & Glassmorphism Flip Cards --- */
+  .projects-section { padding: 8rem 0 5rem 0; background-color: var(--bg-color); position: relative; overflow: hidden; }
+  
+  /* Ambient Light Orb to make the glass refract */
+  .ambient-glow {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 70vw; height: 70vh; border-radius: 50%;
+    background: radial-gradient(circle, rgba(120, 150, 255, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+    z-index: 1; pointer-events: none;
   }
-  .tag:hover { color: var(--text-primary); border-color: var(--text-primary); }
 
-  /* Career Timeline */
+  .projects-swiper { width: 100%; padding: 2rem 0 4rem 0; overflow: visible; z-index: 2; }
+  .swiper-slide { width: 350px; height: 450px; perspective: 1000px; }
+  
+  .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
+  .swiper-slide-active:hover .flip-card-inner { transform: rotateY(180deg); }
+  
+  .glass-panel {
+    position: absolute; width: 100%; height: 100%; backface-visibility: hidden; 
+    display: flex; flex-direction: column; justify-content: flex-start; padding: 2.5rem;
+    
+    /* Transparent Glass UI Properties */
+    background: rgba(10, 10, 10, 0.35);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+  
+  .flip-card-back { transform: rotateY(180deg); align-items: center; justify-content: center; text-align: center; }
+  
+  .flip-card-front h3 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--text-primary); margin: 0 0 1rem 0; }
+  .flip-card-front p { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; margin: 0; }
+  .tech-tags { display: flex; gap: 0.5rem; margin-top: auto; flex-wrap: wrap; }
+  .tag { font-family: 'Hanken Grotesk', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.4rem 0.8rem; border: 1px solid rgba(255, 255, 255, 0.15); color: var(--text-secondary); transition: all 0.3s ease; }
+  
+  /* Project Logo styling (Filter removed for JPG support) */
+  .project-logo { max-width: 80%; max-height: 120px; object-fit: contain; margin-bottom: 2rem; opacity: 0.9; transition: opacity 0.3s ease; border-radius: 8px; }
+  .flip-card-back:hover .project-logo { opacity: 1; }
+  .view-project-btn { font-size: 0.9rem; padding: 0.8rem 2rem; }
+
+  /* Minimalist Swiper Arrows */
+  .custom-arrow { color: #fff; opacity: 0; transition: opacity 0.3s ease; }
+  .custom-arrow::after { font-size: 1.5rem !important; font-weight: bold; }
+  .projects-section:hover .custom-arrow { opacity: 0.5; }
+  .projects-section:hover .custom-arrow:hover { opacity: 1; }
+
+  /* --- FIX: Alternating Center Timeline --- */
   .experience-section { padding: 5rem 0; background-color: var(--bg-color); }
-  .timeline { position: relative; margin-top: 4rem; padding-left: 2rem; }
-  .timeline-line { position: absolute; left: 0; top: 0; width: 2px; height: 100%; background: #1a1a1a; }
+  .timeline { position: relative; margin-top: 4rem; width: 100%; }
+  
+  .timeline-line { position: absolute; top: 0; width: 2px; height: 100%; background: #1a1a1a; }
   .timeline-line-progress { width: 100%; height: 0%; background: var(--accent); }
   
-  .timeline-item { position: relative; padding-bottom: 4rem; cursor: crosshair; }
-  .timeline-dot { position: absolute; left: -2.35rem; top: 0; width: 12px; height: 12px; border-radius: 50%; background: #050505; border: 2px solid var(--accent); z-index: 2; transition: background 0.3s ease; }
-  
+  .timeline-items-wrapper { display: flex; flex-direction: column; width: 100%; }
+  .timeline-item { position: relative; padding-bottom: 5rem; cursor: crosshair; width: 50%; }
+  .timeline-dot { position: absolute; top: 0; width: 16px; height: 16px; border-radius: 50%; background: #050505; border: 2px solid var(--accent); z-index: 2; transition: background 0.3s ease; }
   .timeline-content { transition: transform 0.3s ease; }
   .timeline-item:hover .timeline-dot { background: var(--accent); }
-  .timeline-item:hover .timeline-content { transform: translateX(10px); }
-
+  
   .timeline-date { color: var(--text-secondary); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; display: block; }
   .timeline-content h3 { font-family: 'Syne', sans-serif; font-size: 2rem; margin: 0 0 0.5rem 0; color: var(--text-primary); }
   .timeline-content h4 { font-family: 'Hanken Grotesk', sans-serif; color: var(--text-secondary); font-size: 1.2rem; font-weight: 400; margin: 0; }
   
-  .timeline-hover-summary {
-    max-height: 0;
-    opacity: 0;
-    overflow: hidden;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .timeline-item:hover .timeline-hover-summary {
-    max-height: 300px;
-    opacity: 1;
-    margin-top: 1.5rem;
-  }
-  .problem-statement {
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: var(--text-secondary);
-    border-left: 2px solid #333;
-    padding-left: 1rem;
-    margin: 0;
-    max-width: 800px;
+  .timeline-hover-summary { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+  .timeline-item:hover .timeline-hover-summary { max-height: 300px; opacity: 1; margin-top: 1.5rem; }
+  .problem-statement { font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary); margin: 0; max-width: 500px; }
+
+  /* Desktop Alternating Logic (Fixed Alignment) */
+  @media (min-width: 768px) {
+    .timeline-line { left: 50%; transform: translateX(-50%); }
+    
+    /* Odd Items (Left Side) */
+    .timeline-item:nth-child(odd) { margin-right: auto; margin-left: 0; padding-right: 4rem; text-align: right; }
+    /* Fix: Add left: auto to override default */
+    .timeline-item:nth-child(odd) .timeline-dot { right: -11px; left: auto; }
+    .timeline-item:nth-child(odd) .problem-statement { border-right: 2px solid #333; padding-right: 1rem; margin-left: auto; margin-right: 0; }
+    .timeline-item:nth-child(odd):hover .timeline-content { transform: translateX(-15px); }
+
+    /* Even Items (Right Side) */
+    .timeline-item:nth-child(even) { margin-left: auto; margin-right: 0; padding-left: 4rem; text-align: left; }
+    /* Fix: Add right: auto to ensure clean alignment */
+    .timeline-item:nth-child(even) .timeline-dot { left: -11px; right: auto; }
+    .timeline-item:nth-child(even) .problem-statement { border-left: 2px solid #333; padding-left: 1rem; margin-right: auto; margin-left: 0; }
+    .timeline-item:nth-child(even):hover .timeline-content { transform: translateX(15px); }
   }
 
   /* Bento Grid */
@@ -455,50 +526,23 @@ const { Content: EthosContent } = await render(ethosData);
   .social-links a { color: var(--text-primary); text-decoration: none; font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.9rem; transition: color 0.3s ease; }
   .social-links a:hover { color: var(--text-secondary); }
 
-  /* --- NEW: Contact Modal Brutalist Design --- */
-  .modal-overlay {
-    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-    background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(8px);
-    z-index: 1000; display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events: none; /* Controlled by GSAP */
-  }
-  .modal-box {
-    background: #050505; border: 1px solid #333; padding: 4rem;
-    width: 90%; max-width: 500px; position: relative;
-  }
-  .modal-close {
-    position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none;
-    color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; transition: color 0.3s ease;
-  }
+  /* Modal */
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; }
+  .modal-box { background: #050505; border: 1px solid #333; padding: 4rem; width: 90%; max-width: 500px; position: relative; }
+  .modal-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; color: var(--text-secondary); font-size: 1.5rem; cursor: pointer; transition: color 0.3s ease; }
   .modal-close:hover { color: var(--text-primary); }
   .modal-title { font-family: 'Syne', sans-serif; font-size: 2rem; margin: 0 0 0.5rem 0; }
   .modal-desc { color: var(--text-secondary); font-size: 1rem; margin-bottom: 2rem; }
-  
   .brutalist-form { display: flex; flex-direction: column; gap: 2rem; }
   .hidden { display: none; }
-  
   .input-group { position: relative; }
-  .input-group input, .input-group textarea {
-    width: 100%; background: transparent; border: none; border-bottom: 1px solid #333;
-    padding: 1rem 0; color: var(--text-primary); font-family: 'Hanken Grotesk', sans-serif;
-    font-size: 1rem; outline: none; transition: border-color 0.3s ease; resize: none;
-  }
-  .input-group label {
-    position: absolute; left: 0; top: 1rem; color: var(--text-secondary);
-    pointer-events: none; transition: all 0.3s ease; font-size: 1rem;
-  }
+  .input-group input, .input-group textarea { width: 100%; background: transparent; border: none; border-bottom: 1px solid #333; padding: 1rem 0; color: var(--text-primary); font-family: 'Hanken Grotesk', sans-serif; font-size: 1rem; outline: none; transition: border-color 0.3s ease; resize: none; }
+  .input-group label { position: absolute; left: 0; top: 1rem; color: var(--text-secondary); pointer-events: none; transition: all 0.3s ease; font-size: 1rem; }
   .input-group input:focus, .input-group textarea:focus { border-bottom-color: var(--text-primary); }
-  
-  /* Floating Label Logic */
-  .input-group input:focus ~ label, 
-  .input-group input:not(:placeholder-shown) ~ label,
-  .input-group textarea:focus ~ label, 
-  .input-group textarea:not(:placeholder-shown) ~ label {
-    top: -10px; font-size: 0.75rem; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em;
-  }
+  .input-group input:focus ~ label, .input-group input:not(:placeholder-shown) ~ label, .input-group textarea:focus ~ label, .input-group textarea:not(:placeholder-shown) ~ label { top: -10px; font-size: 0.75rem; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em; }
   .submit-btn { width: 100%; margin-top: 1rem; font-size: 1rem; padding: 1rem; }
 
-  /* Mobile Adjustments */
+  /* Mobile Adjustments (Max 768px) */
   @media (max-width: 768px) {
     .nav-links { gap: 0.5rem; }
     .contact-btn { padding: 0.5rem 1rem; font-size: 0.75rem; }
@@ -512,13 +556,21 @@ const { Content: EthosContent } = await render(ethosData);
     .ethos-box h2 { font-size: 2rem; }
     .footer-content { flex-direction: column; text-align: center; }
     
+    /* Revert Timeline to Left-Aligned for Mobile Readability */
+    .timeline-line { left: 0; transform: none; }
+    .timeline-item { width: 100%; padding-bottom: 4rem; cursor: default; }
+    .timeline-item:nth-child(odd), .timeline-item:nth-child(even) { margin: 0; padding-left: 2.5rem; padding-right: 0; text-align: left; }
+    
+    /* Fixed mobile dots alignment */
+    .timeline-item:nth-child(odd) .timeline-dot, .timeline-item:nth-child(even) .timeline-dot { left: -7px; right: auto; }
+    .timeline-item:nth-child(odd) .problem-statement, .timeline-item:nth-child(even) .problem-statement { border-left: 2px solid #333; border-right: none; padding-left: 1rem; padding-right: 0; margin-left: 0; margin-right: auto; }
+    .timeline-item:hover .timeline-content, .timeline-item:nth-child(odd):hover .timeline-content, .timeline-item:nth-child(even):hover .timeline-content { transform: none; }
+    
     .timeline-hover-summary { max-height: 0; opacity: 0; }
-    .timeline-item { cursor: default; }
-    .timeline-item:hover .timeline-content { transform: none; }
     .timeline-item.is-active .timeline-hover-summary { max-height: 500px; opacity: 1; margin-top: 1.5rem; }
     .timeline-item.is-active .timeline-dot { background: var(--accent); }
     
-    /* Modal mobile fixes */
+    .swiper-slide { width: 85vw; }
     .modal-box { padding: 2rem; }
     .modal-title { font-size: 1.5rem; }
   }
