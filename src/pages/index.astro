@@ -12,6 +12,8 @@ import 'swiper/css/navigation';
 
 const allProjects = await getCollection('projects');
 allProjects.sort((a, b) => a.data.order - b.data.order);
+// Array duplication ensures flawless infinite looping in Swiper
+const carouselProjects = [...allProjects, ...allProjects];
 
 const allExperience = await getCollection('experience');
 allExperience.sort((a, b) => a.data.order - b.data.order);
@@ -37,10 +39,12 @@ const { Content: EthosContent } = await render(ethosData);
   </head>
   <body>
     
+    <Image src={profileImg} alt="" class="ghost-watermark" id="bg-portrait" />
+
     <header class="site-header">
       <div class="header-container">
         <a href="/" class="logo">
-          <img src="/favicon.svg" alt="Fareed M. Rifaideen Logo" />
+          <img src="/favicon.svg" alt="Fareed Logo" />
         </a>
         <nav class="nav-links">
           <a href="https://wa.me/9717775962" class="contact-btn" target="_blank" rel="noopener noreferrer">WhatsApp</a>
@@ -59,7 +63,7 @@ const { Content: EthosContent } = await render(ethosData);
           <img src="/scroll-Icon.svg" alt="Scroll Down" class="scroll-icon" />
         </div>
         <div class="portrait-wrapper">
-          <Image src={profileImg} alt="Fareed Profile" class="portrait-img" /> 
+          <Image src={profileImg} alt="Fareed Profile" class="portrait-img hero-portrait" /> 
         </div>
         <div class="bio-text">
           <p class="bio">
@@ -74,36 +78,57 @@ const { Content: EthosContent } = await render(ethosData);
 
     <section class="projects-section">
       <div class="ambient-glow"></div>
+      
       <div class="container">
         <h2 class="section-title">Featured Projects</h2>
         
-        <div class="swiper projects-swiper">
-          <div class="swiper-wrapper">
-            {allProjects.map((project) => (
-              <div class="swiper-slide project-card-wrapper">
-                <div class="flip-card-inner">
-                  
-                  <div class="flip-card-front glass-panel">
-                    <h3>{project.data.title}</h3>
-                    <p>{project.data.summary}</p>
-                    <div class="tech-tags">
-                      {project.data.techStack.map((tech) => (
-                        <span class="tag">{tech}</span>
-                      ))}
+        <div class="mobile-swipe-prompt">
+          <span>&lt; Swipe &gt;</span>
+        </div>
+
+        <div class="projects-split-layout">
+          <div class="projects-info-panel">
+            <h3 id="active-project-title">{allProjects[0].data.title}</h3>
+            <p id="active-project-summary">{allProjects[0].data.summary}</p>
+            <div class="tech-tags" id="active-project-tags">
+              {allProjects[0].data.techStack.map((tech) => (
+                <span class="tag">{tech}</span>
+              ))}
+            </div>
+            <a href={allProjects[0].data.liveUrl} id="active-project-link" target="_blank" class="contact-btn view-project-btn">View Live Project</a>
+          </div>
+
+          <div class="projects-visual-panel">
+            <div class="swiper projects-swiper">
+              <div class="swiper-wrapper mobile-wallet-stack">
+                {carouselProjects.map((project, index) => (
+                  <div class="swiper-slide project-card-wrapper wallet-card" data-index={index % allProjects.length}>
+                    <div class="flip-card-inner">
+                      
+                      <div class="flip-card-front glass-panel project-image-card">
+                        <div class="hidden-data" data-title={project.data.title} data-summary={project.data.summary} data-link={project.data.liveUrl} data-tags={project.data.techStack.join(',')}></div>
+                        
+                        <img src={project.data.image} alt={`${project.data.title} Logo`} class="project-logo desktop-front-logo" />
+                        
+                        <div class="mobile-project-content">
+                          <h3>{project.data.title}</h3>
+                          <a href={project.data.liveUrl} target="_blank" class="mobile-link">View Project →</a>
+                        </div>
+                      </div>
+
+                      <div class="flip-card-back glass-panel">
+                        <img src={project.data.image} alt={`${project.data.title} Logo`} class="project-logo" />
+                        <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer" class="contact-btn view-project-btn">View Live Project</a>
+                      </div>
+
                     </div>
                   </div>
-
-                  <div class="flip-card-back glass-panel">
-                    <img src={project.data.image} alt={`${project.data.title} Logo`} class="project-logo" />
-                    <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer" class="contact-btn view-project-btn">View Live Project</a>
-                  </div>
-
-                </div>
+                ))}
               </div>
-            ))}
+              <div class="swiper-button-prev custom-arrow"></div>
+              <div class="swiper-button-next custom-arrow"></div>
+            </div>
           </div>
-          <div class="swiper-button-prev custom-arrow"></div>
-          <div class="swiper-button-next custom-arrow"></div>
         </div>
       </div>
     </section>
@@ -111,21 +136,28 @@ const { Content: EthosContent } = await render(ethosData);
     <section class="experience-section">
       <div class="container">
         <h2 class="section-title">Career Journey</h2>
-        <div class="timeline">
-          <div class="timeline-line">
-            <div class="timeline-line-progress"></div>
-          </div>
-          <div class="timeline-items-wrapper">
+        
+        <div class="career-split-layout">
+          <div class="career-index-panel">
             {allExperience.map((job) => (
-              <div class="timeline-item">
+              <div class="index-year" data-year={job.data.date}>{job.data.date.split(' ')[0]}</div>
+            ))}
+          </div>
+
+          <div class="career-cards-panel">
+            {allExperience.map((job) => (
+              <div class="timeline-item drawer-card">
                 <div class="timeline-dot"></div>
-                <div class="timeline-content">
-                  <span class="timeline-date">{job.data.date}</span>
-                  <h3>{job.data.title}</h3>
-                  <h4>{job.data.company}</h4>
-                  <div class="timeline-hover-summary">
-                    <p class="problem-statement">{job.data.problemStatement}</p>
+                <div class="drawer-header">
+                  <div class="drawer-titles">
+                    <h3>{job.data.title}</h3>
+                    <h4>{job.data.company}</h4>
                   </div>
+                  <span class="timeline-date desktop-hide">{job.data.date}</span>
+                  <span class="mobile-expand-icon desktop-hide">+</span>
+                </div>
+                <div class="timeline-hover-summary drawer-body">
+                  <p class="problem-statement">{job.data.problemStatement}</p>
                 </div>
               </div>
             ))}
@@ -221,106 +253,119 @@ const { Content: EthosContent } = await render(ethosData);
       import { ScrollTrigger } from 'gsap/ScrollTrigger';
       import Lenis from '@studio-freight/lenis';
       import Swiper from 'swiper';
-      import { EffectCoverflow, Navigation } from 'swiper/modules';
+      import { EffectCoverflow, Navigation, Autoplay } from 'swiper/modules';
 
       gsap.registerPlugin(ScrollTrigger);
 
       // --- Smooth Scrolling ---
-      const lenis = new Lenis({
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      });
-
-      function raf(time) {
-        lenis.raf(time);
-        requestAnimationFrame(raf);
-      }
+      const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+      function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
       requestAnimationFrame(raf);
-
-      // --- Swiper 3D Carousel Setup (Infinite Loop & Ring Style) ---
-      new Swiper('.projects-swiper', {
-        modules: [EffectCoverflow, Navigation],
-        effect: 'coverflow',
-        grabCursor: true,
-        centeredSlides: true,
-        slidesPerView: 'auto',
-        loop: true, // Makes it infinitely swipeable
-        coverflowEffect: {
-          rotate: 45,      // Steeper angle for ring effect
-          stretch: 0,      
-          depth: 250,      // Pushes side cards further back in 3D space
-          modifier: 1,   
-          slideShadows: true, // Automatically darkens side cards
-        },
-        navigation: {
-          nextEl: '.swiper-button-next',
-          prevEl: '.swiper-button-prev',
-        },
-      });
 
       let mm = gsap.matchMedia();
 
-      // --- Desktop GSAP ---
-      mm.add("(min-width: 768px)", () => {
-        let tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" 
-          }
-        });
-        tl.to(".intro-text", { opacity: 0, x: -50, duration: 1 }, 0)
-          .to(".scroll-icon-wrapper", { opacity: 0, y: 20, duration: 0.5 }, 0)
-          .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
-        tl.to(".portrait-wrapper", { x: "-25vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
-          .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
+      // --- Background Portrait Opacity Tether ---
+      gsap.to("#bg-portrait", {
+        opacity: 0,
+        scrollTrigger: {
+          trigger: ".projects-section",
+          start: "top center", // Fades to zero when projects hit center screen
+          end: "top top",
+          scrub: true
+        }
       });
 
-      // --- Mobile GSAP ---
-      mm.add("(max-width: 767px)", () => {
-        let mobileTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=250%" 
+      // --- Responsive JavaScript Logic ---
+      mm.add("(min-width: 768px)", () => {
+        
+        // DESKTOP: Linear Continuous Swiper Setup
+        const projectSwiper = new Swiper('.projects-swiper', {
+          modules: [EffectCoverflow, Navigation, Autoplay],
+          effect: 'coverflow',
+          grabCursor: true,
+          centeredSlides: true,
+          slidesPerView: 'auto',
+          loop: true,
+          speed: 4000, // Smooth continuous speed
+          autoplay: {
+            delay: 0, // No delay creates the linear ticker effect
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true, // Pauses perfectly on hover for interaction/flipping
+          },
+          coverflowEffect: { rotate: 45, stretch: 0, depth: 250, modifier: 1, slideShadows: true },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
           }
         });
+
+        // Update Sticky Text on Slide Change
+        projectSwiper.on('slideChange', function () {
+          const activeSlide = projectSwiper.slides[projectSwiper.activeIndex];
+          const dataNode = activeSlide.querySelector('.hidden-data') as HTMLElement;
+          
+          if(dataNode) {
+            document.getElementById('active-project-title')!.innerText = dataNode.dataset.title || '';
+            document.getElementById('active-project-summary')!.innerText = dataNode.dataset.summary || '';
+            document.getElementById('active-project-link')!.setAttribute('href', dataNode.dataset.link || '#');
+            
+            const tagsArray = (dataNode.dataset.tags || '').split(',');
+            const tagsHTML = tagsArray.map(tag => `<span class="tag">${tag}</span>`).join('');
+            document.getElementById('active-project-tags')!.innerHTML = tagsHTML;
+          }
+        });
+
+        // DESKTOP: Hero Animations
+        let tl = gsap.timeline({ scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" } });
+        tl.to(".intro-text", { opacity: 0, x: -50, duration: 1 }, 0)
+          .to(".scroll-icon-wrapper", { opacity: 0, y: 20, duration: 0.5 }, 0)
+          .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0)
+          .to(".hero-portrait", { opacity: 0, duration: 0.5 }, 1) 
+        tl.to(".portrait-wrapper", { x: "-25vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
+          .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
+
+        // DESKTOP: Sticky Career Index Highlights
+        gsap.utils.toArray(".timeline-item").forEach((item) => {
+          ScrollTrigger.create({
+            trigger: item as Element,
+            start: "top center",
+            end: "bottom center",
+            onEnter: () => updateActiveYear(item as HTMLElement),
+            onEnterBack: () => updateActiveYear(item as HTMLElement)
+          });
+        });
+
+        function updateActiveYear(item: HTMLElement) {
+          document.querySelectorAll('.index-year').forEach(el => el.classList.remove('active'));
+          const yearEl = document.querySelector(`.index-year[data-year="${item.querySelector('.timeline-date')?.textContent}"]`);
+          if(yearEl) yearEl.classList.add('active');
+        }
+      });
+
+      mm.add("(max-width: 767px)", () => {
+        // MOBILE: Hero Animations
+        let mobileTl = gsap.timeline({ scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=250%" } });
         mobileTl.to(".intro-text", { opacity: 0, y: 30, duration: 1 }, 0)
           .to(".scroll-icon-wrapper", { opacity: 0, duration: 0.5 }, 0)
-          .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
+          .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0)
+          .to(".hero-portrait", { opacity: 0, duration: 0.5 }, 1)
         mobileTl.to(".portrait-wrapper", { x: "-35vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
           .to(".bio-text", { opacity: 1, y: 0, duration: 1, ease: "power1.out" }, 1.5);
 
-        // Mobile Scroll Auto-Focus for Timeline
-        gsap.utils.toArray(".timeline-item").forEach((item) => {
-          ScrollTrigger.create({
-            trigger: item, start: "top 60%", end: "bottom 40%", toggleClass: "is-active", 
+        // MOBILE: Swipe Prompt Fade
+        const prompt = document.querySelector('.mobile-swipe-prompt') as HTMLElement;
+        document.querySelector('.projects-section')?.addEventListener('touchstart', () => {
+          if (prompt) prompt.style.opacity = '0';
+        }, { once: true });
+
+        // MOBILE: Drawer Accordion Logic
+        const drawers = document.querySelectorAll('.drawer-card');
+        drawers.forEach(drawer => {
+          drawer.addEventListener('click', () => {
+            drawers.forEach(d => { if(d !== drawer) d.classList.remove('is-open'); });
+            drawer.classList.toggle('is-open');
           });
         });
-      });
-
-      // --- Shared GSAP Animations ---
-      gsap.to(".timeline-line-progress", {
-        height: "100%", ease: "none",
-        scrollTrigger: { trigger: ".timeline", start: "top center", end: "bottom center", scrub: true }
-      });
-
-      gsap.utils.toArray(".timeline-item").forEach((item) => {
-        gsap.from(item, {
-          opacity: 0, y: 40, duration: 0.8, ease: "power2.out",
-          scrollTrigger: { trigger: item, start: "top 85%" }
-        });
-      });
-
-      gsap.from(".projects-swiper", {
-        opacity: 0, y: 40, duration: 0.8, ease: "power2.out",
-        scrollTrigger: { trigger: ".projects-section", start: "top 85%" }
-      });
-
-      gsap.from(".bento-card", {
-        opacity: 0, y: 40, stagger: 0.15, duration: 0.8, ease: "power2.out",
-        scrollTrigger: { trigger: ".bento-grid", start: "top 85%" }
-      });
-      
-      gsap.from(".ethos-box", {
-        opacity: 0, y: 40, duration: 0.8, ease: "power2.out",
-        scrollTrigger: { trigger: ".ethos-section", start: "top 85%" }
       });
 
       // --- Contact Modal Logic ---
@@ -328,14 +373,11 @@ const { Content: EthosContent } = await render(ethosData);
       const openBtns = document.querySelectorAll(".modal-trigger");
       const closeBtn = document.getElementById("closeModal");
 
-      const openModal = (e) => {
+      const openModal = (e: Event) => {
         e.preventDefault();
         lenis.stop(); 
         gsap.to(modal, { opacity: 1, pointerEvents: "auto", duration: 0.4, ease: "power2.out" });
-        gsap.fromTo(".modal-box", 
-          { y: 50, opacity: 0 }, 
-          { y: 0, opacity: 1, duration: 0.5, delay: 0.1, ease: "power2.out" }
-        );
+        gsap.fromTo(".modal-box", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, delay: 0.1, ease: "power2.out" });
       };
 
       const closeModal = () => {
@@ -348,13 +390,7 @@ const { Content: EthosContent } = await render(ethosData);
       modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
       // --- Dynamic Rotating Subtitle ---
-      const subtitles = [
-        "Full-Stack Digital Marketer & Web Developer",
-        "Technical SEO Specialist",
-        "Bespoke WordPress Architect",
-        "Precision Paid Media Strategist",
-        "Data-Driven Growth Engineer"
-      ];
+      const subtitles = ["Full-Stack Digital Marketer & Web Developer", "Technical SEO Specialist", "Bespoke WordPress Architect", "Precision Paid Media Strategist", "Data-Driven Growth Engineer"];
       let subIndex = 0;
       const dynamicSubtitle = document.querySelector(".dynamic-subtitle");
 
@@ -385,6 +421,13 @@ const { Content: EthosContent } = await render(ethosData);
   body { background-color: var(--bg-color); color: var(--text-primary); font-family: 'Hanken Grotesk', sans-serif; margin: 0; overflow-x: hidden; }
   .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
 
+  /* Ghost Watermark */
+  .ghost-watermark {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    height: 120vh; width: auto; min-width: 100vw; object-fit: cover;
+    opacity: 0.03; mix-blend-mode: luminosity; pointer-events: none; z-index: 0;
+  }
+
   /* Header */
   .site-header { position: fixed; top: 0; width: 100%; padding: 2rem 0; z-index: 100; mix-blend-mode: difference; }
   .header-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
@@ -398,7 +441,7 @@ const { Content: EthosContent } = await render(ethosData);
   .contact-btn:hover { background-color: #fff; color: #000; }
 
   /* Cinematic Section */
-  .cinematic-hero { height: 100vh; width: 100vw; background-color: var(--bg-color); overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; }
+  .cinematic-hero { height: 100vh; width: 100vw; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; z-index: 1;}
   .cinematic-container { position: relative; width: 100%; max-width: 1200px; height: 100%; margin: 0 auto; display: flex; align-items: center; }
   .intro-text { position: absolute; left: 2rem; z-index: 10; }
   .intro-text h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3rem, 7vw, 6.5rem); letter-spacing: -0.02em; margin: 0; line-height: 1.1; }
@@ -413,46 +456,50 @@ const { Content: EthosContent } = await render(ethosData);
   .bio { color: var(--text-secondary); font-size: 1.2rem; line-height: 1.7; margin-bottom: 1.5rem; }
   .section-title { font-family: 'Syne', sans-serif; font-size: 3rem; margin-bottom: 4rem; color: var(--text-primary); }
 
-  /* --- 3D Swiper & Glassmorphism Flip Cards --- */
-  .projects-section { padding: 8rem 0 5rem 0; background-color: var(--bg-color); position: relative; overflow: hidden; }
+  /* --- Projects Layout Restructure --- */
+  .projects-section { padding: 8rem 0 5rem 0; position: relative; }
+  .ambient-glow { position: absolute; top: 50%; right: 0; transform: translateY(-50%); width: 60vw; height: 90vh; border-radius: 50%; background: radial-gradient(circle at center, rgba(99, 102, 241, 0.1) 0%, transparent 60%); filter: blur(40px); z-index: 1; pointer-events: none; }
   
-  /* Ambient Light Orb to make the glass refract */
-  .ambient-glow {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 70vw; height: 70vh; border-radius: 50%;
-    background: radial-gradient(circle, rgba(120, 150, 255, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
-    z-index: 1; pointer-events: none;
+  .mobile-swipe-prompt { display: none; }
+
+  .projects-split-layout { display: flex; gap: 4rem; position: relative; z-index: 2; align-items: center; }
+  .projects-info-panel { width: 40%; position: sticky; top: 30vh; height: fit-content; display: flex; flex-direction: column; gap: 1.5rem; }
+  .projects-info-panel h3 { font-family: 'Syne', sans-serif; font-size: 2.5rem; margin: 0; color: var(--text-primary); }
+  .projects-info-panel p { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.6; margin: 0; }
+  .tech-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .tag { font-family: 'Hanken Grotesk', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.4rem 0.8rem; border: 1px solid rgba(255, 255, 255, 0.15); color: var(--text-secondary); }
+  .view-project-btn { width: fit-content; }
+
+  .projects-visual-panel { width: 60%; }
+  .projects-swiper { width: 100%; padding: 2rem 0; overflow: visible; }
+  
+  /* CRITICAL: Forces the continuous linear transition globally for desktop Swiper */
+  @media (min-width: 768px) {
+    .projects-swiper .swiper-wrapper {
+      -webkit-transition-timing-function: linear !important;
+      transition-timing-function: linear !important;
+    }
   }
 
-  .projects-swiper { width: 100%; padding: 2rem 0 4rem 0; overflow: visible; z-index: 2; }
-  .swiper-slide { width: 350px; height: 450px; perspective: 1000px; }
+  .swiper-slide { width: 320px; height: 420px; perspective: 1000px; }
   
   .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
   .swiper-slide-active:hover .flip-card-inner { transform: rotateY(180deg); }
-  
-  .glass-panel {
-    position: absolute; width: 100%; height: 100%; backface-visibility: hidden; 
-    display: flex; flex-direction: column; justify-content: flex-start; padding: 2.5rem;
-    
-    /* Transparent Glass UI Properties */
-    background: rgba(10, 10, 10, 0.35);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+
+  .project-image-card { 
+    width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;
   }
+  .glass-panel {
+    position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2.5rem; background: linear-gradient(135deg, rgba(25, 25, 25, 0.4) 0%, rgba(10, 10, 10, 0.7) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.2); border-left: 1px solid rgba(255, 255, 255, 0.15); border-bottom: 1px solid rgba(255, 255, 255, 0.02); border-right: 1px solid rgba(255, 255, 255, 0.02); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); border-radius: 12px;
+  }
+  .flip-card-back { transform: rotateY(180deg); }
   
-  .flip-card-back { transform: rotateY(180deg); align-items: center; justify-content: center; text-align: center; }
-  
-  .flip-card-front h3 { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--text-primary); margin: 0 0 1rem 0; }
-  .flip-card-front p { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; margin: 0; }
-  .tech-tags { display: flex; gap: 0.5rem; margin-top: auto; flex-wrap: wrap; }
-  .tag { font-family: 'Hanken Grotesk', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.4rem 0.8rem; border: 1px solid rgba(255, 255, 255, 0.15); color: var(--text-secondary); transition: all 0.3s ease; }
-  
-  /* Project Logo styling (Filter removed for JPG support) */
-  .project-logo { max-width: 80%; max-height: 120px; object-fit: contain; margin-bottom: 2rem; opacity: 0.9; transition: opacity 0.3s ease; border-radius: 8px; }
-  .flip-card-back:hover .project-logo { opacity: 1; }
-  .view-project-btn { font-size: 0.9rem; padding: 0.8rem 2rem; }
+  .project-logo { max-width: 80%; max-height: 150px; object-fit: contain; }
+  .desktop-front-logo { opacity: 0.7; transition: opacity 0.3s ease; filter: grayscale(1); }
+  .swiper-slide-active .desktop-front-logo { opacity: 1; filter: grayscale(0); }
+
+  .hidden-data { display: none; }
+  .mobile-project-content { display: none; }
 
   /* Minimalist Swiper Arrows */
   .custom-arrow { color: #fff; opacity: 0; transition: opacity 0.3s ease; }
@@ -460,50 +507,42 @@ const { Content: EthosContent } = await render(ethosData);
   .projects-section:hover .custom-arrow { opacity: 0.5; }
   .projects-section:hover .custom-arrow:hover { opacity: 1; }
 
-  /* --- FIX: Alternating Center Timeline --- */
-  .experience-section { padding: 5rem 0; background-color: var(--bg-color); }
-  .timeline { position: relative; margin-top: 4rem; width: 100%; }
+  /* --- Career Index Layout Restructure --- */
+  .experience-section { padding: 8rem 0; }
+  .career-split-layout { display: flex; gap: 4rem; }
   
-  .timeline-line { position: absolute; top: 0; width: 2px; height: 100%; background: #1a1a1a; }
-  .timeline-line-progress { width: 100%; height: 0%; background: var(--accent); }
+  /* Desktop Sticky Index */
+  .career-index-panel { width: 25%; position: sticky; top: 40vh; height: fit-content; display: flex; flex-direction: column; gap: 2rem; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 2rem; }
+  .index-year { font-family: 'Syne', sans-serif; font-size: 1.5rem; color: var(--text-secondary); opacity: 0.3; transition: all 0.3s ease; }
+  .index-year.active { opacity: 1; color: var(--text-primary); transform: translateX(10px); }
   
-  .timeline-items-wrapper { display: flex; flex-direction: column; width: 100%; }
-  .timeline-item { position: relative; padding-bottom: 5rem; cursor: crosshair; width: 50%; }
-  .timeline-dot { position: absolute; top: 0; width: 16px; height: 16px; border-radius: 50%; background: #050505; border: 2px solid var(--accent); z-index: 2; transition: background 0.3s ease; }
-  .timeline-content { transition: transform 0.3s ease; }
-  .timeline-item:hover .timeline-dot { background: var(--accent); }
+  .career-cards-panel { width: 75%; display: flex; flex-direction: column; gap: 3rem; position: relative;}
   
-  .timeline-date { color: var(--text-secondary); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; display: block; }
-  .timeline-content h3 { font-family: 'Syne', sans-serif; font-size: 2rem; margin: 0 0 0.5rem 0; color: var(--text-primary); }
-  .timeline-content h4 { font-family: 'Hanken Grotesk', sans-serif; color: var(--text-secondary); font-size: 1.2rem; font-weight: 400; margin: 0; }
+  .timeline-item { position: relative; padding-bottom: 2rem; box-sizing: border-box; }
   
-  .timeline-hover-summary { max-height: 0; opacity: 0; overflow: hidden; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-  .timeline-item:hover .timeline-hover-summary { max-height: 300px; opacity: 1; margin-top: 1.5rem; }
-  .problem-statement { font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary); margin: 0; max-width: 500px; }
-
-  /* Desktop Alternating Logic (Fixed Alignment) */
+  /* Desktop Mathematical Dot Alignment */
   @media (min-width: 768px) {
-    .timeline-line { left: 50%; transform: translateX(-50%); }
-    
-    /* Odd Items (Left Side) */
-    .timeline-item:nth-child(odd) { margin-right: auto; margin-left: 0; padding-right: 4rem; text-align: right; }
-    /* Fix: Add left: auto to override default */
-    .timeline-item:nth-child(odd) .timeline-dot { right: -11px; left: auto; }
-    .timeline-item:nth-child(odd) .problem-statement { border-right: 2px solid #333; padding-right: 1rem; margin-left: auto; margin-right: 0; }
-    .timeline-item:nth-child(odd):hover .timeline-content { transform: translateX(-15px); }
-
-    /* Even Items (Right Side) */
-    .timeline-item:nth-child(even) { margin-left: auto; margin-right: 0; padding-left: 4rem; text-align: left; }
-    /* Fix: Add right: auto to ensure clean alignment */
-    .timeline-item:nth-child(even) .timeline-dot { left: -11px; right: auto; }
-    .timeline-item:nth-child(even) .problem-statement { border-left: 2px solid #333; padding-left: 1rem; margin-right: auto; margin-left: 0; }
-    .timeline-item:nth-child(even):hover .timeline-content { transform: translateX(15px); }
+    .timeline-dot { position: absolute; top: 3.5rem; left: -5.6rem; width: 12px; height: 12px; border-radius: 0; background: #050505; border: 2px solid var(--accent); z-index: 2; transition: all 0.3s ease; transform: translateX(-50%); }
+    .timeline-item:hover .timeline-dot { transform: translateX(-50%) scale(1.3); background: var(--accent); }
   }
 
+  .drawer-card { 
+    background: rgba(10, 10, 10, 0.5); border: 1px solid rgba(255,255,255,0.05); padding: 2.5rem; border-radius: 12px;
+    transition: all 0.3s ease; position: relative; z-index: 5;
+  }
+  .drawer-card:hover { border-color: rgba(255, 255, 255, 0.2); background: #0f0f0f; transform: translateX(10px); }
+  
+  .drawer-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .drawer-titles h3 { font-family: 'Syne', sans-serif; font-size: 2rem; margin: 0 0 0.5rem 0; color: var(--text-primary); }
+  .drawer-titles h4 { font-family: 'Hanken Grotesk', sans-serif; color: var(--text-secondary); font-size: 1.2rem; font-weight: 400; margin: 0; }
+  .timeline-date { color: var(--text-secondary); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .problem-statement { font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary); margin: 1.5rem 0 0 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; }
+  .mobile-expand-icon { display: none; }
+
   /* Bento Grid */
-  .bento-section { padding: 5rem 0; background-color: var(--bg-color); }
+  .bento-section { padding: 5rem 0; }
   .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-  .bento-card { border: 1px solid #333; padding: 2.5rem; display: flex; flex-direction: column; justify-content: center; transition: border-color 0.3s ease; }
+  .bento-card { border: 1px solid #333; padding: 2.5rem; display: flex; flex-direction: column; justify-content: center; transition: border-color 0.3s ease; background: rgba(10,10,10,0.5); backdrop-filter: blur(10px); }
   .bento-card:hover { border-color: var(--text-primary); }
   .skills-card { grid-column: span 2; }
   .bento-card h3 { font-family: 'Syne', sans-serif; font-size: 1.5rem; margin: 0 0 1rem 0; }
@@ -511,8 +550,8 @@ const { Content: EthosContent } = await render(ethosData);
   .bento-meta { font-size: 0.85rem; color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin-top: auto; }
 
   /* Work Ethos */
-  .ethos-section { padding: 5rem 0 10rem 0; background-color: var(--bg-color); }
-  .ethos-box { border: 1px solid #333; padding: 4rem; background-color: #080808; }
+  .ethos-section { padding: 5rem 0 10rem 0; }
+  .ethos-box { border: 1px solid #333; padding: 4rem; background: rgba(8,8,8,0.8); backdrop-filter: blur(10px); }
   .ethos-box h2 { font-family: 'Syne', sans-serif; font-size: 2.5rem; color: var(--text-primary); margin: 0 0 2rem 0; }
   .ethos-content p { color: var(--text-secondary); font-size: 1.2rem; line-height: 1.7; margin: 0 0 1.5rem 0; max-width: 800px; }
   .ethos-content p:last-child { margin: 0; }
@@ -542,7 +581,7 @@ const { Content: EthosContent } = await render(ethosData);
   .input-group input:focus ~ label, .input-group input:not(:placeholder-shown) ~ label, .input-group textarea:focus ~ label, .input-group textarea:not(:placeholder-shown) ~ label { top: -10px; font-size: 0.75rem; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em; }
   .submit-btn { width: 100%; margin-top: 1rem; font-size: 1rem; padding: 1rem; }
 
-  /* Mobile Adjustments (Max 768px) */
+  /* --- MOBILE SPECIFIC LOGIC --- */
   @media (max-width: 768px) {
     .nav-links { gap: 0.5rem; }
     .contact-btn { padding: 0.5rem 1rem; font-size: 0.75rem; }
@@ -551,26 +590,64 @@ const { Content: EthosContent } = await render(ethosData);
     .scroll-icon-wrapper { left: 50%; transform: translateX(-50%); bottom: 3%; }
     .portrait-wrapper { transform: translateX(35vw); }
     .bio-text { width: 75%; right: 1.5rem; left: auto; text-align: right; transform: translateY(30px); }
+    
+    /* MOBILE PROJECTS: The Wallet Stack */
+    .projects-split-layout { flex-direction: column; gap: 2rem; display: block; }
+    .projects-info-panel { display: none; }
+    .projects-visual-panel { width: 100%; }
+    
+    .mobile-swipe-prompt {
+      display: block; position: absolute; top: 5%; left: 50%; transform: translate(-50%, 0);
+      z-index: 20; color: var(--text-primary); font-family: 'Hanken Grotesk', sans-serif;
+      font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
+      background: rgba(0,0,0,0.6); padding: 0.8rem 1.5rem; border-radius: 50px;
+      backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2);
+      pointer-events: none; transition: opacity 0.4s ease;
+      animation: pulse 2s infinite alternate;
+    }
+    @keyframes pulse { 0% { transform: translate(-50%, 0) scale(1); } 100% { transform: translate(-50%, 0) scale(1.05); box-shadow: 0 0 15px rgba(255,255,255,0.2); } }
+
+    /* Disable Swiper on Mobile for Wallet Stack */
+    .projects-swiper { overflow: visible !important; }
+    .projects-swiper .swiper-wrapper { transition-timing-function: ease !important; }
+    .mobile-wallet-stack { display: flex; flex-direction: column; gap: 0; transform: none !important; }
+    
+    .wallet-card { 
+      width: 100%; height: 60vh; position: sticky; top: 15vh; 
+      margin-bottom: 2rem; transform: none !important; opacity: 1 !important; visibility: visible !important;
+    }
+    
+    .project-image-card { border-radius: 20px; box-shadow: 0 -10px 20px rgba(0,0,0,0.5); justify-content: space-between; padding: 2rem; }
+    .desktop-front-logo { max-height: 80px; margin-top: 1rem; opacity: 1; filter: grayscale(0); }
+    
+    .mobile-project-content { display: flex; flex-direction: column; width: 100%; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; margin-top: auto; }
+    .mobile-project-content h3 { font-family: 'Syne', sans-serif; font-size: 1.8rem; margin: 0 0 1rem 0; color: var(--text-primary); text-align: center; }
+    .mobile-link { color: var(--accent); text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; text-align: center; }
+    .flip-card-inner { transform: none !important; }
+
+    /* MOBILE CAREER: The Drawer Accordion */
+    .career-split-layout { flex-direction: column; }
+    .career-index-panel { display: none; }
+    .career-cards-panel { width: 100%; gap: 1rem; }
+    
+    .timeline-item { padding-bottom: 0; }
+    .timeline-dot { display: none; }
+    .drawer-card { padding: 1.5rem; cursor: pointer; transform: none !important; border-radius: 12px; margin-bottom: 1rem; }
+    .drawer-card:hover { transform: none !important; }
+    
+    .desktop-hide { display: none; }
+    .mobile-expand-icon { display: block; font-size: 1.5rem; font-weight: 400; transition: transform 0.3s ease; color: var(--text-primary); }
+    .drawer-body { max-height: 0; overflow: hidden; padding-top: 0; border: none; }
+    
+    /* Active Accordion State */
+    .drawer-card.is-open { border-color: rgba(255,255,255,0.3); background: #0f0f0f; }
+    .drawer-card.is-open .mobile-expand-icon { transform: rotate(45deg); }
+    .drawer-card.is-open .drawer-body { max-height: 500px; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 1.5rem; }
+
     .skills-card { grid-column: span 1; }
     .ethos-box { padding: 2rem; }
     .ethos-box h2 { font-size: 2rem; }
     .footer-content { flex-direction: column; text-align: center; }
-    
-    /* Revert Timeline to Left-Aligned for Mobile Readability */
-    .timeline-line { left: 0; transform: none; }
-    .timeline-item { width: 100%; padding-bottom: 4rem; cursor: default; }
-    .timeline-item:nth-child(odd), .timeline-item:nth-child(even) { margin: 0; padding-left: 2.5rem; padding-right: 0; text-align: left; }
-    
-    /* Fixed mobile dots alignment */
-    .timeline-item:nth-child(odd) .timeline-dot, .timeline-item:nth-child(even) .timeline-dot { left: -7px; right: auto; }
-    .timeline-item:nth-child(odd) .problem-statement, .timeline-item:nth-child(even) .problem-statement { border-left: 2px solid #333; border-right: none; padding-left: 1rem; padding-right: 0; margin-left: 0; margin-right: auto; }
-    .timeline-item:hover .timeline-content, .timeline-item:nth-child(odd):hover .timeline-content, .timeline-item:nth-child(even):hover .timeline-content { transform: none; }
-    
-    .timeline-hover-summary { max-height: 0; opacity: 0; }
-    .timeline-item.is-active .timeline-hover-summary { max-height: 500px; opacity: 1; margin-top: 1.5rem; }
-    .timeline-item.is-active .timeline-dot { background: var(--accent); }
-    
-    .swiper-slide { width: 85vw; }
     .modal-box { padding: 2rem; }
     .modal-title { font-size: 1.5rem; }
   }
