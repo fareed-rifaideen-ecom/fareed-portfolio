@@ -6,14 +6,9 @@ import '@fontsource/hanken-grotesk/600.css';
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import profileImg from '../assets/profile.jpg'; 
-import 'swiper/css';
-import 'swiper/css/effect-coverflow';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination'; 
 
 const allProjects = await getCollection('projects');
 allProjects.sort((a, b) => a.data.order - b.data.order);
-const carouselProjects = [...allProjects, ...allProjects];
 
 const allExperience = await getCollection('experience');
 allExperience.sort((a, b) => a.data.order - b.data.order);
@@ -40,6 +35,8 @@ allServices.sort((a, b) => a.data.order - b.data.order);
   </head>
   <body>
     
+    <Image src={profileImg} alt="" class="ghost-watermark" id="bg-portrait" />
+
     <header class="site-header">
       <div class="header-container">
         <a href="/" class="logo">
@@ -78,86 +75,80 @@ allServices.sort((a, b) => a.data.order - b.data.order);
     <section class="services-section">
       <div class="container">
         <h2 class="section-title">What I Do</h2>
+        <div class="services-grid">
+          {allServices.map((service, index) => (
+            <div class="service-glass-card glass-panel">
+              <div class="service-front">
+                <span class="service-number">0{index + 1}</span>
+                <h3 class="service-title">{service.data.title}</h3>
+              </div>
+              <div class="service-reveal">
+                <p class="service-pitch">{service.data.summary}</p>
+                <div class="tech-tags">
+                  {service.data.techStack.map((tech) => (
+                    <span class="tag">{tech}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="projects-terminal-section">
+      <div class="ambient-glow"></div>
+      <div class="container">
+        <h2 class="section-title">Featured Projects</h2>
         
-        <div class="terminal-window">
+        <div class="terminal-window glass-panel">
           <div class="terminal-header">
             <div class="terminal-dots">
               <span class="dot red"></span>
               <span class="dot yellow"></span>
               <span class="dot green"></span>
             </div>
-            <div class="terminal-title">bash -- fareed@server: ~</div>
+            <div class="terminal-title">bash -- fareed/projects: ~</div>
           </div>
           
           <div class="terminal-body">
             <div class="terminal-sidebar">
-              {allServices.map((service, index) => (
-                <button class={`terminal-command ${index === 0 ? 'active' : ''}`} data-target={`service-${service.data.order}`}>
-                  > ./{service.data.command}
-                </button>
-              ))}
+              {allProjects.map((project, index) => {
+                const safeCommand = project.data.title.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                return (
+                  <button class={`terminal-command ${index === 0 ? 'active' : ''}`} data-target={`proj-${project.data.order}`}>
+                    > ./view_{safeCommand}
+                  </button>
+                )
+              })}
             </div>
             
             <div class="terminal-content">
               <div class="typewriter-container">
-                <span id="typewriter-output">{allServices[0].data.summary}</span><span class="cursor">_</span>
+                <span id="proj-typewriter-output">{allProjects[0].data.summary}</span><span class="cursor">_</span>
               </div>
-              <div id="terminal-tags" class="tech-tags mt-tags">
-                {allServices[0].data.techStack.map(tag => (
-                  <span class="tag terminal-tag">{tag}</span>
-                ))}
+              
+              <div id="proj-details" class="proj-details-reveal">
+                <img id="proj-img" src={allProjects[0].data.image} alt="Project Image" class="terminal-proj-img" />
+                <div id="proj-tags" class="tech-tags mt-tags">
+                  {allProjects[0].data.techStack.map(tag => (
+                    <span class="tag terminal-tag">{tag}</span>
+                  ))}
+                </div>
+                <a id="proj-link" href={allProjects[0].data.liveUrl} target="_blank" class="contact-btn view-project-btn">View Live Project</a>
               </div>
             </div>
 
-            {allServices.map(service => (
-               <div id={`service-${service.data.order}`} class="hidden" data-pitch={service.data.summary} data-tags={service.data.techStack.join(',')}></div>
+            {allProjects.map(project => (
+               <div id={`proj-${project.data.order}`} class="hidden" 
+                    data-summary={project.data.summary} 
+                    data-tags={project.data.techStack.join(',')}
+                    data-img={project.data.image}
+                    data-link={project.data.liveUrl}></div>
             ))}
           </div>
         </div>
 
-      </div>
-    </section>
-
-    <section class="projects-section">
-      <div class="ambient-glow"></div>
-      
-      <div class="container">
-        <h2 class="section-title">Featured Projects</h2>
-        
-        <div class="mobile-swipe-prompt">
-          <span>&lt; Swipe &gt;</span>
-        </div>
-
-        <div class="swiper projects-swiper">
-          <div class="swiper-wrapper">
-            {carouselProjects.map((project) => (
-              <div class="swiper-slide project-card-wrapper">
-                <div class="flip-card-inner">
-                  
-                  <div class="flip-card-front glass-panel">
-                    <h3>{project.data.title}</h3>
-                    <p>{project.data.summary}</p>
-                    <div class="tech-tags">
-                      {project.data.techStack.map((tech) => (
-                        <span class="tag">{tech}</span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div class="flip-card-back glass-panel">
-                    <img src={project.data.image} alt={`${project.data.title} Logo`} class="project-logo" />
-                    <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer" class="contact-btn view-project-btn">View Live Project</a>
-                  </div>
-
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <div class="swiper-button-prev custom-arrow"></div>
-          <div class="swiper-button-next custom-arrow"></div>
-          <div class="swiper-pagination"></div>
-        </div>
       </div>
     </section>
 
@@ -165,26 +156,33 @@ allServices.sort((a, b) => a.data.order - b.data.order);
       <div class="container">
         <h2 class="section-title">Career Journey</h2>
         
-        <div class="career-ruler-wrapper">
+        <div class="career-ruler-wrapper" id="career-scroll-box">
           <div class="career-ruler-track">
             <div class="career-ruler-line"></div>
             
             {allExperience.map((job) => (
-              <div class="ruler-card">
+              <div class="ruler-card tooltip-trigger" data-tooltip={job.data.problemStatement}>
                 <div class="ruler-dot"></div>
                 <div class="ruler-content glass-panel">
                   <span class="timeline-date">{job.data.date}</span>
                   <h3>{job.data.title}</h3>
                   <h4>{job.data.company}</h4>
-                  <p class="problem-statement">{job.data.problemStatement}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
+        <div class="slider-controls-container">
+          <input type="range" id="career-slider" class="custom-blue-slider" min="0" max="100" value="0" />
+        </div>
+
       </div>
     </section>
+
+    <div id="global-tooltip" class="glass-panel hidden-tooltip">
+      <p id="tooltip-text"></p>
+    </div>
 
     <section class="bento-section">
       <div class="container">
@@ -276,8 +274,6 @@ allServices.sort((a, b) => a.data.order - b.data.order);
       import gsap from 'gsap';
       import { ScrollTrigger } from 'gsap/ScrollTrigger';
       import Lenis from '@studio-freight/lenis';
-      import Swiper from 'swiper';
-      import { EffectCoverflow, Navigation, Pagination, Autoplay } from 'swiper/modules';
 
       gsap.registerPlugin(ScrollTrigger);
 
@@ -286,14 +282,27 @@ allServices.sort((a, b) => a.data.order - b.data.order);
       function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
       requestAnimationFrame(raf);
 
-      // --- Terminal Typewriter Logic ---
+      // --- Background Portrait Opacity Tether ---
+      gsap.to("#bg-portrait", {
+        opacity: 0,
+        scrollTrigger: {
+          trigger: ".services-section",
+          start: "top center",
+          end: "top top",
+          scrub: true
+        }
+      });
+
+      // --- Projects Terminal Logic ---
       const commands = document.querySelectorAll('.terminal-command');
-      const output = document.getElementById('typewriter-output');
-      const tagsContainer = document.getElementById('terminal-tags');
+      const output = document.getElementById('proj-typewriter-output');
+      const detailsContainer = document.getElementById('proj-details');
+      const projImg = document.getElementById('proj-img') as HTMLImageElement;
+      const tagsContainer = document.getElementById('proj-tags');
+      const projLink = document.getElementById('proj-link') as HTMLAnchorElement;
       let typeInterval: ReturnType<typeof setInterval>;
 
       commands.forEach(btn => {
-        // Desktop uses hover, Mobile uses tap
         const trigger = window.innerWidth > 768 ? 'mouseenter' : 'click';
         
         btn.addEventListener(trigger, () => {
@@ -304,15 +313,17 @@ allServices.sort((a, b) => a.data.order - b.data.order);
 
           clearInterval(typeInterval);
           if(output) output.textContent = '';
-          if(tagsContainer) {
-            tagsContainer.classList.add('hidden');
-            tagsContainer.innerHTML = '';
+          if(detailsContainer) {
+            detailsContainer.style.opacity = '0';
+            detailsContainer.style.transform = 'translateY(20px)';
           }
 
           const targetId = btn.getAttribute('data-target');
           const dataNode = document.getElementById(targetId!);
-          const pitchText = dataNode?.getAttribute('data-pitch') || '';
+          const pitchText = dataNode?.getAttribute('data-summary') || '';
           const tags = dataNode?.getAttribute('data-tags')?.split(',') || [];
+          const imgSrc = dataNode?.getAttribute('data-img') || '';
+          const liveUrl = dataNode?.getAttribute('data-link') || '#';
 
           let i = 0;
           typeInterval = setInterval(() => {
@@ -320,74 +331,109 @@ allServices.sort((a, b) => a.data.order - b.data.order);
             i++;
             if (i >= pitchText.length) {
               clearInterval(typeInterval);
-              if(tagsContainer) {
-                tagsContainer.innerHTML = tags.map(tag => `<span class="tag terminal-tag">${tag}</span>`).join('');
-                tagsContainer.classList.remove('hidden');
+              if(detailsContainer) {
+                if(projImg) projImg.src = imgSrc;
+                if(projLink) projLink.href = liveUrl;
+                if(tagsContainer) tagsContainer.innerHTML = tags.map(tag => `<span class="tag terminal-tag">${tag}</span>`).join('');
+                
+                // Fade in the image and tags smoothly
+                gsap.to(detailsContainer, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" });
               }
             }
           }, 15); 
         });
       });
 
-      // --- Swiper 3D Carousel (Classic Behavior) ---
-      new Swiper('.projects-swiper', {
-        modules: [EffectCoverflow, Navigation, Pagination, Autoplay],
-        effect: 'coverflow',
-        grabCursor: true,
-        centeredSlides: true,
-        slidesPerView: 'auto',
-        loop: true,
-        autoplay: { delay: 3500, disableOnInteraction: false, pauseOnMouseEnter: true },
-        pagination: { el: '.swiper-pagination', clickable: true },
-        coverflowEffect: { rotate: 50, stretch: 0, depth: 200, modifier: 1, slideShadows: true },
-        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-        on: {
-          touchStart: function () {
-            const prompt = document.querySelector('.mobile-swipe-prompt') as HTMLElement;
-            if (prompt) prompt.style.opacity = '0';
+      // --- Horizontal Career Slider & Scroll Sync ---
+      const scrollBox = document.getElementById('career-scroll-box');
+      const slider = document.getElementById('career-slider') as HTMLInputElement;
+
+      if (scrollBox && slider) {
+        // Update Scroll when Slider moves
+        slider.addEventListener('input', (e) => {
+          const target = e.target as HTMLInputElement;
+          const maxScroll = scrollBox.scrollWidth - scrollBox.clientWidth;
+          scrollBox.scrollLeft = (Number(target.value) / 100) * maxScroll;
+          target.style.setProperty('--val', target.value + '%');
+        });
+
+        // Update Slider when user Swipes/Scrolls naturally
+        scrollBox.addEventListener('scroll', () => {
+          const maxScroll = scrollBox.scrollWidth - scrollBox.clientWidth;
+          if(maxScroll > 0) {
+              const val = (scrollBox.scrollLeft / maxScroll) * 100;
+              slider.value = val.toString();
+              slider.style.setProperty('--val', val + '%');
           }
-        }
+        });
+      }
+
+      // --- Global Interactive Tooltip Logic ---
+      const tooltip = document.getElementById('global-tooltip');
+      const tooltipText = document.getElementById('tooltip-text');
+      const triggerCards = document.querySelectorAll('.tooltip-trigger');
+
+      triggerCards.forEach(card => {
+        // Desktop Hover
+        card.addEventListener('mousemove', (e: Event) => {
+          const mouseEvent = e as MouseEvent;
+          if (window.innerWidth > 768 && tooltip && tooltipText) {
+            tooltipText.textContent = card.getAttribute('data-tooltip');
+            tooltip.classList.remove('hidden-tooltip');
+            // Offset to prevent the tooltip from blocking the cursor
+            tooltip.style.left = (mouseEvent.clientX + 20) + 'px';
+            tooltip.style.top = (mouseEvent.clientY + 20) + 'px';
+          }
+        });
+
+        card.addEventListener('mouseleave', () => {
+          if(tooltip) tooltip.classList.add('hidden-tooltip');
+        });
+
+        // Mobile Tap
+        card.addEventListener('click', () => {
+          if (window.innerWidth <= 768 && tooltip && tooltipText) {
+            tooltipText.textContent = card.getAttribute('data-tooltip');
+            tooltip.classList.remove('hidden-tooltip');
+            tooltip.classList.add('mobile-modal');
+            
+            // Auto-hide mobile modal after 4 seconds
+            setTimeout(() => tooltip.classList.add('hidden-tooltip'), 4000);
+          }
+        });
       });
 
       let mm = gsap.matchMedia();
 
       // --- Desktop GSAP ---
       mm.add("(min-width: 768px)", () => {
-        // FULLY RESTORED: Original 2-Step Animation & Scroll Duration
         let tl = gsap.timeline({
-          scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" }
+          scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=150%" }
         });
-        
-        // Step 1: Text leaves, portrait enters center frame
         tl.to(".intro-text", { opacity: 0, x: -50, duration: 1 }, 0)
           .to(".scroll-icon-wrapper", { opacity: 0, y: 20, duration: 0.5 }, 0)
           .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
-          
-        // Step 2: Portrait moves left, bio text enters
         tl.to(".portrait-wrapper", { x: "-25vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
+          .to(".hero-portrait", { opacity: 0.4, filter: "grayscale(1) brightness(0.6)", duration: 1.2 }, 1.5)
           .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
       });
 
       // --- Mobile GSAP ---
       mm.add("(max-width: 767px)", () => {
-        // FULLY RESTORED: Original 2-Step Animation & Scroll Duration
         let mobileTl = gsap.timeline({
-          scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=250%" }
+          scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=150%" }
         });
-        
-        // Step 1: Text leaves, portrait enters center frame
         mobileTl.to(".intro-text", { opacity: 0, y: 30, duration: 1 }, 0)
           .to(".scroll-icon-wrapper", { opacity: 0, duration: 0.5 }, 0)
           .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
-          
-        // Step 2: Portrait moves left, bio text enters
         mobileTl.to(".portrait-wrapper", { x: "-35vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
+          .to(".hero-portrait", { opacity: 0.2, duration: 1.2 }, 1.5)
           .to(".bio-text", { opacity: 1, y: 0, duration: 1, ease: "power1.out" }, 1.5);
       });
 
-      gsap.from(".projects-swiper", { opacity: 0, y: 40, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".projects-section", start: "top 85%" } });
+      gsap.from(".service-glass-card", { opacity: 0, y: 40, stagger: 0.15, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".services-grid", start: "top 85%" } });
+      gsap.from(".projects-terminal-section", { opacity: 0, y: 40, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".projects-terminal-section", start: "top 85%" } });
       gsap.from(".bento-card", { opacity: 0, y: 40, stagger: 0.15, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".bento-grid", start: "top 85%" } });
-      gsap.from(".ethos-box", { opacity: 0, y: 40, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".ethos-section", start: "top 85%" } });
 
       // --- Contact Modal Logic ---
       const modal = document.getElementById("contactModal");
@@ -400,7 +446,6 @@ allServices.sort((a, b) => a.data.order - b.data.order);
         gsap.to(modal, { opacity: 1, pointerEvents: "auto", duration: 0.4, ease: "power2.out" });
         gsap.fromTo(".modal-box", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, delay: 0.1, ease: "power2.out" });
       };
-
       const closeModal = () => {
         gsap.to(modal, { opacity: 0, pointerEvents: "none", duration: 0.4, ease: "power2.in" });
         lenis.start(); 
@@ -410,7 +455,7 @@ allServices.sort((a, b) => a.data.order - b.data.order);
       closeBtn?.addEventListener("click", closeModal);
       modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
-      // --- Dynamic Rotating Subtitle ---
+      // --- Dynamic Subtitle ---
       const subtitles = ["Full-Stack Digital Marketer & Web Developer", "Technical SEO Specialist", "Bespoke WordPress Architect", "Precision Paid Media Strategist", "Data-Driven Growth Engineer"];
       let subIndex = 0;
       const dynamicSubtitle = document.querySelector(".dynamic-subtitle");
@@ -438,6 +483,7 @@ allServices.sort((a, b) => a.data.order - b.data.order);
     --text-primary: #F5F5F5;
     --text-secondary: #A3A3A3;
     --accent: #fff;
+    --brand-blue: #007bff;
   }
   body { background-color: var(--bg-color); color: var(--text-primary); font-family: 'Hanken Grotesk', sans-serif; margin: 0; overflow-x: hidden; }
   .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
@@ -453,6 +499,13 @@ allServices.sort((a, b) => a.data.order - b.data.order);
     border-radius: 50px; font-size: 0.85rem; transition: all 0.3s ease; cursor: pointer; background: transparent;
   }
   .contact-btn:hover { background-color: #fff; color: #000; }
+
+  /* RESTORED: Ghost Watermark */
+  .ghost-watermark {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    height: 120vh; width: auto; min-width: 100vw; object-fit: cover;
+    opacity: 0.03; mix-blend-mode: luminosity; pointer-events: none; z-index: 0;
+  }
 
   /* Cinematic Section */
   .cinematic-hero { height: 100vh; width: 100vw; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; z-index: 1;}
@@ -471,10 +524,34 @@ allServices.sort((a, b) => a.data.order - b.data.order);
   .bio { color: var(--text-secondary); font-size: 1.2rem; line-height: 1.7; margin-bottom: 1.5rem; }
   .section-title { font-family: 'Syne', sans-serif; font-size: 3rem; margin-bottom: 4rem; color: var(--text-primary); }
 
-  /* --- Interactive Terminal UI --- */
+  /* Generic Glass Panel */
+  .glass-panel { background: linear-gradient(135deg, rgba(25, 25, 25, 0.4) 0%, rgba(10, 10, 10, 0.7) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.2); border-left: 1px solid rgba(255, 255, 255, 0.15); border-bottom: 1px solid rgba(255, 255, 255, 0.02); border-right: 1px solid rgba(255, 255, 255, 0.02); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); border-radius: 12px; }
+
+  /* --- Hover-Reveal Glass Cards (Services) --- */
   .services-section { padding: 4rem 0 8rem 0; position: relative; z-index: 5; }
-  .terminal-window { background: #0a0a0a; border: 1px solid #333; border-radius: 12px; overflow: hidden; font-family: monospace; box-shadow: 0 20px 40px rgba(0,0,0,0.8); }
-  .terminal-header { background: #151515; padding: 12px 20px; display: flex; align-items: center; border-bottom: 1px solid #333; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+  .service-glass-card { position: relative; height: 420px; display: flex; flex-direction: column; justify-content: space-between; padding: 2.5rem; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; }
+  
+  .service-front { transition: transform 0.4s ease; transform: translateY(100px); }
+  .service-number { font-family: 'Syne', sans-serif; font-size: 4rem; color: rgba(255, 255, 255, 0.1); font-weight: 800; display: block; line-height: 1; margin-bottom: -1rem; transition: color 0.4s; }
+  .service-title { font-family: 'Syne', sans-serif; font-size: 2rem; color: var(--text-primary); margin: 0; }
+  
+  .service-reveal { opacity: 0; transform: translateY(40px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+  .service-pitch { font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 1.5rem; }
+  
+  @media (min-width: 768px) {
+    .service-glass-card:hover { border-color: rgba(255, 255, 255, 0.5); transform: translateY(-10px); }
+    .service-glass-card:hover .service-front { transform: translateY(0); }
+    .service-glass-card:hover .service-reveal { opacity: 1; transform: translateY(0); }
+    .service-glass-card:hover .service-number { color: rgba(255, 255, 255, 0.3); }
+  }
+
+  /* --- Interactive Terminal (Projects) --- */
+  .projects-terminal-section { padding: 5rem 0; position: relative; overflow: hidden; z-index: 5; }
+  .ambient-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90vw; height: 90vh; border-radius: 50%; background: radial-gradient(circle at 30% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(217, 70, 239, 0.1) 0%, transparent 50%); filter: blur(40px); z-index: 1; pointer-events: none; }
+  
+  .terminal-window { background: rgba(10, 10, 10, 0.9); overflow: hidden; font-family: monospace; }
+  .terminal-header { background: rgba(20, 20, 20, 0.9); padding: 12px 20px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
   .terminal-dots { display: flex; gap: 8px; width: 60px; }
   .dot { width: 12px; height: 12px; border-radius: 50%; background: #444; }
   .dot.red { background: #ff5f56; }
@@ -482,66 +559,69 @@ allServices.sort((a, b) => a.data.order - b.data.order);
   .dot.green { background: #27c93f; }
   .terminal-title { flex-grow: 1; text-align: center; color: #666; font-size: 0.85rem; letter-spacing: 0.05em; padding-right: 60px; }
   
-  .terminal-body { display: flex; min-height: 350px; }
-  .terminal-sidebar { width: 35%; border-right: 1px solid #333; background: #0c0c0c; display: flex; flex-direction: column; }
-  .terminal-command { padding: 1.5rem; color: #666; text-align: left; cursor: pointer; border: none; background: transparent; border-bottom: 1px solid #1a1a1a; font-family: monospace; font-size: 1rem; transition: all 0.3s; }
-  .terminal-command:hover, .terminal-command.active { color: #fff; background: #151515; border-left: 3px solid var(--accent); }
+  .terminal-body { display: flex; min-height: 450px; }
+  .terminal-sidebar { width: 35%; border-right: 1px solid rgba(255,255,255,0.1); background: rgba(15, 15, 15, 0.5); display: flex; flex-direction: column; }
+  .terminal-command { padding: 1.5rem; color: #666; text-align: left; cursor: pointer; border: none; background: transparent; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: monospace; font-size: 1rem; transition: all 0.3s; }
+  .terminal-command:hover, .terminal-command.active { color: #fff; background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent); }
   
-  .terminal-content { width: 65%; padding: 3rem; display: flex; flex-direction: column; justify-content: center; }
-  .typewriter-container { color: #f5f5f5; font-size: 1.2rem; line-height: 1.7; font-family: 'Hanken Grotesk', sans-serif; }
+  .terminal-content { width: 65%; padding: 3rem; display: flex; flex-direction: column; justify-content: flex-start; }
+  .typewriter-container { color: #f5f5f5; font-size: 1.1rem; line-height: 1.7; font-family: 'Hanken Grotesk', sans-serif; min-height: 80px; margin-bottom: 2rem;}
   .cursor { display: inline-block; width: 10px; height: 1.2rem; background: var(--accent); animation: blink 1s step-end infinite; vertical-align: middle; margin-left: 6px; }
   @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
   
-  .mt-tags { margin-top: 2rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .proj-details-reveal { opacity: 0; transform: translateY(20px); transition: all 0.4s ease; display: flex; flex-direction: column; gap: 2rem; align-items: flex-start; }
+  .terminal-proj-img { max-width: 250px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+  
+  .mt-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .terminal-tag { border-color: #333; background: #111; font-family: monospace; font-size: 0.8rem; }
   .hidden { display: none !important; }
-
-  /* Generic Glass Panel */
-  .glass-panel { background: linear-gradient(135deg, rgba(25, 25, 25, 0.4) 0%, rgba(10, 10, 10, 0.7) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.2); border-left: 1px solid rgba(255, 255, 255, 0.15); border-bottom: 1px solid rgba(255, 255, 255, 0.02); border-right: 1px solid rgba(255, 255, 255, 0.02); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); border-radius: 12px; }
-
-  /* --- 3D Swiper Carousel --- */
-  .projects-section { padding: 5rem 0; position: relative; overflow: hidden; }
-  .ambient-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90vw; height: 90vh; border-radius: 50%; background: radial-gradient(circle at 30% 50%, rgba(99, 102, 241, 0.15) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(217, 70, 239, 0.1) 0%, transparent 50%); filter: blur(40px); z-index: 1; pointer-events: none; }
-  .mobile-swipe-prompt { display: none; }
-  .projects-swiper { width: 100%; padding: 2rem 0 6rem 0; overflow: visible; z-index: 2; }
-  .swiper-slide { width: 380px; height: 380px; perspective: 1000px; }
-  .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
-  .swiper-slide-active:hover .flip-card-inner { transform: rotateY(180deg); }
-  .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: flex-start; padding: 2.5rem; }
-  .flip-card-back { transform: rotateY(180deg); align-items: center; justify-content: center; text-align: center; }
-  .flip-card-front h3 { font-family: 'Syne', sans-serif; font-size: 1.8rem; color: var(--text-primary); margin: 0 0 1rem 0; }
-  .flip-card-front p { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; margin: 0; }
-  .tech-tags { display: flex; gap: 0.5rem; margin-top: auto; flex-wrap: wrap; }
-  .tag { font-family: 'Hanken Grotesk', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.4rem 0.8rem; border: 1px solid rgba(255, 255, 255, 0.15); color: var(--text-secondary); transition: all 0.3s ease; }
-  .project-logo { max-width: 80%; max-height: 120px; object-fit: contain; margin-bottom: 2rem; opacity: 0.9; transition: opacity 0.3s ease; border-radius: 8px; }
-  .flip-card-back:hover .project-logo { opacity: 1; }
-  .view-project-btn { font-size: 0.9rem; padding: 0.8rem 2rem; }
-  .custom-arrow { color: #fff; opacity: 0; transition: opacity 0.3s ease; }
-  .custom-arrow::after { font-size: 1.5rem !important; font-weight: bold; }
-  .projects-section:hover .custom-arrow { opacity: 0.5; }
-  .projects-section:hover .custom-arrow:hover { opacity: 1; }
-  .swiper-pagination-bullet { background: var(--text-secondary); opacity: 0.5; transition: all 0.3s ease; }
-  .swiper-pagination-bullet-active { background: var(--accent); opacity: 1; transform: scale(1.2); }
+  .view-project-btn { font-size: 0.85rem; padding: 0.6rem 1.5rem; }
 
   /* --- HORIZONTAL CAREER RULER --- */
-  .experience-section { padding: 5rem 0; overflow: hidden; }
+  .experience-section { padding: 5rem 0; overflow: hidden; position: relative; }
   .career-ruler-wrapper { width: 100vw; margin-left: calc(-50vw + 50%); position: relative; padding: 2rem 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
   .career-ruler-wrapper::-webkit-scrollbar { display: none; }
   
-  .career-ruler-track { display: flex; gap: 4rem; width: max-content; padding: 0 15vw; position: relative; align-items: flex-start; }
+  .career-ruler-track { display: flex; gap: 3rem; width: max-content; padding: 0 15vw; position: relative; align-items: center; min-height: 250px; }
   
-  .career-ruler-line { position: absolute; top: 1.5rem; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.1); }
+  .career-ruler-line { position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.1); transform: translateY(-50%); }
   
-  .ruler-card { width: 380px; scroll-snap-align: center; position: relative; display: flex; flex-direction: column; }
-  .ruler-dot { width: 16px; height: 16px; border-radius: 50%; background: #050505; border: 2px solid var(--accent); position: absolute; top: 0.5rem; left: 0; z-index: 2; transition: all 0.3s ease; }
-  .ruler-card:hover .ruler-dot { background: var(--accent); transform: scale(1.3); }
+  .ruler-card { width: 280px; scroll-snap-align: center; position: relative; display: flex; flex-direction: column; cursor: crosshair; }
+  .ruler-dot { width: 16px; height: 16px; border-radius: 50%; background: #050505; border: 2px solid var(--accent); position: absolute; top: 50%; left: -24px; z-index: 2; transition: all 0.3s ease; transform: translateY(-50%); }
+  .ruler-card:hover .ruler-dot { background: var(--accent); transform: translateY(-50%) scale(1.3); }
   
-  .ruler-content { margin-top: 4rem; padding: 2.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
-  .timeline-date { color: var(--text-secondary); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-  .ruler-content h3 { font-family: 'Syne', sans-serif; font-size: 1.8rem; margin: 0; color: var(--text-primary); }
-  .ruler-content h4 { font-family: 'Hanken Grotesk', sans-serif; color: var(--text-secondary); font-size: 1.1rem; font-weight: 400; margin: 0 0 1rem 0; }
-  .problem-statement { font-size: 1rem; line-height: 1.6; color: var(--text-secondary); margin: 0; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; }
+  .ruler-content { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.3rem; margin-left: 1rem; }
+  .timeline-date { color: var(--text-secondary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .ruler-content h3 { font-family: 'Syne', sans-serif; font-size: 1.4rem; margin: 0; color: var(--text-primary); }
+  .ruler-content h4 { font-family: 'Hanken Grotesk', sans-serif; color: var(--text-secondary); font-size: 0.95rem; font-weight: 400; margin: 0; }
+  
+  /* Custom Range Slider Styling */
+  .slider-controls-container { max-width: 600px; margin: 2rem auto 0 auto; padding: 0 2rem; }
+  .custom-blue-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+    --val: 0%;
+  }
+  .custom-blue-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px; width: 20px;
+    border-radius: 50%;
+    background: var(--brand-blue);
+    cursor: pointer;
+    margin-top: -8px; 
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+  }
+  .custom-blue-slider::-webkit-slider-runnable-track {
+    width: 100%; height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(to right, var(--brand-blue) var(--val), #333 var(--val));
+  }
 
+  /* Global Interactive Tooltip */
+  .hidden-tooltip { opacity: 0; pointer-events: none; visibility: hidden; }
+  #global-tooltip { position: fixed; z-index: 9999; padding: 1.5rem; max-width: 320px; color: #f5f5f5; font-size: 0.95rem; line-height: 1.6; transition: opacity 0.2s ease; border-radius: 8px; pointer-events: none; }
+  
   /* Bento Grid */
   .bento-section { padding: 5rem 0; }
   .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
@@ -594,30 +674,26 @@ allServices.sort((a, b) => a.data.order - b.data.order);
     .portrait-wrapper { transform: translateX(35vw); }
     .bio-text { width: 75%; right: 1.5rem; left: auto; text-align: right; transform: translateY(30px); }
     
-    /* Mobile Terminal Accordion */
+    /* Mobile Services */
+    .service-glass-card { height: auto; padding: 2rem; }
+    .service-front { transform: translateY(0); margin-bottom: 1.5rem; }
+    .service-reveal { opacity: 1; transform: translateY(0); }
+
+    /* Mobile Projects Terminal */
     .terminal-body { flex-direction: column; min-height: auto; }
     .terminal-sidebar { width: 100%; flex-direction: row; border-right: none; border-bottom: 1px solid #333; overflow-x: auto; scrollbar-width: none; }
     .terminal-sidebar::-webkit-scrollbar { display: none; }
     .terminal-command { padding: 1rem 1.5rem; white-space: nowrap; border-bottom: none; border-left: none !important; border-bottom: 3px solid transparent; }
     .terminal-command.active { border-bottom: 3px solid var(--accent); }
     .terminal-content { width: 100%; padding: 2rem; min-height: 250px; }
+    .terminal-proj-img { max-width: 100%; }
 
-    .mobile-swipe-prompt {
-      display: block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      z-index: 20; color: var(--text-primary); font-family: 'Hanken Grotesk', sans-serif;
-      font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
-      background: rgba(0,0,0,0.6); padding: 0.8rem 1.5rem; border-radius: 50px;
-      backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2);
-      pointer-events: none; transition: opacity 0.4s ease;
-      animation: pulse 2s infinite alternate;
-    }
-    @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(1); } 100% { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 0 15px rgba(255,255,255,0.2); } }
-
-    .swiper-slide { width: 85vw; height: 85vw; }
-    
     /* Mobile Career Ruler */
-    .ruler-card { width: 85vw; }
-    .career-ruler-track { padding: 0 7.5vw; gap: 2rem; }
+    .ruler-card { width: 75vw; }
+    .career-ruler-track { padding: 0 12.5vw; gap: 2rem; }
+    
+    /* Mobile Tooltip Overrides */
+    .mobile-modal { top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; width: 90vw; pointer-events: auto !important; box-shadow: 0 0 50px rgba(0,0,0,0.9); border-color: rgba(255,255,255,0.3); }
 
     .skills-card { grid-column: span 1; }
     .ethos-box { padding: 2rem; }
