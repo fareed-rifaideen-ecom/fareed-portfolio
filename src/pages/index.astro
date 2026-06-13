@@ -1,14 +1,9 @@
 ---
-import '@fontsource/syne/700.css';
-import '@fontsource/syne/800.css';
-import '@fontsource/hanken-grotesk/400.css';
-import '@fontsource/hanken-grotesk/600.css';
+// src/pages/index.astro
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import profileImg from '../assets/profile.jpg'; 
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination'; 
+import BaseLayout from '../layouts/BaseLayout.astro';
 
 const allProjects = await getCollection('projects');
 allProjects.sort((a, b) => a.data.order - b.data.order);
@@ -43,464 +38,450 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 const firstProject = allProjects.length > 0 ? allProjects[0] : null;
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>Fareed M. Rifaideen | Full-Stack Digital Marketer & Web Developer</title>
-    <meta name="title" content="Fareed M. Rifaideen | Full-Stack Digital Marketer & Web Developer" />
-    <meta name="description" content="Architecting high-performance digital ecosystems through technical SEO, bespoke WordPress development, and precision Meta Ads." />
-  </head>
-  <body>
+<BaseLayout 
+  title="Fareed M. Rifaideen | Full-Stack Digital Marketer & Web Developer"
+  description="Architecting high-performance digital ecosystems. Specializing in comprehensive SEO, bespoke WordPress development, and precision Full-Stack Digital Marketing strategies."
+>
     
-    <Image src={profileImg} alt="" class="ghost-watermark" id="bg-portrait" loading="lazy" />
+  <Image src={profileImg} alt="" class="ghost-watermark" id="bg-portrait" loading="lazy" />
 
-    <header class="site-header">
-      <div class="header-container">
-        <a href="/" class="logo">
-          <img src="/favicon.svg" alt="Fareed Logo" />
-        </a>
-        <nav class="nav-links">
-          <a href="https://wa.me/9717775962" class="contact-btn" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-          <a href="#contact-modal" class="contact-btn modal-trigger">Let's Talk</a>
-        </nav>
-      </div>
-    </header>
-
-    <section class="cinematic-hero">
-      <div class="cinematic-container">
-        <div class="intro-text">
-          <h1>Fareed M.<br/>Rifaideen</h1>
-          <h2 class="dynamic-subtitle-wrapper">I'm a <span class="dynamic-subtitle">Full-Stack Digital Marketer & Web Developer</span></h2>
-        </div>
-        <div class="scroll-icon-wrapper">
-          <img src="/scroll-Icon.svg" alt="Scroll Down" class="scroll-icon" />
-        </div>
-        <div class="portrait-wrapper">
-          <Image src={profileImg} alt="Fareed Profile" class="portrait-img hero-portrait" loading="eager" /> 
-        </div>
-        <div class="bio-text">
-          <p class="bio">
-            I build digital marketing systems that make sense for the bottom line. With ten years of experience in financial operations, I treat marketing budgets like business investments.
-          </p>
-          <p class="bio">
-            As a Full-Stack Marketer and Web Developer, I combine technical SEO, custom WordPress development, and targeted ads to build digital spaces that solve problems and generate real returns.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- NEW: Sticky Scroll Editorial Deck -->
-    <section class="services-sticky-section" id="services">
-      <div class="container">
-        <div class="sticky-editorial-layout">
-          
-          <!-- LEFT COLUMN: Sticky Context -->
-          <div class="sticky-sidebar">
-            <div class="sticky-content">
-              <h2 class="section-title">What I Do</h2>
-              <p class="sticky-description">
-                I engineer digital growth by combining technical precision with targeted marketing strategies. Here is exactly how my brain can make you money.
-              </p>
-              <a href="#contact-modal" class="btn-solid modal-trigger sticky-cta">Start a Project ↗</a>
-            </div>
-          </div>
-
-          <!-- RIGHT COLUMN: Scrolling Cards -->
-          <div class="scrolling-cards-container">
-            {allServices.map((service: any, index: number) => (
-              <div class="editorial-service-card glass-panel service-anim-card">
-                <div class="service-card-header">
-                  <span class="service-number">0{index + 1}</span>
-                  <h3 class="service-title">{service.data.title}</h3>
-                </div>
-                <div class="service-card-body">
-                  <p class="service-pitch">{service.data.summary}</p>
-                  <div class="tech-tags">
-                    {service.data.techStack.map((tech: string) => (
-                      <span class="tag">{tech}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- 2-Column Featured Projects -->
-    <section class="projects-editorial-section">
-      <div class="container">
-        <div class="projects-editorial-grid">
-          
-          <!-- LEFT COLUMN: Typography & CTAs -->
-          <div class="projects-text-content">
-            <div class="label-pill">
-              <span class="pill-dot"></span>
-              <span>Data-Driven Precision</span>
-            </div>
-            
-            <h2 class="massive-editorial-title">Engineered<br/>for Growth<br/>& Scale.</h2>
-            
-            <p class="editorial-description">
-              My approach to every case study is rooted in a passion for blending data-driven precision with striking creative execution. I don't just build campaigns; I engineer digital ecosystems designed to scale and convert.
-            </p>
-            
-            <div class="editorial-buttons">
-              <a href="https://github.com/fareed-rifaideen-ecom" target="_blank" rel="noopener noreferrer" class="btn-outline">View GitHub ↗</a>
-              <a href="#contact-modal" class="btn-solid modal-trigger">Let's Talk ↗</a>
-            </div>
-          </div>
-
-          <!-- RIGHT COLUMN: Flat Overlapping Carousel -->
-          <div class="projects-visual-carousel">
-            <div class="mobile-swipe-prompt">
-              <span>&lt; Swipe &gt;</span>
-            </div>
-            
-            <div class="swiper projects-swiper">
-              <div class="swiper-wrapper">
-                {carouselProjects.map((project: any) => (
-                  <div class="swiper-slide project-card-wrapper">
-                    <div class="flip-card-inner">
-                      
-                      <!-- FRONT: Monochromatic Image Poster -->
-                      <div class="flip-card-front poster-front" style={`background-image: linear-gradient(to top, rgba(5,5,5,0.9) 0%, rgba(5,5,5,0.2) 100%), url(${project.data.image});`}>
-                        <div class="poster-content">
-                           <h3>{project.data.title}</h3>
-                           <div class="tech-tags poster-tags">
-                             {project.data.techStack.slice(0, 2).map((tech: string) => (
-                               <span class="tag">{tech}</span>
-                             ))}
-                           </div>
-                        </div>
-                      </div>
-
-                      <!-- BACK: Details, Logo & CTA -->
-                      <div class="flip-card-back glass-panel back-details">
-                        <img src={project.data.image} alt={`${project.data.title} Logo`} class="project-logo bw-logo" loading="lazy" decoding="async" />
-                        <p class="back-summary">{project.data.summary}</p>
-                        <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer" class="contact-btn view-project-btn">View Live Project</a>
-                      </div>
-
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div class="swiper-pagination editorial-pagination"></div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- Career Slider Section -->
-    <section class="experience-section">
-      <div class="container">
-        <h2 class="section-title">Career Journey</h2>
-        
-        <div class="career-ruler-wrapper" id="career-scroll-box">
-          <div class="career-ruler-track">
-            <div class="career-ruler-line"></div>
-            
-            {allExperience.map((job: any) => (
-              <div class="ruler-card tooltip-trigger" data-tooltip={job.data.problemStatement}>
-                <div class="ruler-dot"></div>
-                <div class="ruler-content glass-panel">
-                  <span class="timeline-date">{job.data.date}</span>
-                  <h3>{job.data.title}</h3>
-                  <h4>{job.data.company}</h4>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div class="slider-controls-container">
-          <input type="range" id="career-slider" class="custom-monochrome-slider" min="0" max="100" value="0" />
-        </div>
-
-      </div>
-    </section>
-
-    <div id="global-tooltip" class="glass-panel hidden-tooltip">
-      <p id="tooltip-text"></p>
+  <header class="site-header">
+    <div class="header-container">
+      <a href="/" class="logo">
+        <img src="/favicon.svg" alt="Fareed Logo" />
+      </a>
+      <nav class="nav-links">
+        <a href="https://wa.me/9717775962" class="contact-btn" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <a href="#contact-modal" class="contact-btn modal-trigger">Let's Talk</a>
+      </nav>
     </div>
+  </header>
 
-    <!-- Bento Section -->
-    <section class="bento-section">
-      <div class="container">
-        <h2 class="section-title">Arsenal & Education</h2>
-        <div class="bento-grid">
-          <div class="bento-card skills-card">
-            <h3>Technical Stack</h3>
-            <div class="tech-tags">
-              <span class="tag">Digital Strategy</span>
-              <span class="tag">Technical SEO</span>
-              <span class="tag">Meta Ads & PPC</span>
-              <span class="tag">Google Ads & SEM</span>
-              <span class="tag">Data Analytics (GA4)</span>
-              <span class="tag">WordPress & WooCommerce</span>
-              <span class="tag">PHP</span>
-              <span class="tag">E-commerce Optimization</span>
-              <span class="tag">AI-Driven Trend Analysis</span>
-              <span class="tag">Campaign Performance Monitoring</span>
+  <section class="cinematic-hero">
+    <div class="cinematic-container">
+      <div class="intro-text">
+        <h1>Fareed M.<br/>Rifaideen</h1>
+        <h2 class="dynamic-subtitle-wrapper">I'm a <span class="dynamic-subtitle">Full-Stack Digital Marketer & Web Developer</span></h2>
+      </div>
+      <div class="scroll-icon-wrapper">
+        <img src="/scroll-Icon.svg" alt="Scroll Down" class="scroll-icon" />
+      </div>
+      <div class="portrait-wrapper">
+        <Image src={profileImg} alt="Fareed Profile" class="portrait-img hero-portrait" loading="eager" /> 
+      </div>
+      <div class="bio-text">
+        <p class="bio">
+          I build digital marketing systems that make sense for the bottom line. With ten years of experience in financial operations, I treat marketing budgets like business investments.
+        </p>
+        <p class="bio">
+          As a Full-Stack Marketer and Web Developer, I combine technical SEO, custom WordPress development, and targeted ads to build digital spaces that solve problems and generate real returns.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sticky Scroll Editorial Deck -->
+  <section class="services-sticky-section" id="services">
+    <div class="container">
+      <div class="sticky-editorial-layout">
+        
+        <div class="sticky-sidebar">
+          <div class="sticky-content">
+            <h2 class="section-title">What I Do</h2>
+            <p class="sticky-description">
+              I engineer digital growth by combining technical precision with targeted marketing strategies. Here is exactly how my brain can make you money.
+            </p>
+            <a href="#contact-modal" class="btn-solid modal-trigger sticky-cta">Start a Project ↗</a>
+          </div>
+        </div>
+
+        <div class="scrolling-cards-container">
+          {allServices.map((service: any, index: number) => (
+            <div class="editorial-service-card glass-panel service-anim-card">
+              <div class="service-card-header">
+                <span class="service-number">0{index + 1}</span>
+                <h3 class="service-title">{service.data.title}</h3>
+              </div>
+              <div class="service-card-body">
+                <p class="service-pitch">{service.data.summary}</p>
+                <div class="tech-tags">
+                  {service.data.techStack.map((tech: string) => (
+                    <span class="tag">{tech}</span>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
+        </div>
 
-          <div class="bento-card cert-card">
-            <h3>Professional Memberships</h3>
-            <p>Member of Chartered Management Institute (MCMI)</p>
-            <span class="bento-meta">CMI, UK</span>
-          </div>
+      </div>
+    </div>
+  </section>
 
-          {allEducation.map((edu: any) => (
-            <div class="bento-card edu-card">
-              <h3>{edu.data.degree}</h3>
-              <p>{edu.data.institution}</p>
-              <span class="bento-meta">{edu.data.date}</span>
+  <!-- 2-Column Featured Projects -->
+  <section class="projects-editorial-section">
+    <div class="container">
+      <div class="projects-editorial-grid">
+        
+        <div class="projects-text-content">
+          <div class="label-pill">
+            <span class="pill-dot"></span>
+            <span>Data-Driven Precision</span>
+          </div>
+          
+          <h2 class="massive-editorial-title">Engineered<br/>for Growth<br/>& Scale.</h2>
+          
+          <p class="editorial-description">
+            My approach to every case study is rooted in a passion for blending data-driven precision with striking creative execution. I don't just build campaigns; I engineer digital ecosystems designed to scale and convert.
+          </p>
+          
+          <div class="editorial-buttons">
+            <a href="https://github.com/fareed-rifaideen-ecom" target="_blank" rel="noopener noreferrer" class="btn-outline">View GitHub ↗</a>
+            <a href="#contact-modal" class="btn-solid modal-trigger">Let's Talk ↗</a>
+          </div>
+        </div>
+
+        <div class="projects-visual-carousel">
+          <div class="mobile-swipe-prompt">
+            <span>&lt; Swipe &gt;</span>
+          </div>
+          
+          <div class="swiper projects-swiper">
+            <div class="swiper-wrapper">
+              {carouselProjects.map((project: any) => (
+                <div class="swiper-slide project-card-wrapper">
+                  <div class="flip-card-inner">
+                    
+                    <div class="flip-card-front poster-front" style={`background-image: linear-gradient(to top, rgba(5,5,5,0.9) 0%, rgba(5,5,5,0.2) 100%), url(${project.data.image});`}>
+                      <div class="poster-content">
+                         <h3>{project.data.title}</h3>
+                         <div class="tech-tags poster-tags">
+                           {project.data.techStack.slice(0, 2).map((tech: string) => (
+                             <span class="tag">{tech}</span>
+                           ))}
+                         </div>
+                      </div>
+                    </div>
+
+                    <div class="flip-card-back glass-panel back-details">
+                      <img src={project.data.image} alt={`${project.data.title} Logo`} class="project-logo bw-logo" loading="lazy" decoding="async" />
+                      <p class="back-summary">{project.data.summary}</p>
+                      <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer" class="contact-btn view-project-btn">View Live Project</a>
+                    </div>
+
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div class="swiper-pagination editorial-pagination"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Career Slider Section -->
+  <section class="experience-section">
+    <div class="container">
+      <h2 class="section-title">Career Journey</h2>
+      
+      <div class="career-ruler-wrapper" id="career-scroll-box">
+        <div class="career-ruler-track">
+          <div class="career-ruler-line"></div>
+          
+          {allExperience.map((job: any) => (
+            <div class="ruler-card tooltip-trigger" data-tooltip={job.data.problemStatement}>
+              <div class="ruler-dot"></div>
+              <div class="ruler-content glass-panel">
+                <span class="timeline-date">{job.data.date}</span>
+                <h3>{job.data.title}</h3>
+                <h4>{job.data.company}</h4>
+              </div>
             </div>
           ))}
         </div>
       </div>
-    </section>
 
-    <section class="ethos-section">
-      <div class="container">
-        <div class="ethos-box">
-          <h2>{ethosData.data.title}</h2>
-          <div class="ethos-content">
-            <EthosContent />
-            <a href={ethosData.data.buttonLink} class="contact-btn ethos-btn modal-trigger">{ethosData.data.buttonText}</a>
+      <div class="slider-controls-container">
+        <input type="range" id="career-slider" class="custom-monochrome-slider" min="0" max="100" value="0" />
+      </div>
+
+    </div>
+  </section>
+
+  <div id="global-tooltip" class="glass-panel hidden-tooltip">
+    <p id="tooltip-text"></p>
+  </div>
+
+  <!-- Bento Section -->
+  <section class="bento-section">
+    <div class="container">
+      <h2 class="section-title">Arsenal & Education</h2>
+      <div class="bento-grid">
+        <div class="bento-card skills-card">
+          <h3>Technical Stack</h3>
+          <div class="tech-tags">
+            <span class="tag">Digital Strategy</span>
+            <span class="tag">Technical SEO</span>
+            <span class="tag">Meta Ads & PPC</span>
+            <span class="tag">Google Ads & SEM</span>
+            <span class="tag">Data Analytics (GA4)</span>
+            <span class="tag">WordPress & WooCommerce</span>
+            <span class="tag">PHP</span>
+            <span class="tag">E-commerce Optimization</span>
+            <span class="tag">AI-Driven Trend Analysis</span>
+            <span class="tag">Campaign Performance Monitoring</span>
           </div>
         </div>
-      </div>
-    </section>
 
-    <footer class="site-footer">
-      <div class="container footer-content">
-        <p>© {new Date().getFullYear()} Fareed M. Rifaideen. All rights reserved.</p>
-        <div class="social-links">
-          <a href="https://wa.me/9717775962" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-          <a href="https://www.linkedin.com/in/fareed03" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a href="https://github.com/fareed-rifaideen-ecom" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <div class="bento-card cert-card">
+          <h3>Professional Memberships</h3>
+          <p>Member of Chartered Management Institute (MCMI)</p>
+          <span class="bento-meta">CMI, UK</span>
         </div>
-      </div>
-    </footer>
 
-    <!-- Contact Modal -->
-    <div class="modal-overlay" id="contactModal">
-      <div class="modal-box">
-        <button class="modal-close" id="closeModal">✕</button>
-        <h3 class="modal-title">Start a Conversation</h3>
-        <p class="modal-desc">Tell me about the problem you are trying to solve.</p>
-        <form name="project-inquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="brutalist-form">
-          <p class="hidden">
-            <label>Don’t fill this out if you're human: <input name="bot-field" /></label>
-          </p>
-          <div class="input-group">
-            <input type="text" name="name" id="name" required placeholder=" " />
-            <label for="name">Your Name</label>
+        {allEducation.map((edu: any) => (
+          <div class="bento-card edu-card">
+            <h3>{edu.data.degree}</h3>
+            <p>{edu.data.institution}</p>
+            <span class="bento-meta">{edu.data.date}</span>
           </div>
-          <div class="input-group">
-            <input type="email" name="email" id="email" required placeholder=" " />
-            <label for="email">Email Address</label>
-          </div>
-          <div class="input-group">
-            <textarea name="message" id="message" rows="4" required placeholder=" "></textarea>
-            <label for="message">Project Details</label>
-          </div>
-          <button type="submit" class="contact-btn submit-btn">Send Inquiry</button>
-        </form>
+        ))}
       </div>
     </div>
+  </section>
 
-    <script>
-      import gsap from 'gsap';
-      import { ScrollTrigger } from 'gsap/ScrollTrigger';
-      import Lenis from '@studio-freight/lenis';
-      import Swiper from 'swiper';
-      import { EffectCoverflow, Pagination, Autoplay } from 'swiper/modules';
+  <section class="ethos-section">
+    <div class="container">
+      <div class="ethos-box">
+        <h2>{ethosData.data.title}</h2>
+        <div class="ethos-content">
+          <EthosContent />
+          <a href={ethosData.data.buttonLink} class="contact-btn ethos-btn modal-trigger">{ethosData.data.buttonText}</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      gsap.registerPlugin(ScrollTrigger);
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <p>© {new Date().getFullYear()} Fareed M. Rifaideen. All rights reserved.</p>
+      <div class="social-links">
+        <a href="https://wa.me/9717775962" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <a href="https://www.linkedin.com/in/fareed03" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://github.com/fareed-rifaideen-ecom" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </div>
+  </footer>
 
-      // --- Smooth Scrolling ---
-      const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
-      function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
-      requestAnimationFrame(raf);
+  <!-- Contact Modal -->
+  <div class="modal-overlay" id="contactModal">
+    <div class="modal-box">
+      <button class="modal-close" id="closeModal">✕</button>
+      <h3 class="modal-title">Start a Conversation</h3>
+      <p class="modal-desc">Tell me about the problem you are trying to solve.</p>
+      <form name="project-inquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="brutalist-form">
+        <p class="hidden">
+          <label>Don’t fill this out if you're human: <input name="bot-field" /></label>
+        </p>
+        <div class="input-group">
+          <input type="text" name="name" id="name" required placeholder=" " />
+          <label for="name">Your Name</label>
+        </div>
+        <div class="input-group">
+          <input type="email" name="email" id="email" required placeholder=" " />
+          <label for="email">Email Address</label>
+        </div>
+        <div class="input-group">
+          <textarea name="message" id="message" rows="4" required placeholder=" "></textarea>
+          <label for="message">Project Details</label>
+        </div>
+        <button type="submit" class="contact-btn submit-btn">Send Inquiry</button>
+      </form>
+    </div>
+  </div>
 
-      // --- UPDATED: Background Portrait Opacity Tether ---
-      gsap.to("#bg-portrait", {
-        opacity: 0,
-        scrollTrigger: {
-          trigger: ".services-sticky-section",
-          start: "top center",
-          end: "top top",
-          scrub: true
+  <script>
+    import gsap from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    import Lenis from '@studio-freight/lenis';
+    import Swiper from 'swiper';
+    import { EffectCoverflow, Pagination, Autoplay } from 'swiper/modules';
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // --- Smooth Scrolling ---
+    const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+    function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+
+    // --- Background Portrait Opacity Tether ---
+    gsap.to("#bg-portrait", {
+      opacity: 0,
+      scrollTrigger: {
+        trigger: ".services-sticky-section",
+        start: "top center",
+        end: "top top",
+        scrub: true
+      }
+    });
+
+    // --- Flat Overlapping Carousel ---
+    new Swiper('.projects-swiper', {
+      modules: [EffectCoverflow, Pagination, Autoplay],
+      effect: 'coverflow',
+      grabCursor: true,
+      centeredSlides: true,
+      slidesPerView: 'auto',
+      loop: true,
+      autoplay: { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true },
+      coverflowEffect: { 
+        rotate: 0,
+        stretch: -40,
+        depth: 150,
+        modifier: 1.5,
+        slideShadows: false, 
+      },
+      pagination: { el: '.editorial-pagination', clickable: true },
+      on: {
+        touchStart: function () {
+          const prompt = document.querySelector('.mobile-swipe-prompt') as HTMLElement;
+          if (prompt) prompt.style.opacity = '0';
+        }
+      }
+    });
+
+    // --- Horizontal Career Slider Logic ---
+    const scrollBox = document.getElementById('career-scroll-box');
+    const slider = document.getElementById('career-slider') as HTMLInputElement;
+
+    if (scrollBox && slider) {
+      slider.addEventListener('input', (e) => {
+        const target = e.target as HTMLInputElement;
+        const maxScroll = scrollBox.scrollWidth - scrollBox.clientWidth;
+        scrollBox.scrollLeft = (Number(target.value) / 100) * maxScroll;
+        target.style.setProperty('--val', target.value + '%');
+      });
+
+      scrollBox.addEventListener('scroll', () => {
+        const maxScroll = scrollBox.scrollWidth - scrollBox.clientWidth;
+        if(maxScroll > 0) {
+            const val = (scrollBox.scrollLeft / maxScroll) * 100;
+            slider.value = val.toString();
+            slider.style.setProperty('--val', val + '%');
+        }
+      });
+    }
+
+    // --- Global Interactive Tooltip Logic ---
+    const tooltip = document.getElementById('global-tooltip');
+    const tooltipText = document.getElementById('tooltip-text');
+    const triggerCards = document.querySelectorAll('.tooltip-trigger');
+
+    triggerCards.forEach(card => {
+      card.addEventListener('mousemove', (e: Event) => {
+        const mouseEvent = e as MouseEvent;
+        if (window.innerWidth > 768 && tooltip && tooltipText) {
+          tooltipText.textContent = card.getAttribute('data-tooltip');
+          tooltip.classList.remove('hidden-tooltip');
+          tooltip.style.left = (mouseEvent.clientX + 20) + 'px';
+          tooltip.style.top = (mouseEvent.clientY + 20) + 'px';
         }
       });
 
-      // --- Flat Overlapping Carousel ---
-      new Swiper('.projects-swiper', {
-        modules: [EffectCoverflow, Pagination, Autoplay],
-        effect: 'coverflow',
-        grabCursor: true,
-        centeredSlides: true,
-        slidesPerView: 'auto',
-        loop: true,
-        autoplay: { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true },
-        coverflowEffect: { 
-          rotate: 0,
-          stretch: -40,
-          depth: 150,
-          modifier: 1.5,
-          slideShadows: false, 
-        },
-        pagination: { el: '.editorial-pagination', clickable: true },
-        on: {
-          touchStart: function () {
-            const prompt = document.querySelector('.mobile-swipe-prompt') as HTMLElement;
-            if (prompt) prompt.style.opacity = '0';
-          }
+      card.addEventListener('mouseleave', () => {
+        if(tooltip) tooltip.classList.add('hidden-tooltip');
+      });
+
+      card.addEventListener('click', () => {
+        if (window.innerWidth <= 768 && tooltip && tooltipText) {
+          tooltipText.textContent = card.getAttribute('data-tooltip');
+          tooltip.classList.remove('hidden-tooltip');
+          tooltip.classList.add('mobile-modal');
+          setTimeout(() => tooltip.classList.add('hidden-tooltip'), 4000);
         }
       });
+    });
 
-      // --- Horizontal Career Slider Logic ---
-      const scrollBox = document.getElementById('career-scroll-box');
-      const slider = document.getElementById('career-slider') as HTMLInputElement;
+    let mm = gsap.matchMedia();
 
-      if (scrollBox && slider) {
-        slider.addEventListener('input', (e) => {
-          const target = e.target as HTMLInputElement;
-          const maxScroll = scrollBox.scrollWidth - scrollBox.clientWidth;
-          scrollBox.scrollLeft = (Number(target.value) / 100) * maxScroll;
-          target.style.setProperty('--val', target.value + '%');
-        });
+    // --- Desktop GSAP ---
+    mm.add("(min-width: 768px)", () => {
+      let tl = gsap.timeline({
+        scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=150%" }
+      });
+      tl.to(".intro-text", { opacity: 0, x: -50, duration: 1 }, 0)
+        .to(".scroll-icon-wrapper", { opacity: 0, y: 20, duration: 0.5 }, 0)
+        .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
+      tl.to(".portrait-wrapper", { x: "-25vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
+        .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
+    });
 
-        scrollBox.addEventListener('scroll', () => {
-          const maxScroll = scrollBox.scrollWidth - scrollBox.clientWidth;
-          if(maxScroll > 0) {
-              const val = (scrollBox.scrollLeft / maxScroll) * 100;
-              slider.value = val.toString();
-              slider.style.setProperty('--val', val + '%');
+    // --- Mobile GSAP ---
+    mm.add("(max-width: 767px)", () => {
+      let mobileTl = gsap.timeline({
+        scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=150%" }
+      });
+      mobileTl.to(".intro-text", { opacity: 0, y: 30, duration: 1 }, 0)
+        .to(".scroll-icon-wrapper", { opacity: 0, duration: 0.5 }, 0)
+        .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
+      mobileTl.to(".portrait-wrapper", { x: "-35vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
+        .to(".bio-text", { opacity: 1, y: 0, duration: 1, ease: "power1.out" }, 1.5);
+    });
+
+    gsap.from(".service-anim-card", { 
+      opacity: 0, 
+      y: 40, 
+      stagger: 0.15, 
+      duration: 0.8, 
+      ease: "power2.out", 
+      scrollTrigger: { trigger: ".scrolling-cards-container", start: "top 85%" } 
+    });
+
+    gsap.from(".projects-editorial-section", { opacity: 0, y: 40, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".projects-editorial-section", start: "top 85%" } });
+    gsap.from(".bento-card", { opacity: 0, y: 40, stagger: 0.15, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".bento-grid", start: "top 85%" } });
+
+    // --- Contact Modal Logic ---
+    const modal = document.getElementById("contactModal");
+    const openBtns = document.querySelectorAll(".modal-trigger");
+    const closeBtn = document.getElementById("closeModal");
+
+    const openModal = (e: Event) => {
+      e.preventDefault();
+      lenis.stop(); 
+      gsap.to(modal, { opacity: 1, pointerEvents: "auto", duration: 0.4, ease: "power2.out" });
+      gsap.fromTo(".modal-box", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, delay: 0.1, ease: "power2.out" });
+    };
+    const closeModal = () => {
+      gsap.to(modal, { opacity: 0, pointerEvents: "none", duration: 0.4, ease: "power2.in" });
+      lenis.start(); 
+    };
+
+    openBtns.forEach(btn => btn.addEventListener("click", openModal));
+    closeBtn?.addEventListener("click", closeModal);
+    modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+    // --- Dynamic Subtitle ---
+    const subtitles = ["Full-Stack Digital Marketer & Web Developer", "Technical SEO Specialist", "Bespoke WordPress Architect", "Precision Paid Media Strategist", "Data-Driven Growth Engineer"];
+    let subIndex = 0;
+    const dynamicSubtitle = document.querySelector(".dynamic-subtitle");
+
+    if (dynamicSubtitle) {
+      gsap.delayedCall(3, function changeText() {
+        gsap.to(dynamicSubtitle, {
+          y: -15, opacity: 0, duration: 0.5, ease: "power2.in",
+          onComplete: () => {
+            subIndex = (subIndex + 1) % subtitles.length;
+            dynamicSubtitle.textContent = subtitles[subIndex];
+            gsap.fromTo(dynamicSubtitle, { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" });
+            gsap.delayedCall(3, changeText);
           }
         });
-      }
-
-      // --- Global Interactive Tooltip Logic ---
-      const tooltip = document.getElementById('global-tooltip');
-      const tooltipText = document.getElementById('tooltip-text');
-      const triggerCards = document.querySelectorAll('.tooltip-trigger');
-
-      triggerCards.forEach(card => {
-        card.addEventListener('mousemove', (e: Event) => {
-          const mouseEvent = e as MouseEvent;
-          if (window.innerWidth > 768 && tooltip && tooltipText) {
-            tooltipText.textContent = card.getAttribute('data-tooltip');
-            tooltip.classList.remove('hidden-tooltip');
-            tooltip.style.left = (mouseEvent.clientX + 20) + 'px';
-            tooltip.style.top = (mouseEvent.clientY + 20) + 'px';
-          }
-        });
-
-        card.addEventListener('mouseleave', () => {
-          if(tooltip) tooltip.classList.add('hidden-tooltip');
-        });
-
-        card.addEventListener('click', () => {
-          if (window.innerWidth <= 768 && tooltip && tooltipText) {
-            tooltipText.textContent = card.getAttribute('data-tooltip');
-            tooltip.classList.remove('hidden-tooltip');
-            tooltip.classList.add('mobile-modal');
-            setTimeout(() => tooltip.classList.add('hidden-tooltip'), 4000);
-          }
-        });
       });
-
-      let mm = gsap.matchMedia();
-
-      // --- Desktop GSAP ---
-      mm.add("(min-width: 768px)", () => {
-        let tl = gsap.timeline({
-          scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=150%" }
-        });
-        tl.to(".intro-text", { opacity: 0, x: -50, duration: 1 }, 0)
-          .to(".scroll-icon-wrapper", { opacity: 0, y: 20, duration: 0.5 }, 0)
-          .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
-        tl.to(".portrait-wrapper", { x: "-25vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
-          .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
-      });
-
-      // --- Mobile GSAP ---
-      mm.add("(max-width: 767px)", () => {
-        let mobileTl = gsap.timeline({
-          scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=150%" }
-        });
-        mobileTl.to(".intro-text", { opacity: 0, y: 30, duration: 1 }, 0)
-          .to(".scroll-icon-wrapper", { opacity: 0, duration: 0.5 }, 0)
-          .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
-        mobileTl.to(".portrait-wrapper", { x: "-35vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
-          .to(".bio-text", { opacity: 1, y: 0, duration: 1, ease: "power1.out" }, 1.5);
-      });
-
-      // --- NEW: Sticky Section Card Animations ---
-      gsap.from(".service-anim-card", { 
-        opacity: 0, 
-        y: 40, 
-        stagger: 0.15, 
-        duration: 0.8, 
-        ease: "power2.out", 
-        scrollTrigger: { trigger: ".scrolling-cards-container", start: "top 85%" } 
-      });
-
-      gsap.from(".projects-editorial-section", { opacity: 0, y: 40, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".projects-editorial-section", start: "top 85%" } });
-      gsap.from(".bento-card", { opacity: 0, y: 40, stagger: 0.15, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".bento-grid", start: "top 85%" } });
-
-      // --- Contact Modal Logic ---
-      const modal = document.getElementById("contactModal");
-      const openBtns = document.querySelectorAll(".modal-trigger");
-      const closeBtn = document.getElementById("closeModal");
-
-      const openModal = (e: Event) => {
-        e.preventDefault();
-        lenis.stop(); 
-        gsap.to(modal, { opacity: 1, pointerEvents: "auto", duration: 0.4, ease: "power2.out" });
-        gsap.fromTo(".modal-box", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, delay: 0.1, ease: "power2.out" });
-      };
-      const closeModal = () => {
-        gsap.to(modal, { opacity: 0, pointerEvents: "none", duration: 0.4, ease: "power2.in" });
-        lenis.start(); 
-      };
-
-      openBtns.forEach(btn => btn.addEventListener("click", openModal));
-      closeBtn?.addEventListener("click", closeModal);
-      modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
-
-      // --- Dynamic Subtitle ---
-      const subtitles = ["Full-Stack Digital Marketer & Web Developer", "Technical SEO Specialist", "Bespoke WordPress Architect", "Precision Paid Media Strategist", "Data-Driven Growth Engineer"];
-      let subIndex = 0;
-      const dynamicSubtitle = document.querySelector(".dynamic-subtitle");
-
-      if (dynamicSubtitle) {
-        gsap.delayedCall(3, function changeText() {
-          gsap.to(dynamicSubtitle, {
-            y: -15, opacity: 0, duration: 0.5, ease: "power2.in",
-            onComplete: () => {
-              subIndex = (subIndex + 1) % subtitles.length;
-              dynamicSubtitle.textContent = subtitles[subIndex];
-              gsap.fromTo(dynamicSubtitle, { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" });
-              gsap.delayedCall(3, changeText);
-            }
-          });
-        });
-      }
-    </script>
-  </body>
-</html>
+    }
+  </script>
+</BaseLayout>
 
 <style is:global>
   :root {
@@ -549,24 +530,22 @@ const firstProject = allProjects.length > 0 ? allProjects[0] : null;
   .section-title { font-family: 'Syne', sans-serif; font-size: 3rem; margin-bottom: 4rem; color: var(--text-primary); }
 
   /* Generic Glass Panel */
-  .glass-panel { background: linear-gradient(135deg, rgba(25, 25, 25, 0.6) 0%, rgba(10, 10, 10, 0.9) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.02); border-right: 1px solid rgba(255, 255, 255, 0.02); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); border-radius: 12px; }
+  .glass-panel { background: linear-gradient(135deg, rgba(25, 25, 25, 0.4) 0%, rgba(10, 10, 10, 0.8) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.02); border-right: 1px solid rgba(255, 255, 255, 0.02); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); border-radius: 16px; }
 
   /* Shared Button Styles */
   .btn-solid { font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; background: #fff; color: #000; padding: 0.8rem 2rem; border-radius: 50px; text-decoration: none; transition: all 0.3s ease; border: 1px solid #fff;}
   .btn-solid:hover { background: transparent; color: #fff; }
 
-  /* --- NEW: Sticky Editorial Services Section --- */
+  /* --- Sticky Editorial Services Section --- */
   .services-sticky-section { padding: 8rem 0; position: relative; z-index: 5; }
   .sticky-editorial-layout { display: flex; gap: 5rem; align-items: flex-start; }
   
-  /* LEFT: Sticky Sidebar */
   .sticky-sidebar { width: 35%; position: sticky; top: 15vh; }
   .sticky-content { display: flex; flex-direction: column; align-items: flex-start; }
   .sticky-sidebar .section-title { margin-bottom: 1.5rem; }
   .sticky-description { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; margin-bottom: 2.5rem; }
   .sticky-cta { display: inline-flex; }
 
-  /* RIGHT: Scrolling Cards */
   .scrolling-cards-container { width: 65%; display: flex; flex-direction: column; gap: 6rem; padding-bottom: 5rem; }
   .editorial-service-card { padding: 4rem; display: flex; flex-direction: column; gap: 2.5rem; border-radius: 16px; transition: border-color 0.3s ease; border: 1px solid rgba(255,255,255,0.05); }
   .editorial-service-card:hover { border-color: rgba(255,255,255,0.3); }
@@ -633,7 +612,7 @@ const firstProject = allProjects.length > 0 ? allProjects[0] : null;
   .career-ruler-wrapper::-webkit-scrollbar { display: none; }
   
   .career-ruler-track { display: flex; gap: 3rem; width: max-content; padding: 0 15vw; position: relative; align-items: center; min-height: 250px; }
-  .career-ruler-line { position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.1); transform: translateY(-50%); }
+  .career-ruler-line { absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.1); transform: translateY(-50%); }
   
   .ruler-card { width: 280px; scroll-snap-align: center; position: relative; display: flex; flex-direction: column; cursor: crosshair; }
   .ruler-dot { width: 16px; height: 16px; border-radius: 50%; background: #050505; border: 2px solid var(--accent); position: absolute; top: 50%; left: -24px; z-index: 2; transition: all 0.3s ease; transform: translateY(-50%); }

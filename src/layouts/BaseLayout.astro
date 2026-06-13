@@ -1,0 +1,93 @@
+---
+// src/layouts/BaseLayout.astro
+import '@fontsource/syne/700.css';
+import '@fontsource/syne/800.css';
+import '@fontsource/hanken-grotesk/400.css';
+import '@fontsource/hanken-grotesk/600.css';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+// Define the properties this layout accepts
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+}
+
+const { 
+  title, 
+  description, 
+  image = "https://fareed-rifaideen.netlify.app/og-image.jpg" 
+} = Astro.props;
+
+// Automatically grabs the exact URL of whatever page the user is on
+const url = Astro.url.href;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content="Full-Stack Digital Marketer, Comprehensive SEO, Web Developer Dubai, Meta Ads Expert, PPC Management, Fareed M. Rifaideen" />
+    <meta name="author" content="Fareed M. Rifaideen" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href={url} />
+
+    <!-- Open Graph / LinkedIn / Facebook / WhatsApp -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={image} />
+
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#050505" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Technical SEO JSON-LD Schema -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Fareed M. Rifaideen",
+        "jobTitle": "Full-Stack Digital Marketer & Web Developer",
+        "url": "https://fareed-rifaideen.netlify.app/",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Dubai",
+          "addressCountry": "AE"
+        },
+        "sameAs": [
+          "https://www.linkedin.com/in/fareed03",
+          "https://github.com/fareed-rifaideen-ecom"
+        ],
+        "knowsAbout": [
+          "Search Engine Optimization (SEO)",
+          "Full-Stack Digital Marketing",
+          "Data Analytics",
+          "Performance Marketing",
+          "E-commerce Optimization",
+          "WordPress & WooCommerce Development"
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <!-- The content of your pages will be injected here -->
+    <slot />
+  </body>
+</html>
