@@ -43,9 +43,21 @@ const ethosCollection = defineCollection({
   }),
 });
 
+const servicesCollection = defineCollection({
+  loader: glob({ pattern: "*.md", base: "./src/content/services" }),
+  schema: z.object({
+    title: z.string(),
+    command: z.string(),
+    summary: z.string(),
+    techStack: z.array(z.string()),
+    order: z.number(),
+  }),
+});
+
 export const collections = {
   'projects': projectsCollection,
   'experience': experienceCollection,
   'education': educationCollection,
   'ethos': ethosCollection,
+  'services': servicesCollection,
 };
