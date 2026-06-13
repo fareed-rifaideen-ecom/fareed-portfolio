@@ -4,6 +4,8 @@ import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import profileImg from '../assets/profile.jpg'; 
 import BaseLayout from '../layouts/BaseLayout.astro';
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 const allProjects = await getCollection('projects');
 allProjects.sort((a, b) => a.data.order - b.data.order);
@@ -34,8 +36,6 @@ const fallbackServices = [
 
 const allServices = (fetchedServices && fetchedServices.length > 0) ? fetchedServices : fallbackServices;
 allServices.sort((a: any, b: any) => a.data.order - b.data.order);
-
-const firstProject = allProjects.length > 0 ? allProjects[0] : null;
 ---
 
 <BaseLayout 
@@ -80,7 +80,7 @@ const firstProject = allProjects.length > 0 ? allProjects[0] : null;
     </div>
   </section>
 
-  <!-- Sticky Scroll Editorial Deck -->
+  <!-- Sticky Scroll Editorial Deck (Services) -->
   <section class="services-sticky-section" id="services">
     <div class="container">
       <div class="sticky-editorial-layout">
@@ -118,66 +118,46 @@ const firstProject = allProjects.length > 0 ? allProjects[0] : null;
     </div>
   </section>
 
-  <!-- 2-Column Featured Projects -->
-  <section class="projects-editorial-section">
+  <!-- 3D Flip Track Carousel (Projects) -->
+  <section class="projects-flip-track-section" id="projects">
     <div class="container">
-      <div class="projects-editorial-grid">
-        
-        <div class="projects-text-content">
-          <div class="label-pill">
-            <span class="pill-dot"></span>
-            <span>Data-Driven Precision</span>
-          </div>
-          
-          <h2 class="massive-editorial-title">Engineered<br/>for Growth<br/>& Scale.</h2>
-          
-          <p class="editorial-description">
-            My approach to every case study is rooted in a passion for blending data-driven precision with striking creative execution. I don't just build campaigns; I engineer digital ecosystems designed to scale and convert.
-          </p>
-          
-          <div class="editorial-buttons">
-            <a href="https://github.com/fareed-rifaideen-ecom" target="_blank" rel="noopener noreferrer" class="btn-outline">View GitHub ↗</a>
-            <a href="#contact-modal" class="btn-solid modal-trigger">Let's Talk ↗</a>
-          </div>
+      <div class="projects-header-wrapper">
+        <div class="label-pill">
+          <span class="pill-dot"></span>
+          <span>Featured Work</span>
         </div>
-
-        <div class="projects-visual-carousel">
-          <div class="mobile-swipe-prompt">
-            <span>&lt; Swipe &gt;</span>
-          </div>
-          
-          <div class="swiper projects-swiper">
-            <div class="swiper-wrapper">
-              {carouselProjects.map((project: any) => (
-                <div class="swiper-slide project-card-wrapper">
-                  <div class="flip-card-inner">
-                    
-                    <div class="flip-card-front poster-front" style={`background-image: linear-gradient(to top, rgba(5,5,5,0.9) 0%, rgba(5,5,5,0.2) 100%), url(${project.data.image});`}>
-                      <div class="poster-content">
-                         <h3>{project.data.title}</h3>
-                         <div class="tech-tags poster-tags">
-                           {project.data.techStack.slice(0, 2).map((tech: string) => (
-                             <span class="tag">{tech}</span>
-                           ))}
-                         </div>
-                      </div>
-                    </div>
-
-                    <div class="flip-card-back glass-panel back-details">
-                      <img src={project.data.image} alt={`${project.data.title} Logo`} class="project-logo bw-logo" loading="lazy" decoding="async" />
-                      <p class="back-summary">{project.data.summary}</p>
-                      <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer" class="contact-btn view-project-btn">View Live Project</a>
-                    </div>
-
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div class="swiper-pagination editorial-pagination"></div>
-          </div>
-        </div>
-
+        <h2 class="massive-projects-title">Engineered for<br/>Growth & Scale.</h2>
       </div>
+    </div>
+
+    <div class="swiper flip-projects-swiper">
+      <div class="swiper-wrapper">
+        {carouselProjects.map((project: any) => (
+          <div class="swiper-slide flip-project-card">
+            <div class="flip-card-inner">
+              
+              <!-- State A: Front (Text & Tags) -->
+              <div class="flip-card-front glass-panel">
+                <h3 class="proj-front-title">{project.data.title}</h3>
+                <p class="proj-front-summary">{project.data.summary}</p>
+                <div class="tech-tags">
+                  {project.data.techStack.slice(0, 3).map((tech: string) => (
+                    <span class="tag pill-tag">{tech}</span>
+                  ))}
+                </div>
+              </div>
+
+              <!-- State B: Back (Logo & Button) -->
+              <div class="flip-card-back glass-panel">
+                <img src={project.data.image} alt={`${project.data.title} Logo`} class="project-logo bw-logo" loading="lazy" decoding="async" />
+                <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer" class="btn-solid view-project-btn">View Live URL</a>
+              </div>
+
+            </div>
+          </div>
+        ))}
+      </div>
+      <div class="swiper-pagination flip-pagination"></div>
     </div>
   </section>
 
@@ -307,7 +287,7 @@ const firstProject = allProjects.length > 0 ? allProjects[0] : null;
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
     import Lenis from '@studio-freight/lenis';
     import Swiper from 'swiper';
-    import { EffectCoverflow, Pagination, Autoplay } from 'swiper/modules';
+    import { Pagination, Autoplay } from 'swiper/modules';
 
     gsap.registerPlugin(ScrollTrigger);
 
@@ -327,29 +307,39 @@ const firstProject = allProjects.length > 0 ? allProjects[0] : null;
       }
     });
 
-    // --- Flat Overlapping Carousel ---
-    new Swiper('.projects-swiper', {
-      modules: [EffectCoverflow, Pagination, Autoplay],
-      effect: 'coverflow',
-      grabCursor: true,
-      centeredSlides: true,
+    // --- 3D Flip Track Carousel Logic ---
+    new Swiper('.flip-projects-swiper', {
+      modules: [Pagination, Autoplay],
       slidesPerView: 'auto',
+      centeredSlides: true,
+      spaceBetween: 80, // INCREASED GAP: Clean separation between cards
       loop: true,
-      autoplay: { delay: 4000, disableOnInteraction: false, pauseOnMouseEnter: true },
-      coverflowEffect: { 
-        rotate: 0,
-        stretch: -40,
-        depth: 150,
-        modifier: 1.5,
-        slideShadows: false, 
+      speed: 1000, 
+      autoplay: { 
+        delay: 3000, 
+        disableOnInteraction: false, 
+        pauseOnMouseEnter: true 
       },
-      pagination: { el: '.editorial-pagination', clickable: true },
-      on: {
-        touchStart: function () {
-          const prompt = document.querySelector('.mobile-swipe-prompt') as HTMLElement;
-          if (prompt) prompt.style.opacity = '0';
-        }
+      pagination: { 
+        el: '.flip-pagination', 
+        clickable: true 
       }
+    });
+
+    // Mobile specific script for handling 3D click flips
+    const flipCards = document.querySelectorAll('.flip-project-card');
+    flipCards.forEach(card => {
+      card.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+          card.classList.toggle('is-flipped');
+          
+          flipCards.forEach(otherCard => {
+            if (otherCard !== card) {
+              otherCard.classList.remove('is-flipped');
+            }
+          });
+        }
+      });
     });
 
     // --- Horizontal Career Slider Logic ---
@@ -430,16 +420,21 @@ const firstProject = allProjects.length > 0 ? allProjects[0] : null;
         .to(".bio-text", { opacity: 1, y: 0, duration: 1, ease: "power1.out" }, 1.5);
     });
 
-    gsap.from(".service-anim-card", { 
-      opacity: 0, 
-      y: 40, 
-      stagger: 0.15, 
-      duration: 0.8, 
-      ease: "power2.out", 
-      scrollTrigger: { trigger: ".scrolling-cards-container", start: "top 85%" } 
+    const serviceCards = gsap.utils.toArray(".service-anim-card");
+    serviceCards.forEach((card) => {
+      gsap.from(card as Element, {
+        opacity: 0,
+        y: 50,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: card as Element,
+          start: "top 85%"
+        }
+      });
     });
 
-    gsap.from(".projects-editorial-section", { opacity: 0, y: 40, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".projects-editorial-section", start: "top 85%" } });
+    gsap.from(".projects-flip-track-section", { opacity: 0, y: 40, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".projects-flip-track-section", start: "top 85%" } });
     gsap.from(".bento-card", { opacity: 0, y: 40, stagger: 0.15, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".bento-grid", start: "top 85%" } });
 
     // --- Contact Modal Logic ---
@@ -533,22 +528,21 @@ const firstProject = allProjects.length > 0 ? allProjects[0] : null;
   .glass-panel { background: linear-gradient(135deg, rgba(25, 25, 25, 0.4) 0%, rgba(10, 10, 10, 0.8) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.02); border-right: 1px solid rgba(255, 255, 255, 0.02); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); border-radius: 16px; }
 
   /* Shared Button Styles */
-  .btn-solid { font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; background: #fff; color: #000; padding: 0.8rem 2rem; border-radius: 50px; text-decoration: none; transition: all 0.3s ease; border: 1px solid #fff;}
+  .btn-solid { font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; background: #fff; color: #000; padding: 0.8rem 2rem; border-radius: 50px; text-decoration: none; transition: all 0.3s ease; border: 1px solid #fff; display: inline-block; text-align: center; }
   .btn-solid:hover { background: transparent; color: #fff; }
 
   /* --- Sticky Editorial Services Section --- */
-  .services-sticky-section { padding: 8rem 0; position: relative; z-index: 5; }
-  .sticky-editorial-layout { display: flex; gap: 5rem; align-items: flex-start; }
+  .services-sticky-section { padding: 5rem 0; position: relative; z-index: 5; }
+  .sticky-editorial-layout { display: flex; justify-content: space-between; align-items: flex-start; }
   
-  .sticky-sidebar { width: 35%; position: sticky; top: 15vh; }
+  .sticky-sidebar { width: 35%; position: sticky; top: 25vh; }
   .sticky-content { display: flex; flex-direction: column; align-items: flex-start; }
   .sticky-sidebar .section-title { margin-bottom: 1.5rem; }
   .sticky-description { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; margin-bottom: 2.5rem; }
   .sticky-cta { display: inline-flex; }
 
-  .scrolling-cards-container { width: 65%; display: flex; flex-direction: column; gap: 6rem; padding-bottom: 5rem; }
-  .editorial-service-card { padding: 4rem; display: flex; flex-direction: column; gap: 2.5rem; border-radius: 16px; transition: border-color 0.3s ease; border: 1px solid rgba(255,255,255,0.05); }
-  .editorial-service-card:hover { border-color: rgba(255,255,255,0.3); }
+  .scrolling-cards-container { width: 55%; display: flex; flex-direction: column; gap: 4rem; }
+  .editorial-service-card { display: flex; flex-direction: column; gap: 2rem; padding: 3.5rem; border-radius: 16px; }
   
   .service-card-header { display: flex; flex-direction: column; gap: 1rem; }
   .service-number { font-family: 'Syne', sans-serif; font-size: 5rem; color: rgba(255, 255, 255, 0.05); font-weight: 800; line-height: 0.8; margin-left: -5px; }
@@ -556,53 +550,66 @@ const firstProject = allProjects.length > 0 ? allProjects[0] : null;
   
   .service-card-body { display: flex; flex-direction: column; gap: 2rem; }
   .service-pitch { color: var(--text-secondary); font-size: 1.15rem; line-height: 1.7; margin: 0; }
-
-  /* --- EDITORIAL PROJECTS SECTION --- */
-  .projects-editorial-section { padding: 5rem 0; overflow: hidden; position: relative; }
-  .projects-editorial-grid { display: flex; align-items: center; justify-content: space-between; gap: 4rem; }
-  
-  .projects-text-content { width: 45%; display: flex; flex-direction: column; align-items: flex-start; }
-  
-  .label-pill { display: inline-flex; align-items: center; gap: 0.5rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; padding: 0.4rem 1.2rem; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 2rem; }
-  .pill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-primary); }
-  
-  .massive-editorial-title { font-family: 'Syne', sans-serif; font-size: 4rem; line-height: 1.1; margin: 0 0 1.5rem 0; color: var(--text-primary); letter-spacing: -0.02em; }
-  .editorial-description { color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; margin: 0 0 2.5rem 0; max-width: 90%; }
-  
-  .editorial-buttons { display: flex; gap: 1rem; }
-  .btn-outline { font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 0.8rem 2rem; border-radius: 50px; text-decoration: none; transition: all 0.3s ease; }
-  .btn-outline:hover { border-color: #fff; }
-
-  .projects-visual-carousel { width: 55%; position: relative; }
-  .mobile-swipe-prompt { display: none; }
-  
-  .projects-swiper { width: 100%; padding: 2rem 0 4rem 0; overflow: visible; z-index: 2; }
-  .swiper-slide { width: 280px; height: 380px; perspective: 1000px; }
-  
-  .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
-  .swiper-slide-active:hover .flip-card-inner { transform: rotateY(180deg); }
-  
-  .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 16px; overflow: hidden; }
-  
-  .poster-front { background-size: cover; background-position: center; display: flex; flex-direction: column; justify-content: flex-end; padding: 2rem; filter: grayscale(100%); transition: filter 0.5s ease; border: 1px solid rgba(255,255,255,0.1); }
-  .swiper-slide-active .poster-front { filter: grayscale(0%); }
-  
-  .poster-content h3 { font-family: 'Syne', sans-serif; font-size: 1.5rem; color: #fff; margin: 0 0 0.5rem 0; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
-  .poster-tags { margin-top: 0; }
-  .poster-tags .tag { border-color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); color: #fff; }
-  
-  .flip-card-back { transform: rotateY(180deg); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 2rem; }
-  .back-summary { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.5rem; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
-  
   .tech-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .tag { font-family: 'Hanken Grotesk', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.4rem 0.8rem; border: 1px solid rgba(255, 255, 255, 0.15); color: var(--text-secondary); transition: all 0.3s ease; }
+
+  /* --- MODIFIED: 3D FLIP TRACK SECTION --- */
+  .projects-flip-track-section { padding: 8rem 0; position: relative; z-index: 5; overflow: hidden; }
   
-  .project-logo { max-width: 80%; max-height: 80px; object-fit: contain; margin-bottom: 1.5rem; border-radius: 8px; }
+  .projects-header-wrapper { text-align: center; margin-bottom: 4rem; display: flex; flex-direction: column; align-items: center; }
+  .label-pill { display: inline-flex; align-items: center; gap: 0.5rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; padding: 0.4rem 1.2rem; font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+  .pill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-primary); }
+  .massive-projects-title { font-family: 'Syne', sans-serif; font-size: clamp(3rem, 5vw, 4.5rem); letter-spacing: -0.02em; color: var(--text-primary); margin: 0; line-height: 1.1; }
+
+  .flip-projects-swiper { width: 100%; padding-bottom: 4rem; overflow: visible; }
+  
+  /* FIXED: Precise boundaries and dynamic z-index for overlapping fix */
+  .flip-project-card { width: 340px; height: 320px; perspective: 1000px; cursor: pointer; z-index: 1; }
+  .flip-project-card:hover { z-index: 10; }
+  
+  .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
+  
+  /* Desktop Hover */
+  @media (min-width: 769px) {
+    .flip-project-card:hover .flip-card-inner { transform: rotateY(180deg); }
+  }
+  
+  /* Mobile Click Toggle */
+  .flip-project-card.is-flipped { z-index: 10; }
+  .flip-project-card.is-flipped .flip-card-inner { transform: rotateY(180deg); }
+
+  /* FIXED: Strict box-sizing and top/left absolute clamps to prevent 3D shifting */
+  .flip-card-front, .flip-card-back { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    backface-visibility: hidden; 
+    border-radius: 16px; 
+    padding: 2rem; 
+    display: flex; 
+    flex-direction: column; 
+    box-sizing: border-box;
+    margin: 0;
+  }
+  
+  /* State A: Front */
+  .flip-card-front { justify-content: flex-start; }
+  .proj-front-title { font-family: 'Syne', sans-serif; font-size: 1.4rem; color: var(--text-primary); margin: 0 0 1rem 0; line-height: 1.2; }
+  
+  /* REFINED: Clamped Summary for shorter 320px height */
+  .proj-front-summary { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .pill-tag { border-radius: 50px; background: #fff; color: #000; border: none; font-weight: 700; font-size: 0.7rem; }
+  
+  /* State B: Back */
+  .flip-card-back { transform: rotateY(180deg); align-items: center; justify-content: center; text-align: center; }
+  .project-logo { max-width: 80%; max-height: 90px; object-fit: contain; margin-bottom: 2rem; }
   .bw-logo { filter: grayscale(100%) brightness(1.5); transition: all 0.4s ease; opacity: 0.8; }
   .flip-card-back:hover .bw-logo { filter: grayscale(0) brightness(1); opacity: 1; }
-  .view-project-btn { font-size: 0.85rem; padding: 0.7rem 1.8rem; }
-  
-  .editorial-pagination { position: absolute; bottom: 0; display: flex; justify-content: center; gap: 8px; }
+  .view-project-btn { width: 100%; margin-top: auto; }
+
+  .flip-pagination { position: absolute; bottom: 0; display: flex; justify-content: center; gap: 8px; }
   .swiper-pagination-bullet { background: var(--text-secondary); opacity: 0.3; transition: all 0.3s ease; width: 8px; height: 8px; }
   .swiper-pagination-bullet-active { background: #fff; opacity: 1; transform: scale(1.3); }
 
@@ -612,7 +619,7 @@ const firstProject = allProjects.length > 0 ? allProjects[0] : null;
   .career-ruler-wrapper::-webkit-scrollbar { display: none; }
   
   .career-ruler-track { display: flex; gap: 3rem; width: max-content; padding: 0 15vw; position: relative; align-items: center; min-height: 250px; }
-  .career-ruler-line { absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.1); transform: translateY(-50%); }
+  .career-ruler-line { position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.1); transform: translateY(-50%); }
   
   .ruler-card { width: 280px; scroll-snap-align: center; position: relative; display: flex; flex-direction: column; cursor: crosshair; }
   .ruler-dot { width: 16px; height: 16px; border-radius: 50%; background: #050505; border: 2px solid var(--accent); position: absolute; top: 50%; left: -24px; z-index: 2; transition: all 0.3s ease; transform: translateY(-50%); }
@@ -623,7 +630,7 @@ const firstProject = allProjects.length > 0 ? allProjects[0] : null;
   .ruler-content h3 { font-family: 'Syne', sans-serif; font-size: 1.4rem; margin: 0; color: var(--text-primary); }
   .ruler-content h4 { font-family: 'Hanken Grotesk', sans-serif; color: var(--text-secondary); font-size: 0.95rem; font-weight: 400; margin: 0; }
 
-  /* Custom Range Slider Styling (Strict Monochrome) */
+  /* Custom Range Slider Styling */
   .slider-controls-container { max-width: 600px; margin: 2rem auto 0 auto; padding: 0 2rem; }
   .custom-monochrome-slider {
     -webkit-appearance: none;
@@ -712,25 +719,9 @@ const firstProject = allProjects.length > 0 ? allProjects[0] : null;
     .service-number { font-size: 4rem; }
     .service-pitch { font-size: 1.05rem; }
 
-    /* Mobile Split Projects */
-    .projects-editorial-grid { flex-direction: column; gap: 2rem; }
-    .projects-text-content, .projects-visual-carousel { width: 100%; }
-    .massive-editorial-title { font-size: 3rem; }
-    .editorial-buttons { flex-direction: column; }
-    .btn-outline, .btn-solid { text-align: center; }
-    .swiper-slide { width: 85vw; height: 420px; }
-    
-    /* Mobile Swipe Prompt */
-    .mobile-swipe-prompt {
-      display: block; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      z-index: 20; color: var(--text-primary); font-family: 'Hanken Grotesk', sans-serif;
-      font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
-      background: rgba(0,0,0,0.6); padding: 0.8rem 1.5rem; border-radius: 50px;
-      backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2);
-      pointer-events: none; transition: opacity 0.4s ease;
-      animation: pulse 2s infinite alternate;
-    }
-    @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(1); } 100% { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 0 15px rgba(255,255,255,0.2); } }
+    /* Mobile 3D Flip Track */
+    .projects-flip-track-section { padding: 4rem 0; }
+    .flip-project-card { width: 85vw; height: 320px; } 
 
     /* Mobile Career Ruler */
     .ruler-card { width: 75vw; }
