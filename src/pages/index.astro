@@ -301,6 +301,15 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
 
+    // --- MODIFIED: Dynamic Shrink Island Logic ---
+    // Instead of 50px, this now waits until the cinematic Hero/Bio section is finished
+    // and the user has scrolled down into the Services section.
+    ScrollTrigger.create({
+      trigger: ".services-sticky-section",
+      start: 'top 15%', // Triggers the exact moment the Services section hits the top 15% of the screen
+      toggleClass: { className: 'is-scrolled', targets: '.site-header' }
+    });
+
     // --- Magnetic Scroll Indicator Logic (Desktop Only) ---
     const magTarget = document.querySelector('.magnetic-target');
     const heroSection = document.querySelector('.cinematic-hero');
@@ -353,13 +362,12 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       });
     });
 
-    // --- FIX 1: Background Portrait Fade-In Logic ---
-    // Start at 0, fade to 0.03 so it becomes visible AFTER the hero section
+    // --- Ghost Watermark Background Fade ---
     gsap.to("#bg-portrait", {
       opacity: 0.03,
       scrollTrigger: {
         trigger: ".services-sticky-section",
-        start: "top 80%", // Trigger slightly before services hits the top
+        start: "top 80%", 
         end: "top 20%",
         scrub: true
       }
@@ -473,7 +481,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         .to(".scroll-icon-wrapper", { opacity: 0, duration: 0.5 }, 0)
         .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
       
-      // FIX 2: Reduced x translation to -15vw to stop left-edge face cropping on mobile
       mobileTl.to(".portrait-wrapper", { x: "-15vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
         .to(".bio-text", { opacity: 1, y: 0, duration: 1, ease: "power1.out" }, 1.5);
         
@@ -565,10 +572,43 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
   .global-padding { padding: var(--section-gap-desktop) 0; }
 
-  /* Header */
-  .site-header { position: fixed; top: 0; width: 100%; padding: 2rem 0; z-index: 100; mix-blend-mode: difference; }
-  .header-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
-  .logo img { height: 35px; width: auto; display: block; }
+  /* --- HEADER: INITIAL STATE --- */
+  .site-header { 
+    position: fixed; top: 0; left: 0; width: 100%; 
+    padding: 2rem 0; z-index: 100; 
+    transition: padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none; /* Clicks pass through empty space */
+  }
+  
+  .header-container { 
+    max-width: 1200px; margin: 0 auto; padding: 0 2rem; 
+    display: flex; justify-content: space-between; align-items: center; 
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 50px;
+    border: 1px solid transparent;
+    background: transparent;
+    pointer-events: auto; /* Buttons are clickable */
+  }
+
+  /* --- HEADER: DYNAMIC SCROLL STATE (THE PILL) --- */
+  .site-header.is-scrolled {
+    padding: 1.5rem 0; /* Drops slightly from the ceiling */
+  }
+
+  .site-header.is-scrolled .header-container {
+    max-width: 800px; /* Collapses inward */
+    padding: 0.8rem 1.5rem;
+    background: rgba(10, 10, 10, 0.65); /* Sleek dark glass */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  }
+
+  .logo img { height: 35px; width: auto; display: block; transition: height 0.4s ease; }
+  /* Optional: slightly shrink logo inside the pill */
+  .site-header.is-scrolled .logo img { height: 28px; }
+
   .nav-links { display: flex; gap: 1rem; align-items: center; }
   
   .whatsapp-icon-link {
@@ -587,8 +627,10 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     border-radius: 50px; font-size: var(--step--1); transition: all 0.3s ease; cursor: pointer; background: transparent;
   }
   .contact-btn:hover { background-color: #fff; color: #000; }
+  /* Make button perfectly fit inside the glass pill */
+  .site-header.is-scrolled .contact-btn { padding: 0.5rem 1.2rem; }
 
-  /* FIX 1 CSS: Ghost Watermark initial opacity is 0 */
+  /* Ghost Watermark */
   .ghost-watermark {
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
     height: 120vh; width: auto; min-width: 100vw; object-fit: cover;
@@ -828,11 +870,17 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
     .global-padding { padding: var(--section-gap-mobile) 0; }
 
+    /* Mobile Header adjustments for the pill */
+    .site-header { padding: 1rem 0; }
+    .site-header.is-scrolled { padding: 1rem 0; }
+    .site-header.is-scrolled .header-container { max-width: 90vw; padding: 0.6rem 1.2rem; }
+
     .nav-links { gap: 0.5rem; }
     .contact-btn { padding: 0.5rem 1rem; }
+    .site-header.is-scrolled .contact-btn { padding: 0.4rem 1rem; }
+
     .intro-text { bottom: 15%; left: 1.5rem; }
     
-    /* FIX 3 CSS: Safely lifted above native mobile UI bars */
     .scroll-icon-wrapper { left: 50%; transform: translateX(-50%); bottom: 12%; }
     .magnetic-target { transform: none !important; }
     
