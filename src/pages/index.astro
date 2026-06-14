@@ -29,9 +29,9 @@ try {
 }
 
 const fallbackServices = [
-  { data: { title: "Full-Stack SEO", command: "execute_seo", summary: "I architect comprehensive search engine strategies from the server to the front end. By combining deep technical audits, semantic site structure, and rigorous keyword gap analyses, I drive high-intent organic traffic directly to your bottom line.", techStack: ["Technical SEO", "SEMrush", "Ahrefs", "Schema Markup"], order: 1 } },
-  { data: { title: "Data-Driven Marketing", command: "execute_marketing", summary: "Leveraging a decade of background in financial operations, I treat ad budgets like business investments. I engineer precision paid media campaigns across Meta and Google, utilizing AI-driven trend analysis and real-time data to ruthlessly optimize for maximum ROAS.", techStack: ["Meta Ads", "Google Ads", "GA4", "HubSpot"], order: 2 } },
-  { data: { title: "Custom Web Development", command: "execute_development", summary: "I craft bespoke, conversion-optimized digital storefronts. Moving beyond basic templates, I combine sleek UI/UX design with custom WordPress, WooCommerce, and PHP backend development to ensure a flawless, lightning-fast user experience across all devices.", techStack: ["WordPress", "WooCommerce", "PHP", "CSS"], order: 3 } }
+  { data: { title: "Full-Stack SEO", command: "execute_seo", summary: "I align your digital infrastructure with exactly what search engines demand and what your target market is actively looking for. From server-side technical health to frontend semantic structure, I eliminate roadblocks to drive high-intent, organic traffic directly to your storefront.", order: 1 } },
+  { data: { title: "Data-Driven Marketing", command: "execute_marketing", summary: "Paid media requires strict financial discipline. I design and manage highly targeted campaigns across Meta and Google, leveraging real-time analytics to immediately cut wasted spend and aggressively scale the strategies that generate verified returns.", order: 2 } },
+  { data: { title: "Custom Web Development", command: "execute_development", summary: "Off-the-shelf templates rarely scale. I build custom, lightning-fast WordPress and WooCommerce platforms tailored specifically to your sales funnels. I focus on clean PHP backend development and intuitive UI design to ensure a completely frictionless experience from the landing page to the checkout.", order: 3 } }
 ];
 
 const allServices = (fetchedServices && fetchedServices.length > 0) ? fetchedServices : fallbackServices;
@@ -82,10 +82,10 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       </div>
       <div class="bio-text">
         <p class="bio">
-          I build digital marketing systems that make sense for the bottom line. With ten years of experience in financial operations, I treat marketing budgets like business investments.
+          I build digital ecosystems engineered for one specific metric: ROI. With a decade of experience in financial operations, I treat your marketing budget as a direct investment rather than an operational expense.
         </p>
         <p class="bio">
-          As a Full-Stack Marketer and Web Developer, I combine technical SEO, custom WordPress development, and targeted ads to build digital spaces that solve problems and generate real returns.
+          As a Full-Stack Marketer and Web Developer, I bridge the gap between technical infrastructure and customer acquisition. From custom WooCommerce platforms to rigorous technical SEO, I design digital spaces that solve complex problems and drive tangible revenue.
         </p>
         <a href="#ethos" class="btn-outline bio-cta">Read My Ethos <span class="bounce-arrow">↓</span></a>
       </div>
@@ -100,7 +100,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
           <div class="sticky-content">
             <h2 class="section-title">What I Do</h2>
             <p class="sticky-description">
-              I engineer digital growth by combining technical precision with targeted marketing strategies. Here is exactly how my brain can make you money.
+              I engineer digital growth by combining technical architecture with highly targeted acquisition strategies. Here is exactly how I turn execution into tangible business revenue.
             </p>
             <a href="#contact-modal" class="btn-solid modal-trigger sticky-cta glow-breathe"><span class="btn-text">Start a Project</span></a>
           </div>
@@ -114,11 +114,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
                 <h3 class="service-title">{service.data.title}</h3>
               </div>
               <div class="service-card-body">
-                <p class="service-pitch">{service.data.summary}</p>
-                <div class="tech-tags">
-                  {service.data.techStack.map((tech: string) => (
-                    <span class="tag">{tech}</span>
-                  ))}
+                <div class="service-card-body-inner">
+                  <p class="service-pitch">{service.data.summary}</p>
                 </div>
               </div>
             </div>
@@ -196,7 +193,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
           <div class="terminal-sidebar">
             <p class="term-comment"># Hover to execute deployment log:</p>
             {allExperience.map((job: any, index: number) => {
-              // Now mapped to Title instead of Company
               const safeTitle = job.data.title.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
               return (
                 <button 
@@ -320,7 +316,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     <div class="modal-box">
       <button class="modal-close" id="closeModal">✕</button>
       <h3 class="modal-title">Start a Conversation</h3>
-      <p class="modal-desc">Tell me about the problem you are trying to solve.</p>
+      <p class="modal-desc">What primary business objective are we tackling today?</p>
       <form name="project-inquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="brutalist-form">
         <p class="hidden">
           <label>Don’t fill this out if you're human: <input name="bot-field" /></label>
@@ -337,7 +333,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
           <textarea name="message" id="message" rows="4" required placeholder=" "></textarea>
           <label for="message">Project Details</label>
         </div>
-        <button type="submit" class="contact-btn submit-btn">Initiate Project</button>
+        <button type="submit" class="contact-btn submit-btn">Send Brief</button>
       </form>
     </div>
   </div>
@@ -621,7 +617,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
     // --- Dynamic Subtitle ---
-    const subtitles = ["Full-Stack Digital Marketer & Web Developer", "Technical SEO Specialist", "Bespoke WordPress Architect", "Precision Paid Media Strategist", "Data-Driven Growth Engineer"];
+    const subtitles = ["Full-Stack Digital Marketer & Web Developer", "SEO Marketing Specialist", "Bespoke WordPress Architect", "Precision Paid Media Strategist", "Data-Driven Growth Engineer"];
     let subIndex = 0;
     const dynamicSubtitle = document.querySelector(".dynamic-subtitle");
 
@@ -831,11 +827,11 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .service-number { font-family: 'Syne', sans-serif; font-size: 5rem; color: rgba(255, 255, 255, 0.05); font-weight: 800; line-height: 0.8; margin-left: -5px; }
   .service-title { font-family: 'Syne', sans-serif; font-size: var(--step-3); color: var(--text-primary); margin: 0; }
   
-  .service-card-body { display: flex; flex-direction: column; gap: 2rem; }
+  /* Layout handled by inner wrapper for safety */
+  .service-card-body-inner { display: flex; flex-direction: column; gap: 2rem; }
+  
   .service-pitch { color: var(--text-secondary); font-size: var(--step-1); line-height: 1.7; margin: 0; }
-  .tech-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-  .tag { font-family: 'Hanken Grotesk', sans-serif; font-size: var(--step--2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.4rem 0.8rem; border: 1px solid rgba(255, 255, 255, 0.15); color: var(--text-secondary); transition: all 0.3s ease; }
-
+  
   /* --- 3D FLIP TRACK SECTION --- */
   .projects-flip-track-section { position: relative; z-index: 5; overflow: hidden; }
   
@@ -867,7 +863,11 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .proj-front-title { font-family: 'Syne', sans-serif; font-size: var(--step-2); color: var(--text-primary); margin: 0 0 1rem 0; line-height: 1.2; }
   
   .proj-front-summary { font-size: var(--step-0); color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-  .pill-tag { border-radius: 50px; background: #fff; color: #000; border: none; font-weight: 700; font-size: var(--step--2); }
+  
+  .tech-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .pill-tag { font-family: 'Hanken Grotesk', sans-serif; padding: 0.4rem 0.8rem; border-radius: 50px; background: #fff; color: #000; border: none; font-weight: 700; font-size: var(--step--2); text-transform: uppercase; letter-spacing: 0.05em; }
+  .tag { font-family: 'Hanken Grotesk', sans-serif; font-size: var(--step--2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.4rem 0.8rem; border: 1px solid rgba(255, 255, 255, 0.15); color: var(--text-secondary); transition: all 0.3s ease; }
+
   
   .flip-card-back { transform: rotateY(180deg); align-items: center; justify-content: center; text-align: center; }
   .project-logo { max-width: 80%; max-height: 90px; object-fit: contain; margin-bottom: 2rem; }
