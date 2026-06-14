@@ -3,6 +3,7 @@
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import profileImg from '../assets/profile.jpg'; 
+import ethosImg from '../assets/ethos-portrait.jpg'; // The new Ethos image
 import BaseLayout from '../layouts/BaseLayout.astro';
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -178,7 +179,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
       <div class="terminal-window">
         
-        <!-- Terminal Header Controls -->
         <div class="terminal-header">
           <div class="terminal-buttons">
             <span class="term-btn red"></span>
@@ -188,7 +188,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
           <div class="terminal-title">fareed@admin: ~/career/logs</div>
         </div>
 
-        <!-- DESKTOP DUAL-PANE VIEW -->
         <div class="terminal-body desktop-terminal">
           <div class="terminal-sidebar">
             <p class="term-comment"># Hover to execute deployment log:</p>
@@ -218,7 +217,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
           </div>
         </div>
 
-        <!-- MOBILE ACCORDION VIEW -->
         <div class="terminal-body mobile-terminal">
           <p class="term-comment"># Tap to execute deployment log:</p>
           {allExperience.map((job: any, index: number) => {
@@ -291,12 +289,33 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
   <section class="ethos-section global-padding" id="ethos">
     <div class="container">
-      <div class="ethos-box">
-        <h2>{ethosData.data.title}</h2>
-        <div class="ethos-content">
-          <EthosContent />
-          <a href={ethosData.data.buttonLink} class="contact-btn ethos-btn modal-trigger">{ethosData.data.buttonText}</a>
+      <div class="ethos-split-layout">
+        
+        <div class="ethos-box">
+          <h2>{ethosData.data.title}</h2>
+          <div class="ethos-content">
+            <EthosContent />
+            <a href={ethosData.data.buttonLink} class="contact-btn ethos-btn modal-trigger">{ethosData.data.buttonText}</a>
+          </div>
         </div>
+
+        <div class="ethos-image-wrapper glass-panel" id="ethos-interact-zone">
+          
+          <Image src={ethosImg} alt="Ethos Portrait" class="ethos-base-img" loading="lazy" />
+          
+          <div class="ethos-color-layer" id="ethos-color-reveal">
+            <Image src={ethosImg} alt="" class="ethos-reveal-img" loading="lazy" />
+          </div>
+
+          <div class="haptic-prompt" id="haptic-hint">
+            <div class="haptic-ring"></div>
+            <svg class="fingerprint-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm2-8.5c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-4.5 3c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm9 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+        </div>
+
       </div>
     </div>
   </section>
@@ -446,6 +465,96 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         }
       });
     });
+
+    // ==========================================
+    // --- ETHOS X-RAY / INK DROP ENGINE ---
+    // ==========================================
+    const ethosZone = document.getElementById('ethos-interact-zone');
+    const colorReveal = document.getElementById('ethos-color-reveal');
+    const hapticHint = document.getElementById('haptic-hint');
+    let hintDismissed = false;
+
+    if (ethosZone && colorReveal) {
+      
+      // 1. DESKTOP LOGIC (Mouse Spotlight)
+      ethosZone.addEventListener('mousemove', (e: Event) => {
+        const mouseEvent = e as MouseEvent;
+        // Only run mouse logic on desktop
+        if (window.innerWidth > 768) {
+          if (!hintDismissed && hapticHint) {
+            gsap.to(hapticHint, { opacity: 0, duration: 0.5, onComplete: () => hapticHint.style.display = 'none' });
+            hintDismissed = true;
+          }
+          
+          const rect = ethosZone.getBoundingClientRect();
+          const x = mouseEvent.clientX - rect.left;
+          const y = mouseEvent.clientY - rect.top;
+          
+          // Using quickTo for buttery smooth cursor tracking without layout thrashing
+          gsap.to(colorReveal, {
+            '--x': `${x}px`,
+            '--y': `${y}px`,
+            '--size': '150px', // The size of the desktop spotlight
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        }
+      });
+
+      ethosZone.addEventListener('mouseleave', () => {
+        if (window.innerWidth > 768) {
+          gsap.to(colorReveal, { '--size': '0px', duration: 0.5, ease: "power2.out" });
+        }
+      });
+
+      // 2. MOBILE LOGIC (Touch & Hold Ink Drop)
+      let isTouching = false;
+
+      const triggerInkDrop = (e: Event) => {
+        const touchEvent = e as TouchEvent;
+        if (window.innerWidth <= 768) {
+          // Prevent screen from scrolling while they hold
+          if (e.cancelable) e.preventDefault(); 
+          isTouching = true;
+
+          if (!hintDismissed && hapticHint) {
+            gsap.to(hapticHint, { opacity: 0, duration: 0.5, onComplete: () => hapticHint.style.display = 'none' });
+            hintDismissed = true;
+          }
+
+          const rect = ethosZone.getBoundingClientRect();
+          const touch = touchEvent.touches[0];
+          const x = touch.clientX - rect.left;
+          const y = touch.clientY - rect.top;
+
+          // Instantly move the 0px circle to the thumb location
+          gsap.set(colorReveal, { '--x': `${x}px`, '--y': `${y}px`, '--size': '0px' });
+          
+          // Animate the circle massive enough to cover the whole image
+          gsap.to(colorReveal, {
+            '--size': '1200px', 
+            duration: 1.2, 
+            ease: "power2.inOut"
+          });
+        }
+      };
+
+      const reverseInkDrop = () => {
+        if (window.innerWidth <= 768 && isTouching) {
+          isTouching = false;
+          // Collapse the color back into the touch point
+          gsap.to(colorReveal, {
+            '--size': '0px', 
+            duration: 0.5, 
+            ease: "power2.in"
+          });
+        }
+      };
+
+      ethosZone.addEventListener('touchstart', triggerInkDrop, { passive: false });
+      ethosZone.addEventListener('touchend', reverseInkDrop);
+      ethosZone.addEventListener('touchcancel', reverseInkDrop);
+    }
 
     let mm = gsap.matchMedia();
 
@@ -962,12 +1071,106 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .bento-card p { color: var(--text-secondary); font-size: var(--step-0); line-height: 1.5; margin: 0 0 1rem 0; }
   .bento-meta { font-size: var(--step--1); color: #666; text-transform: uppercase; letter-spacing: 0.05em; margin-top: auto; }
 
-  /* Work Ethos */
-  .ethos-box { border: 1px solid #333; padding: 4rem; background: rgba(8,8,8,0.8); backdrop-filter: blur(10px); }
+  /* ==========================================
+     NEW: ETHOS X-RAY INTERACTION STYLING 
+  ========================================== */
+  .ethos-split-layout {
+    display: grid;
+    grid-template-columns: 1fr 400px; 
+    gap: 2rem;
+    align-items: stretch;
+  }
+
+  .ethos-box { 
+    border: 1px solid #333; 
+    padding: 4rem; 
+    background: rgba(8,8,8,0.8); 
+    backdrop-filter: blur(10px); 
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  
   .ethos-box h2 { font-family: 'Syne', sans-serif; font-size: var(--step-3); color: var(--text-primary); margin: 0 0 2rem 0; }
-  .ethos-content p { color: var(--text-secondary); font-size: var(--step-1); line-height: 1.7; margin: 0 0 1.5rem 0; max-width: 800px; }
+  .ethos-content p { color: var(--text-secondary); font-size: var(--step-1); line-height: 1.7; margin: 0 0 1.5rem 0; }
   .ethos-content p:last-child { margin: 0; }
   .ethos-btn { margin-top: 2.5rem; display: inline-flex; }
+
+  /* The Interactive Image Container */
+  .ethos-image-wrapper {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: crosshair; 
+    /* CSS Variables controlled by GSAP */
+    --x: 50%;
+    --y: 50%;
+    --size: 0px; 
+  }
+
+  /* Layer 1: Grayscale Base */
+  .ethos-base-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: grayscale(100%) contrast(1.1); 
+    display: block;
+  }
+
+  /* Layer 2: The Color Reveal Spotlight */
+  .ethos-color-layer {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    /* The Magic: A circle drawn at the X/Y coordinates fed by JavaScript */
+    clip-path: circle(var(--size) at var(--x) var(--y));
+    -webkit-clip-path: circle(var(--size) at var(--x) var(--y));
+    pointer-events: none; 
+    z-index: 2;
+  }
+  
+  .ethos-reveal-img {
+    width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
+  }
+
+  /* Layer 3: The Haptic Fingerprint Overlay */
+  .haptic-prompt {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0.8;
+  }
+
+  .fingerprint-icon {
+    width: 30px;
+    height: 30px;
+    color: rgba(255, 255, 255, 0.9);
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+    z-index: 2;
+  }
+
+  /* The Pulsing Ring */
+  .haptic-ring {
+    position: absolute;
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 100%; height: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    animation: pulse-ring 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  @keyframes pulse-ring {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; border-width: 2px; }
+    100% { transform: translate(-50%, -50%) scale(2); opacity: 0; border-width: 0; }
+  }
 
   /* Footer */
   .site-footer { border-top: 1px solid #1a1a1a; padding: 3rem 0; }
@@ -1016,7 +1219,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     
     .portrait-wrapper { transform: translateX(35vw); }
     
-    /* --- FIX: Pan Mobile Image Crop to perfectly offset the 35vw container shift --- */
+    /* --- Pan Mobile Image Crop to perfectly offset the 35vw container shift --- */
     .portrait-img { object-position: 30% 25%; }
     .ghost-watermark { object-position: 30% 25%; }
     
@@ -1041,8 +1244,15 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     .mobile-modal { top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; width: 90vw; pointer-events: auto !important; box-shadow: 0 0 50px rgba(0,0,0,0.9); border-color: rgba(255,255,255,0.3); }
 
     .skills-card { grid-column: span 1; }
-    .ethos-box { padding: 2rem; }
     .footer-content { flex-direction: column; text-align: center; }
     .modal-box { padding: 2rem; }
+    
+    /* Mobile Ethos Adjustments */
+    .ethos-split-layout {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    .ethos-box { padding: 2.5rem; }
+    .ethos-image-wrapper { height: 400px; } 
   }
 </style>
