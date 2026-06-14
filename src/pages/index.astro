@@ -51,7 +51,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         <img src="/favicon.svg" alt="Fareed Logo" />
       </a>
       <nav class="nav-links">
-        <!-- MODIFIED: Minimalist WhatsApp SVG Icon -->
         <a href="https://wa.me/9717775962" class="whatsapp-icon-link" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path d="M17.472 14.38c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.305-.883-.653-1.48-1.459-1.653-1.756-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51h-.57c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.445 4.439-9.884 9.884-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.006 5.45-4.439 9.885-9.881 9.885m8.413-18.297A11.815 11.815 0 0012.052 0C5.495 0 .104 5.384.104 11.933c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652c1.73.943 3.682 1.44 5.711 1.44h.004c6.558 0 11.956-5.384 11.96-11.937A11.812 11.812 0 0020.464 3.486z"/>
@@ -68,9 +67,16 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         <h1>Fareed M.<br/>Rifaideen</h1>
         <h2 class="dynamic-subtitle-wrapper">I'm a <span class="dynamic-subtitle">Full-Stack Digital Marketer & Web Developer</span></h2>
       </div>
+      
       <div class="scroll-icon-wrapper">
-        <img src="/scroll-Icon.svg" alt="Scroll Down" class="scroll-icon" />
+        <div class="magnetic-target">
+          <span class="magnetic-text">Scroll</span>
+          <div class="icon-bounce-wrapper">
+            <img src="/scroll-Icon.svg" alt="Scroll Down" class="scroll-icon" />
+          </div>
+        </div>
       </div>
+
       <div class="portrait-wrapper">
         <Image src={profileImg} alt="Fareed Profile" class="portrait-img hero-portrait" loading="eager" /> 
       </div>
@@ -81,13 +87,11 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         <p class="bio">
           As a Full-Stack Marketer and Web Developer, I combine technical SEO, custom WordPress development, and targeted ads to build digital spaces that solve problems and generate real returns.
         </p>
-        <!-- MODIFIED: Bio Section CTA with Bounce Span -->
         <a href="#ethos" class="btn-outline bio-cta">Read My Ethos <span class="bounce-arrow">↓</span></a>
       </div>
     </div>
   </section>
 
-  <!-- Sticky Scroll Editorial Deck (Services) -->
   <section class="services-sticky-section global-padding" id="services">
     <div class="container">
       <div class="sticky-editorial-layout">
@@ -125,7 +129,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     </div>
   </section>
 
-  <!-- 3D Flip Track Carousel (Projects) -->
   <section class="projects-flip-track-section global-padding" id="projects">
     <div class="container">
       <div class="projects-header-wrapper">
@@ -143,7 +146,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
           <div class="swiper-slide flip-project-card">
             <div class="flip-card-inner">
               
-              <!-- State A: Front (Text & Tags) -->
               <div class="flip-card-front glass-panel">
                 <h3 class="proj-front-title">{project.data.title}</h3>
                 <p class="proj-front-summary">{project.data.summary}</p>
@@ -154,10 +156,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
                 </div>
               </div>
 
-              <!-- State B: Back (Logo & Button) -->
               <div class="flip-card-back glass-panel">
                 <img src={project.data.image} alt={`${project.data.title} Logo`} class="project-logo bw-logo" loading="lazy" decoding="async" />
-                <!-- MODIFIED: Updated Copywriting -->
                 <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer" class="btn-solid view-project-btn"><span class="btn-text">View Live Project</span></a>
               </div>
 
@@ -169,7 +169,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     </div>
   </section>
 
-  <!-- Career Slider Section -->
   <section class="experience-section global-padding">
     <div class="container">
       <h2 class="section-title">Career Journey</h2>
@@ -202,7 +201,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     <p id="tooltip-text"></p>
   </div>
 
-  <!-- Bento Section -->
   <section class="bento-section global-padding">
     <div class="container">
       <h2 class="section-title">Arsenal & Education</h2>
@@ -263,7 +261,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     </div>
   </footer>
 
-  <!-- Contact Modal -->
   <div class="modal-overlay" id="contactModal">
     <div class="modal-box">
       <button class="modal-close" id="closeModal">✕</button>
@@ -285,7 +282,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
           <textarea name="message" id="message" rows="4" required placeholder=" "></textarea>
           <label for="message">Project Details</label>
         </div>
-        <!-- MODIFIED: Updated Copywriting -->
         <button type="submit" class="contact-btn submit-btn">Initiate Project</button>
       </form>
     </div>
@@ -304,6 +300,48 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
     function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
+
+    // --- Magnetic Scroll Indicator Logic (Desktop Only) ---
+    const magTarget = document.querySelector('.magnetic-target');
+    const heroSection = document.querySelector('.cinematic-hero');
+    
+    if (magTarget && heroSection && window.innerWidth > 768) {
+      heroSection.addEventListener('mousemove', (e) => {
+        const mouseEvent = e as MouseEvent;
+        const wrapper = magTarget.parentElement as HTMLElement;
+        const rect = wrapper.getBoundingClientRect();
+        
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        const distX = mouseEvent.clientX - centerX;
+        const distY = mouseEvent.clientY - centerY;
+        const distance = Math.sqrt(distX * distX + distY * distY);
+        
+        // MODIFIED: Radius expanded to 600px for a more eager magnetic pull
+        if (distance < 600) {
+          gsap.to(magTarget, {
+            x: distX * 0.3,
+            y: distY * 0.3,
+            rotate: distX * 0.05, 
+            duration: 0.4,
+            ease: "power2.out"
+          });
+        } else {
+          gsap.to(magTarget, {
+            x: 0,
+            y: 0,
+            rotate: 0,
+            duration: 0.8,
+            ease: "elastic.out(1, 0.4)"
+          });
+        }
+      });
+      
+      heroSection.addEventListener('mouseleave', () => {
+        gsap.to(magTarget, { x: 0, y: 0, rotate: 0, duration: 0.8, ease: "elastic.out(1, 0.4)" });
+      });
+    }
 
     // --- Lenis Anchor Interceptor for Bio CTA ---
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -527,7 +565,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   body { background-color: var(--bg-color); color: var(--text-primary); font-family: 'Hanken Grotesk', sans-serif; margin: 0; overflow-x: hidden; }
   .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
 
-  /* Apply Global Spacing Class */
   .global-padding { padding: var(--section-gap-desktop) 0; }
 
   /* Header */
@@ -536,7 +573,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .logo img { height: 35px; width: auto; display: block; }
   .nav-links { display: flex; gap: 1rem; align-items: center; }
   
-  /* NEW: Minimalist WhatsApp Icon Link */
   .whatsapp-icon-link {
     color: var(--text-primary);
     opacity: 0.7;
@@ -545,10 +581,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     align-items: center;
     justify-content: center;
   }
-  .whatsapp-icon-link:hover {
-    opacity: 1;
-    transform: scale(1.1);
-  }
+  .whatsapp-icon-link:hover { opacity: 1; transform: scale(1.1); }
   
   .contact-btn {
     font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; color: #fff; text-decoration: none;
@@ -572,14 +605,18 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .dynamic-subtitle-wrapper { font-family: 'Hanken Grotesk', sans-serif; font-weight: 400; font-size: clamp(1rem, 2vw, 1.5rem); color: var(--text-secondary); margin-top: 1rem; display: flex; align-items: center; gap: 0.4rem;}
   .dynamic-subtitle { display: inline-block; color: var(--text-primary); font-weight: 600; }
   
-  .scroll-icon-wrapper { position: absolute; bottom: 3rem; left: 2rem; z-index: 10; }
-  .scroll-icon { width: 30px; height: auto; opacity: 0.7; animation: bounce 2s infinite; }
+  .scroll-icon-wrapper { position: absolute; bottom: 3rem; left: 2.5rem; z-index: 10; display: flex; justify-content: center; align-items: flex-end; width: 60px; height: 100px; }
+  .magnetic-target { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+  .magnetic-text { font-family: 'Hanken Grotesk', sans-serif; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); opacity: 0.8; }
+  .icon-bounce-wrapper { animation: bounce 2s infinite; }
+  .scroll-icon { width: 24px; height: auto; opacity: 0.7; }
+  
   @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
+  
   .portrait-wrapper { position: absolute; height: 100vh; width: 100vw; top: 0; left: 0; display: flex; align-items: center; justify-content: center; z-index: 1; transform: translateX(35vw); }
   .portrait-img { height: 100%; width: 100%; max-width: 800px; object-fit: cover; object-position: center; transition: filter 1s ease; }
   .bio-text { position: absolute; right: 2rem; width: 450px; z-index: 10; opacity: 0; transform: translateX(50px); }
   .bio { color: var(--text-secondary); font-size: var(--step-1); line-height: 1.7; margin-bottom: 1.5rem; }
-  
   .bio-cta { margin-top: 1rem; }
   
   .section-title { font-family: 'Syne', sans-serif; font-size: var(--step-4); margin-bottom: 4rem; color: var(--text-primary); }
@@ -587,18 +624,15 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   /* Generic Glass Panel */
   .glass-panel { background: linear-gradient(135deg, rgba(25, 25, 25, 0.4) 0%, rgba(10, 10, 10, 0.8) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.02); border-right: 1px solid rgba(255, 255, 255, 0.02); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); border-radius: 16px; }
 
-  /* --- UPGRADED SOLID CTA BUTTONS --- */
+  /* --- SOLID CTA BUTTONS --- */
   .btn-solid { 
-    position: relative;
-    overflow: hidden;
-    font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; 
+    position: relative; overflow: hidden; font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; 
     letter-spacing: 0.05em; font-size: var(--step--1); background: #fff; color: #000; 
     padding: 0.8rem 2.5rem; border-radius: 50px; text-decoration: none; 
     border: 1px solid #fff; display: inline-flex; align-items: center; justify-content: center; 
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
   
-  /* Diagonal Arrow Push Layer */
   .btn-solid .btn-text { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2; position: relative; }
   .btn-solid::after {
     content: '↗'; position: absolute; right: 1.2rem; opacity: 0;
@@ -609,7 +643,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .btn-solid:hover .btn-text { transform: translateX(-5px); }
   .btn-solid:hover::after { opacity: 1; transform: translate(0, 0); }
 
-  /* MODIFIED: Liquid Sheen Idle Animation - Using dark silver on white */
   .btn-solid::before {
     content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
     background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0) 100%);
@@ -633,15 +666,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   }
   .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.05); }
 
-  /* NEW: Bio CTA Gentle Bounce Animation */
-  .bounce-arrow {
-    display: inline-block;
-    margin-left: 0.5rem;
-    transition: transform 0.3s ease;
-  }
-  .bio-cta:hover .bounce-arrow {
-    animation: gentle-bounce 1s infinite;
-  }
+  .bounce-arrow { display: inline-block; margin-left: 0.5rem; transition: transform 0.3s ease; }
+  .bio-cta:hover .bounce-arrow { animation: gentle-bounce 1s infinite; }
   @keyframes gentle-bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(4px); }
@@ -807,7 +833,10 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     .nav-links { gap: 0.5rem; }
     .contact-btn { padding: 0.5rem 1rem; }
     .intro-text { bottom: 15%; left: 1.5rem; }
+    
     .scroll-icon-wrapper { left: 50%; transform: translateX(-50%); bottom: 3%; }
+    .magnetic-target { transform: none !important; }
+    
     .portrait-wrapper { transform: translateX(35vw); }
     
     .bio-text { 
