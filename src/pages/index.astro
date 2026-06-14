@@ -318,7 +318,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         const distY = mouseEvent.clientY - centerY;
         const distance = Math.sqrt(distX * distX + distY * distY);
         
-        // MODIFIED: Radius expanded to 600px for a more eager magnetic pull
         if (distance < 600) {
           gsap.to(magTarget, {
             x: distX * 0.3,
@@ -343,7 +342,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       });
     }
 
-    // --- Lenis Anchor Interceptor for Bio CTA ---
+    // --- Lenis Anchor Interceptor ---
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         const targetId = this.getAttribute('href');
@@ -354,13 +353,14 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       });
     });
 
-    // --- Background Portrait Opacity Tether ---
+    // --- FIX 1: Background Portrait Fade-In Logic ---
+    // Start at 0, fade to 0.03 so it becomes visible AFTER the hero section
     gsap.to("#bg-portrait", {
-      opacity: 0,
+      opacity: 0.03,
       scrollTrigger: {
         trigger: ".services-sticky-section",
-        start: "top center",
-        end: "top top",
+        start: "top 80%", // Trigger slightly before services hits the top
+        end: "top 20%",
         scrub: true
       }
     });
@@ -384,17 +384,13 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       }
     });
 
-    // Mobile specific script for handling 3D click flips
     const flipCards = document.querySelectorAll('.flip-project-card');
     flipCards.forEach(card => {
       card.addEventListener('click', () => {
         if (window.innerWidth <= 768) {
           card.classList.toggle('is-flipped');
-          
           flipCards.forEach(otherCard => {
-            if (otherCard !== card) {
-              otherCard.classList.remove('is-flipped');
-            }
+            if (otherCard !== card) otherCard.classList.remove('is-flipped');
           });
         }
       });
@@ -476,7 +472,9 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       mobileTl.to(".intro-text", { opacity: 0, y: 30, duration: 1 }, 0)
         .to(".scroll-icon-wrapper", { opacity: 0, duration: 0.5 }, 0)
         .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
-      mobileTl.to(".portrait-wrapper", { x: "-35vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
+      
+      // FIX 2: Reduced x translation to -15vw to stop left-edge face cropping on mobile
+      mobileTl.to(".portrait-wrapper", { x: "-15vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
         .to(".bio-text", { opacity: 1, y: 0, duration: 1, ease: "power1.out" }, 1.5);
         
       mobileTl.to({}, { duration: 1.5 });
@@ -590,11 +588,11 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   }
   .contact-btn:hover { background-color: #fff; color: #000; }
 
-  /* Ghost Watermark */
+  /* FIX 1 CSS: Ghost Watermark initial opacity is 0 */
   .ghost-watermark {
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
     height: 120vh; width: auto; min-width: 100vw; object-fit: cover;
-    opacity: 0.03; mix-blend-mode: luminosity; pointer-events: none; z-index: 0;
+    opacity: 0; mix-blend-mode: luminosity; pointer-events: none; z-index: 0;
   }
 
   /* Cinematic Section */
@@ -834,7 +832,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     .contact-btn { padding: 0.5rem 1rem; }
     .intro-text { bottom: 15%; left: 1.5rem; }
     
-    .scroll-icon-wrapper { left: 50%; transform: translateX(-50%); bottom: 3%; }
+    /* FIX 3 CSS: Safely lifted above native mobile UI bars */
+    .scroll-icon-wrapper { left: 50%; transform: translateX(-50%); bottom: 12%; }
     .magnetic-target { transform: none !important; }
     
     .portrait-wrapper { transform: translateX(35vw); }
@@ -847,7 +846,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       transform: translateY(30px); 
     }
     
-    /* Mobile Sticky Services */
     .sticky-editorial-layout { flex-direction: column; gap: 4rem; }
     .sticky-sidebar, .scrolling-cards-container { width: 100%; }
     .sticky-sidebar { position: relative; top: 0; }
@@ -855,14 +853,11 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     .editorial-service-card { padding: 2.5rem; gap: 1.5rem; }
     .service-number { font-size: 4rem; }
 
-    /* Mobile 3D Flip Track */
     .flip-project-card { width: 85vw; height: 320px; } 
 
-    /* Mobile Career Ruler */
     .ruler-card { width: 75vw; }
     .career-ruler-track { padding: 0 12.5vw; gap: 2rem; }
     
-    /* Mobile Tooltip Overrides */
     .mobile-modal { top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; width: 90vw; pointer-events: auto !important; box-shadow: 0 0 50px rgba(0,0,0,0.9); border-color: rgba(255,255,255,0.3); }
 
     .skills-card { grid-column: span 1; }
