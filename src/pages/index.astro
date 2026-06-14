@@ -169,31 +169,86 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     </div>
   </section>
 
-  <section class="experience-section global-padding">
+  <section class="terminal-experience-section global-padding" id="experience">
     <div class="container">
-      <h2 class="section-title">Career Journey</h2>
-      
-      <div class="career-ruler-wrapper" id="career-scroll-box">
-        <div class="career-ruler-track">
-          <div class="career-ruler-line"></div>
-          
-          {allExperience.map((job: any) => (
-            <div class="ruler-card tooltip-trigger" data-tooltip={job.data.problemStatement}>
-              <div class="ruler-dot"></div>
-              <div class="ruler-content glass-panel">
-                <span class="timeline-date">{job.data.date}</span>
-                <h3>{job.data.title}</h3>
-                <h4>{job.data.company}</h4>
-              </div>
-            </div>
-          ))}
+      <div class="projects-header-wrapper">
+        <div class="label-pill">
+          <span class="pill-dot"></span>
+          <span>Career History</span>
         </div>
+        <h2 class="massive-projects-title">Execution Logs.</h2>
       </div>
 
-      <div class="slider-controls-container">
-        <input type="range" id="career-slider" class="custom-monochrome-slider" min="0" max="100" value="0" />
-      </div>
+      <div class="terminal-window">
+        
+        <!-- Terminal Header Controls -->
+        <div class="terminal-header">
+          <div class="terminal-buttons">
+            <span class="term-btn red"></span>
+            <span class="term-btn yellow"></span>
+            <span class="term-btn green"></span>
+          </div>
+          <div class="terminal-title">fareed@admin: ~/career/logs</div>
+        </div>
 
+        <!-- DESKTOP DUAL-PANE VIEW -->
+        <div class="terminal-body desktop-terminal">
+          <div class="terminal-sidebar">
+            <p class="term-comment"># Hover to execute deployment log:</p>
+            {allExperience.map((job: any, index: number) => {
+              // Now mapped to Title instead of Company
+              const safeTitle = job.data.title.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+              return (
+                <button 
+                  class="term-command desktop-cmd" 
+                  data-date={job.data.date}
+                  data-title={job.data.title}
+                  data-company={job.data.company}
+                  data-problem={job.data.problemStatement}
+                >
+                  <span class="prompt-arrow">❯</span> ./run_{safeTitle}
+                </button>
+              );
+            })}
+          </div>
+          
+          <div class="terminal-main">
+            <div class="terminal-output-wrapper">
+              <div id="desktop-terminal-output" class="terminal-output">
+                <p class="system-msg term-comment">System ready. Awaiting command input...</p>
+              </div>
+              <span class="blinking-cursor">█</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- MOBILE ACCORDION VIEW -->
+        <div class="terminal-body mobile-terminal">
+          <p class="term-comment"># Tap to execute deployment log:</p>
+          {allExperience.map((job: any, index: number) => {
+            const safeTitle = job.data.title.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+            return (
+              <div class="mobile-term-group">
+                <button 
+                  class="term-command mobile-cmd" 
+                  data-index={index}
+                  data-date={job.data.date}
+                  data-title={job.data.title}
+                  data-company={job.data.company}
+                  data-problem={job.data.problemStatement}
+                >
+                  <span class="prompt-arrow">❯</span> ./run_{safeTitle}
+                </button>
+                <div class="mobile-output-wrapper" id={`mobile-output-${index}`}>
+                  <div class="mobile-output-content"></div>
+                  <span class="blinking-cursor mobile-cursor" style="display:none;">█</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+      </div>
     </div>
   </section>
 
@@ -290,11 +345,12 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   <script>
     import gsap from 'gsap';
     import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    import { TextPlugin } from 'gsap/TextPlugin';
     import Lenis from '@studio-freight/lenis';
     import Swiper from 'swiper';
     import { Pagination, Autoplay } from 'swiper/modules';
 
-    gsap.registerPlugin(ScrollTrigger);
+    gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
     // --- Smooth Scrolling ---
     const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
@@ -395,58 +451,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       });
     });
 
-    // --- Horizontal Career Slider Logic ---
-    const scrollBox = document.getElementById('career-scroll-box');
-    const slider = document.getElementById('career-slider') as HTMLInputElement;
-
-    if (scrollBox && slider) {
-      slider.addEventListener('input', (e) => {
-        const target = e.target as HTMLInputElement;
-        const maxScroll = scrollBox.scrollWidth - scrollBox.clientWidth;
-        scrollBox.scrollLeft = (Number(target.value) / 100) * maxScroll;
-        target.style.setProperty('--val', target.value + '%');
-      });
-
-      scrollBox.addEventListener('scroll', () => {
-        const maxScroll = scrollBox.scrollWidth - scrollBox.clientWidth;
-        if(maxScroll > 0) {
-            const val = (scrollBox.scrollLeft / maxScroll) * 100;
-            slider.value = val.toString();
-            slider.style.setProperty('--val', val + '%');
-        }
-      });
-    }
-
-    // --- Global Interactive Tooltip Logic ---
-    const tooltip = document.getElementById('global-tooltip');
-    const tooltipText = document.getElementById('tooltip-text');
-    const triggerCards = document.querySelectorAll('.tooltip-trigger');
-
-    triggerCards.forEach(card => {
-      card.addEventListener('mousemove', (e: Event) => {
-        const mouseEvent = e as MouseEvent;
-        if (window.innerWidth > 768 && tooltip && tooltipText) {
-          tooltipText.textContent = card.getAttribute('data-tooltip');
-          tooltip.classList.remove('hidden-tooltip');
-          tooltip.style.left = (mouseEvent.clientX + 20) + 'px';
-          tooltip.style.top = (mouseEvent.clientY + 20) + 'px';
-        }
-      });
-
-      card.addEventListener('mouseleave', () => {
-        if(tooltip) tooltip.classList.add('hidden-tooltip');
-      });
-
-      card.addEventListener('click', () => {
-        if (window.innerWidth <= 768 && tooltip && tooltipText) {
-          tooltipText.textContent = card.getAttribute('data-tooltip');
-          tooltip.classList.remove('hidden-tooltip');
-          tooltip.classList.add('mobile-modal');
-          setTimeout(() => tooltip.classList.add('hidden-tooltip'), 4000);
-        }
-      });
-    });
-
     let mm = gsap.matchMedia();
 
     // ==========================================
@@ -464,12 +468,47 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
       tl.to({}, { duration: 1.5 });
 
-      // Trigger Header Pill (Desktop Only)
+      // Trigger Header Pill 
       ScrollTrigger.create({
         trigger: ".services-sticky-section",
         start: 'top 15%', 
         end: 'max', 
         toggleClass: { className: 'is-scrolled', targets: '.site-header' }
+      });
+
+      // --- DESKTOP TERMINAL TYPEWRITER LOGIC ---
+      const desktopCmds = document.querySelectorAll('.desktop-cmd');
+      const desktopOutput = document.getElementById('desktop-terminal-output');
+
+      desktopCmds.forEach(cmd => {
+        cmd.addEventListener('mouseenter', function() {
+          const el = this as HTMLElement;
+          desktopCmds.forEach(c => c.classList.remove('active-cmd'));
+          el.classList.add('active-cmd');
+
+          const date = el.getAttribute('data-date');
+          const title = el.getAttribute('data-title');
+          const company = el.getAttribute('data-company');
+          const problem = el.getAttribute('data-problem');
+
+          // Dynamically parsing both the Job Title and the Company
+          const logHTML = `
+            <span class="term-date">[ ${date} ]</span><br/>
+            <span class="term-process">TARGET_ORG:</span> <span class="term-title">${company}</span><br/>
+            <span class="term-process">EXEC_ROLE:</span> <span class="term-title">${title}</span><br/><br/>
+            <span class="term-info">OUTPUT LOG:</span><br/><span class="term-desc">${problem}</span><br/><br/>
+            <span class="term-success">> [ exit code 0 ] process execution successful.</span>
+          `;
+
+          if (desktopOutput) {
+            gsap.killTweensOf(desktopOutput);
+            gsap.to(desktopOutput, {
+              text: { value: logHTML },
+              duration: 1.2,
+              ease: "none"
+            });
+          }
+        });
       });
     });
 
@@ -482,16 +521,71 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" }
       });
       
-      // Horizontal slide out for intro text
       mobileTl.to(".intro-text", { opacity: 0, x: -30, duration: 1 }, 0)
         .to(".scroll-icon-wrapper", { opacity: 0, duration: 0.5 }, 0)
         .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
       
-      // Portrait shifts further left to make room, bio text slides in from right
       mobileTl.to(".portrait-wrapper", { x: "-35vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
         .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
         
       mobileTl.to({}, { duration: 1.5 });
+
+      // --- MOBILE TERMINAL ACCORDION LOGIC ---
+      const mobileCmds = document.querySelectorAll('.mobile-cmd');
+      let activeMobileIndex = -1;
+
+      mobileCmds.forEach((cmd, index) => {
+        cmd.addEventListener('click', function() {
+          const el = this as HTMLElement;
+          if (activeMobileIndex === index) return; 
+          
+          if (activeMobileIndex !== -1) {
+             const prevWrapper = document.getElementById(`mobile-output-${activeMobileIndex}`);
+             const prevContent = prevWrapper?.querySelector('.mobile-output-content');
+             const prevCursor = prevWrapper?.querySelector('.mobile-cursor');
+             if(prevContent && prevWrapper && prevCursor) {
+               gsap.killTweensOf(prevContent);
+               gsap.to(prevWrapper, { height: 0, duration: 0.4, ease: "power2.inOut" });
+               (prevCursor as HTMLElement).style.display = 'none';
+               mobileCmds[activeMobileIndex].classList.remove('active-cmd');
+             }
+          }
+
+          activeMobileIndex = index;
+          el.classList.add('active-cmd');
+
+          const wrapper = document.getElementById(`mobile-output-${index}`);
+          const content = wrapper?.querySelector('.mobile-output-content');
+          const cursor = wrapper?.querySelector('.mobile-cursor');
+          
+          const date = el.getAttribute('data-date');
+          const title = el.getAttribute('data-title');
+          const company = el.getAttribute('data-company');
+          const problem = el.getAttribute('data-problem');
+
+          const logHTML = `
+            <span class="term-date">[ ${date} ]</span><br/>
+            <span class="term-process">TARGET_ORG:</span> <span class="term-title">${company}</span><br/>
+            <span class="term-process">EXEC_ROLE:</span> <span class="term-title">${title}</span><br/><br/>
+            <span class="term-info">OUTPUT:</span> <span class="term-desc">${problem}</span><br/><br/>
+            <span class="term-success">> execution successful.</span>
+          `;
+
+          if(content && wrapper && cursor) {
+            gsap.set(content, { text: "" }); 
+            (cursor as HTMLElement).style.display = 'inline-block';
+            
+            gsap.to(wrapper, { 
+              height: "auto", 
+              duration: 0.4, 
+              ease: "power2.inOut", 
+              onComplete: () => {
+                gsap.to(content, { text: { value: logHTML }, duration: 1.2, ease: "none" });
+              }
+            });
+          }
+        });
+      });
     });
 
     // --- GLOBAL SERVICE CARDS FADE UP (Runs on Desktop & Mobile) ---
@@ -555,16 +649,15 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     --accent: #fff;
 
     /* THE GOLDEN TYPOGRAPHIC SCALE */
-    --step--2: 0.75rem; /* Tech tags, small metadata */
-    --step--1: 0.85rem; /* Buttons, pill labels */
-    --step-0: 1rem;     /* Standard body, summaries */
-    --step-1: 1.15rem;  /* Large body, bios, pitches */
-    --step-2: 1.5rem;   /* Card Headers (Projects, Ruler, Bento) */
-    --step-3: 2.5rem;   /* Major Sub-headers (Services, Ethos) */
-    --step-4: 3rem;     /* Standard Section Titles */
-    --step-5: clamp(3rem, 5vw, 4.5rem); /* Hero / Massive Titles */
+    --step--2: 0.75rem; 
+    --step--1: 0.85rem; 
+    --step-0: 1rem;     
+    --step-1: 1.15rem;  
+    --step-2: 1.5rem;   
+    --step-3: 2.5rem;   
+    --step-4: 3rem;     
+    --step-5: clamp(3rem, 5vw, 4.5rem); 
 
-    /* GLOBAL SECTION SPACING */
     --section-gap-desktop: 8rem;
     --section-gap-mobile: 4rem;
   }
@@ -574,7 +667,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
   .global-padding { padding: var(--section-gap-desktop) 0; }
 
-  /* --- HEADER: INITIAL STATE (Unboxed & Transparent) --- */
+  /* --- HEADER --- */
   .site-header { 
     position: fixed; top: 0; left: 0; width: 100%; 
     padding: 2rem 0; z-index: 100; 
@@ -591,7 +684,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
   .logo img { height: 35px; width: auto; display: block; transition: height 0.4s ease; }
 
-  /* --- HEADER: DYNAMIC SCROLL STATE (Desktop Only Pill) --- */
   @media (min-width: 769px) {
     .site-header.is-scrolled {
       padding: 1.5rem 0; 
@@ -629,7 +721,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   }
   .contact-btn:hover { background-color: #fff; color: #000; }
 
-  /* --- NEON BREATHE AMBIENT GLOW --- */
   .glow-breathe {
     animation: neon-breathe 4s infinite ease-in-out;
   }
@@ -639,7 +730,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 8px rgba(255, 255, 255, 0.2); }
   }
 
-  /* Ghost Watermark */
   .ghost-watermark {
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
     height: 120vh; width: auto; min-width: 100vw; 
@@ -677,10 +767,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   
   .section-title { font-family: 'Syne', sans-serif; font-size: var(--step-4); margin-bottom: 4rem; color: var(--text-primary); }
 
-  /* Generic Glass Panel */
   .glass-panel { background: linear-gradient(135deg, rgba(25, 25, 25, 0.4) 0%, rgba(10, 10, 10, 0.8) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.02); border-right: 1px solid rgba(255, 255, 255, 0.02); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); border-radius: 16px; }
 
-  /* --- SOLID CTA BUTTONS --- */
   .btn-solid { 
     position: relative; overflow: hidden; font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; 
     letter-spacing: 0.05em; font-size: var(--step--1); background: #fff; color: #000; 
@@ -712,7 +800,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     100% { left: 200%; }
   }
 
-  /* --- OUTLINE CTA BUTTON --- */
   .btn-outline {
     font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; 
     letter-spacing: 0.05em; font-size: var(--step--1); background: transparent; color: #fff; 
@@ -792,50 +879,80 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .swiper-pagination-bullet { background: var(--text-secondary); opacity: 0.3; transition: all 0.3s ease; width: 8px; height: 8px; }
   .swiper-pagination-bullet-active { background: #fff; opacity: 1; transform: scale(1.3); }
 
-  /* --- HORIZONTAL CAREER RULER --- */
-  .experience-section { overflow: hidden; position: relative; }
-  .career-ruler-wrapper { width: 100vw; margin-left: calc(-50vw + 50%); position: relative; padding: 2rem 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
-  .career-ruler-wrapper::-webkit-scrollbar { display: none; }
-  
-  .career-ruler-track { display: flex; gap: 3rem; width: max-content; padding: 0 15vw; position: relative; align-items: center; min-height: 250px; }
-  .career-ruler-line { position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: rgba(255,255,255,0.1); transform: translateY(-50%); }
-  
-  .ruler-card { width: 280px; scroll-snap-align: center; position: relative; display: flex; flex-direction: column; cursor: crosshair; }
-  .ruler-dot { width: 16px; height: 16px; border-radius: 50%; background: #050505; border: 2px solid var(--accent); position: absolute; top: 50%; left: -24px; z-index: 2; transition: all 0.3s ease; transform: translateY(-50%); }
-  .ruler-card:hover .ruler-dot { background: var(--accent); transform: translateY(-50%) scale(1.3); }
-  
-  .ruler-content { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.3rem; margin-left: 1rem; }
-  .timeline-date { color: var(--text-secondary); font-size: var(--step--1); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-  .ruler-content h3 { font-family: 'Syne', sans-serif; font-size: var(--step-2); margin: 0; color: var(--text-primary); }
-  .ruler-content h4 { font-family: 'Hanken Grotesk', sans-serif; color: var(--text-secondary); font-size: var(--step-0); font-weight: 400; margin: 0; }
-
-  /* Custom Range Slider Styling */
-  .slider-controls-container { max-width: 600px; margin: 2rem auto 0 auto; padding: 0 2rem; }
-  .custom-monochrome-slider {
-    -webkit-appearance: none;
-    width: 100%;
-    background: transparent;
-    --val: 0%;
-  }
-  .custom-monochrome-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    height: 20px; width: 20px;
-    border-radius: 50%;
-    background: #fff;
-    cursor: pointer;
-    margin-top: -8px; 
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-  }
-  .custom-monochrome-slider::-webkit-slider-runnable-track {
-    width: 100%; height: 4px;
-    border-radius: 2px;
-    background: linear-gradient(to right, #fff var(--val), #333 var(--val));
+  /* ==========================================
+     NEW: TERMINAL UX STYLING 
+  ========================================== */
+  .terminal-window {
+    background: rgba(8, 8, 8, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
   }
 
-  /* Global Interactive Tooltip */
-  .hidden-tooltip { opacity: 0; pointer-events: none; visibility: hidden; }
-  #global-tooltip { position: fixed; z-index: 9999; padding: 1.5rem; max-width: 320px; color: #f5f5f5; font-size: var(--step-0); line-height: 1.6; transition: opacity 0.2s ease; border-radius: 8px; pointer-events: none; }
+  .terminal-header {
+    background: rgba(25, 25, 25, 1);
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .terminal-buttons { display: flex; gap: 8px; }
+  .term-btn { width: 12px; height: 12px; border-radius: 50%; }
+  .term-btn.red { background: #ff5f56; }
+  .term-btn.yellow { background: #ffbd2e; }
+  .term-btn.green { background: #27c93f; }
+
+  .terminal-title { 
+    margin: 0 auto; 
+    color: var(--text-secondary); 
+    font-size: 0.85rem; 
+    letter-spacing: 0.05em; 
+  }
+
+  .term-comment { color: #666; margin-bottom: 1.5rem; font-size: 0.95rem; }
   
+  .term-command {
+    background: transparent; border: none; color: #A3A3A3; text-align: left;
+    font-family: inherit; font-size: 0.95rem; width: 100%; padding: 0.6rem 0;
+    cursor: pointer; transition: all 0.3s ease; text-transform: lowercase;
+  }
+  .term-command:hover, .term-command.active-cmd { color: #00e5ff; }
+  .prompt-arrow { color: #27c93f; margin-right: 0.5rem; }
+
+  .blinking-cursor { animation: blink 1s step-end infinite; color: #f5f5f5; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Syntax Highlighting Colors */
+  .term-date { color: #888; }
+  .term-process { color: #ffbd2e; font-weight: 600; }
+  .term-title { color: #fff; font-weight: 600; }
+  .term-info { color: #ff5f56; font-weight: 600; }
+  .term-desc { color: #e0e0e0; line-height: 1.6; display: block; margin-top: 0.5rem; }
+  .term-success { color: #27c93f; }
+
+  /* Desktop Terminal View */
+  .desktop-terminal { display: grid; grid-template-columns: 35% 65%; min-height: 400px; }
+  .terminal-sidebar { border-right: 1px solid rgba(255,255,255,0.05); padding: 2rem; background: rgba(5,5,5,0.5); }
+  .terminal-main { padding: 2.5rem; display: flex; flex-direction: column; justify-content: stretch; }
+  .terminal-output-wrapper { font-size: 1rem; color: #f5f5f5; line-height: 1.6; }
+  .terminal-output { display: inline; }
+
+  /* Mobile Terminal View */
+  .mobile-terminal { display: none; padding: 1.5rem; }
+  .mobile-term-group { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 1rem 0; }
+  .mobile-term-group:last-child { border-bottom: none; }
+  .mobile-output-wrapper { overflow: hidden; height: 0; }
+  .mobile-output-content { display: inline; font-size: 0.9rem; line-height: 1.6; color: #e0e0e0; }
+
+  @media (max-width: 768px) {
+    .desktop-terminal { display: none; }
+    .mobile-terminal { display: block; }
+    .mobile-output-wrapper { padding-left: 1rem; border-left: 1px solid rgba(255,255,255,0.1); margin-top: 0.5rem; margin-left: 0.5rem;}
+  }
+
   /* Bento Grid */
   .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
   .bento-card { border: 1px solid #333; padding: 2.5rem; display: flex; flex-direction: column; justify-content: center; transition: border-color 0.3s ease; background: rgba(10,10,10,0.5); backdrop-filter: blur(10px); }
@@ -898,10 +1015,11 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     .magnetic-target { transform: none !important; }
     
     .portrait-wrapper { transform: translateX(35vw); }
-    .portrait-img { object-position: center; }
-    .ghost-watermark { object-position: center; }
     
-    /* --- FIX: Restored proper right-side anchor and slide-in for mobile text --- */
+    /* --- FIX: Pan Mobile Image Crop to perfectly offset the 35vw container shift --- */
+    .portrait-img { object-position: 30% 25%; }
+    .ghost-watermark { object-position: 30% 25%; }
+    
     .bio-text { 
       width: 80%; 
       right: 1.5rem; 
@@ -912,16 +1030,14 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     
     .sticky-editorial-layout { flex-direction: column; gap: 4rem; }
     .sticky-sidebar, .scrolling-cards-container { width: 100%; }
-    .sticky-sidebar { position: relative; top: 0; }
+    .sticky-sidebar { position: relative; top: 0; margin-bottom: 2rem; }
     .scrolling-cards-container { gap: 3rem; padding-bottom: 0; }
     .editorial-service-card { padding: 2.5rem; gap: 1.5rem; }
     .service-number { font-size: 4rem; }
 
     .flip-project-card { width: 85vw; height: 320px; } 
 
-    .ruler-card { width: 75vw; }
-    .career-ruler-track { padding: 0 12.5vw; gap: 2rem; }
-    
+    #global-tooltip { position: fixed; }
     .mobile-modal { top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; width: 90vw; pointer-events: auto !important; box-shadow: 0 0 50px rgba(0,0,0,0.9); border-color: rgba(255,255,255,0.3); }
 
     .skills-card { grid-column: span 1; }
