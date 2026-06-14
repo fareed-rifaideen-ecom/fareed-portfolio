@@ -56,7 +56,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
             <path d="M17.472 14.38c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.305-.883-.653-1.48-1.459-1.653-1.756-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51h-.57c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.445 4.439-9.884 9.884-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.006 5.45-4.439 9.885-9.881 9.885m8.413-18.297A11.815 11.815 0 0012.052 0C5.495 0 .104 5.384.104 11.933c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652c1.73.943 3.682 1.44 5.711 1.44h.004c6.558 0 11.956-5.384 11.96-11.937A11.812 11.812 0 0020.464 3.486z"/>
           </svg>
         </a>
-        <a href="#contact-modal" class="contact-btn modal-trigger">Let's Talk</a>
+        <!-- STRATEGIC INJECTION: Neon Breathe applied to header CTA -->
+        <a href="#contact-modal" class="contact-btn modal-trigger glow-breathe">Let's Talk</a>
       </nav>
     </div>
   </header>
@@ -102,7 +103,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
             <p class="sticky-description">
               I engineer digital growth by combining technical precision with targeted marketing strategies. Here is exactly how my brain can make you money.
             </p>
-            <a href="#contact-modal" class="btn-solid modal-trigger sticky-cta"><span class="btn-text">Start a Project</span></a>
+            <!-- STRATEGIC INJECTION: Neon Breathe applied to Services CTA -->
+            <a href="#contact-modal" class="btn-solid modal-trigger sticky-cta glow-breathe"><span class="btn-text">Start a Project</span></a>
           </div>
         </div>
 
@@ -301,12 +303,10 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
 
-    // --- MODIFIED: Dynamic Shrink Island Logic ---
-    // Instead of 50px, this now waits until the cinematic Hero/Bio section is finished
-    // and the user has scrolled down into the Services section.
+    // --- Dynamic Shrink Island Logic ---
     ScrollTrigger.create({
       trigger: ".services-sticky-section",
-      start: 'top 15%', // Triggers the exact moment the Services section hits the top 15% of the screen
+      start: 'top 15%',
       toggleClass: { className: 'is-scrolled', targets: '.site-header' }
     });
 
@@ -577,7 +577,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     position: fixed; top: 0; left: 0; width: 100%; 
     padding: 2rem 0; z-index: 100; 
     transition: padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    pointer-events: none; /* Clicks pass through empty space */
+    pointer-events: none; 
   }
   
   .header-container { 
@@ -587,18 +587,18 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     border-radius: 50px;
     border: 1px solid transparent;
     background: transparent;
-    pointer-events: auto; /* Buttons are clickable */
+    pointer-events: auto; 
   }
 
   /* --- HEADER: DYNAMIC SCROLL STATE (THE PILL) --- */
   .site-header.is-scrolled {
-    padding: 1.5rem 0; /* Drops slightly from the ceiling */
+    padding: 1.5rem 0; 
   }
 
   .site-header.is-scrolled .header-container {
-    max-width: 800px; /* Collapses inward */
+    max-width: 800px; 
     padding: 0.8rem 1.5rem;
-    background: rgba(10, 10, 10, 0.65); /* Sleek dark glass */
+    background: rgba(10, 10, 10, 0.65); 
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -606,7 +606,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   }
 
   .logo img { height: 35px; width: auto; display: block; transition: height 0.4s ease; }
-  /* Optional: slightly shrink logo inside the pill */
   .site-header.is-scrolled .logo img { height: 28px; }
 
   .nav-links { display: flex; gap: 1rem; align-items: center; }
@@ -627,8 +626,17 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     border-radius: 50px; font-size: var(--step--1); transition: all 0.3s ease; cursor: pointer; background: transparent;
   }
   .contact-btn:hover { background-color: #fff; color: #000; }
-  /* Make button perfectly fit inside the glass pill */
   .site-header.is-scrolled .contact-btn { padding: 0.5rem 1.2rem; }
+
+  /* --- NEW: NEON BREATHE AMBIENT GLOW --- */
+  .glow-breathe {
+    animation: neon-breathe 4s infinite ease-in-out;
+  }
+  
+  @keyframes neon-breathe {
+    0%, 100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
+    50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 8px rgba(255, 255, 255, 0.2); }
+  }
 
   /* Ghost Watermark */
   .ghost-watermark {
@@ -870,7 +878,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
     .global-padding { padding: var(--section-gap-mobile) 0; }
 
-    /* Mobile Header adjustments for the pill */
     .site-header { padding: 1rem 0; }
     .site-header.is-scrolled { padding: 1rem 0; }
     .site-header.is-scrolled .header-container { max-width: 90vw; padding: 0.6rem 1.2rem; }
