@@ -56,7 +56,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
             <path d="M17.472 14.38c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.305-.883-.653-1.48-1.459-1.653-1.756-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51h-.57c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.445 4.439-9.884 9.884-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.006 5.45-4.439 9.885-9.881 9.885m8.413-18.297A11.815 11.815 0 0012.052 0C5.495 0 .104 5.384.104 11.933c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652c1.73.943 3.682 1.44 5.711 1.44h.004c6.558 0 11.956-5.384 11.96-11.937A11.812 11.812 0 0020.464 3.486z"/>
           </svg>
         </a>
-        <!-- STRATEGIC INJECTION: Neon Breathe applied to header CTA -->
         <a href="#contact-modal" class="contact-btn modal-trigger glow-breathe">Let's Talk</a>
       </nav>
     </div>
@@ -103,7 +102,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
             <p class="sticky-description">
               I engineer digital growth by combining technical precision with targeted marketing strategies. Here is exactly how my brain can make you money.
             </p>
-            <!-- STRATEGIC INJECTION: Neon Breathe applied to Services CTA -->
             <a href="#contact-modal" class="btn-solid modal-trigger sticky-cta glow-breathe"><span class="btn-text">Start a Project</span></a>
           </div>
         </div>
@@ -303,13 +301,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
 
-    // --- Dynamic Shrink Island Logic ---
-    ScrollTrigger.create({
-      trigger: ".services-sticky-section",
-      start: 'top 15%',
-      toggleClass: { className: 'is-scrolled', targets: '.site-header' }
-    });
-
     // --- Magnetic Scroll Indicator Logic (Desktop Only) ---
     const magTarget = document.querySelector('.magnetic-target');
     const heroSection = document.querySelector('.cinematic-hero');
@@ -458,8 +449,9 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
     let mm = gsap.matchMedia();
 
-    // --- Desktop GSAP ---
+    // --- Desktop GSAP & Pill Logic ---
     mm.add("(min-width: 768px)", () => {
+      // 1. Pin the Hero/Bio section
       let tl = gsap.timeline({
         scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" }
       });
@@ -468,8 +460,17 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
       tl.to(".portrait-wrapper", { x: "-25vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
         .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
-      
       tl.to({}, { duration: 1.5 });
+
+      // 2. STRATEGIC FIX: Execute Pill trigger AFTER the pin is established.
+      // This guarantees the browser calculates the 300% spacer offset properly, 
+      // preventing the pill from appearing prematurely in the Bio section.
+      ScrollTrigger.create({
+        trigger: ".services-sticky-section",
+        start: 'top 15%', 
+        end: 'max', 
+        toggleClass: { className: 'is-scrolled', targets: '.site-header' }
+      });
     });
 
     // --- Mobile GSAP ---
@@ -485,6 +486,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         .to(".bio-text", { opacity: 1, y: 0, duration: 1, ease: "power1.out" }, 1.5);
         
       mobileTl.to({}, { duration: 1.5 });
+      
+      // Notice: The Pill logic is explicitly omitted from the Mobile GSAP block.
     });
 
     const serviceCards = gsap.utils.toArray(".service-anim-card");
@@ -572,7 +575,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
   .global-padding { padding: var(--section-gap-desktop) 0; }
 
-  /* --- HEADER: INITIAL STATE --- */
+  /* --- HEADER: INITIAL STATE (Unboxed & Transparent) --- */
   .site-header { 
     position: fixed; top: 0; left: 0; width: 100%; 
     padding: 2rem 0; z-index: 100; 
@@ -584,29 +587,30 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     max-width: 1200px; margin: 0 auto; padding: 0 2rem; 
     display: flex; justify-content: space-between; align-items: center; 
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    border-radius: 50px;
-    border: 1px solid transparent;
-    background: transparent;
     pointer-events: auto; 
-  }
-
-  /* --- HEADER: DYNAMIC SCROLL STATE (THE PILL) --- */
-  .site-header.is-scrolled {
-    padding: 1.5rem 0; 
-  }
-
-  .site-header.is-scrolled .header-container {
-    max-width: 800px; 
-    padding: 0.8rem 1.5rem;
-    background: rgba(10, 10, 10, 0.65); 
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+    /* STRATEGIC FIX: Removed transparent borders/radius from initial state to guarantee zero boxing */
   }
 
   .logo img { height: 35px; width: auto; display: block; transition: height 0.4s ease; }
-  .site-header.is-scrolled .logo img { height: 28px; }
+
+  /* --- HEADER: DYNAMIC SCROLL STATE (Desktop Only Pill) --- */
+  @media (min-width: 769px) {
+    .site-header.is-scrolled {
+      padding: 1.5rem 0; 
+    }
+    .site-header.is-scrolled .header-container {
+      max-width: 800px; 
+      padding: 0.8rem 1.5rem;
+      background: rgba(10, 10, 10, 0.65); 
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+    }
+    .site-header.is-scrolled .logo img { height: 28px; }
+    .site-header.is-scrolled .contact-btn { padding: 0.5rem 1.2rem; }
+  }
 
   .nav-links { display: flex; gap: 1rem; align-items: center; }
   
@@ -626,9 +630,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     border-radius: 50px; font-size: var(--step--1); transition: all 0.3s ease; cursor: pointer; background: transparent;
   }
   .contact-btn:hover { background-color: #fff; color: #000; }
-  .site-header.is-scrolled .contact-btn { padding: 0.5rem 1.2rem; }
 
-  /* --- NEW: NEON BREATHE AMBIENT GLOW --- */
+  /* --- NEON BREATHE AMBIENT GLOW --- */
   .glow-breathe {
     animation: neon-breathe 4s infinite ease-in-out;
   }
@@ -641,7 +644,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   /* Ghost Watermark */
   .ghost-watermark {
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    height: 120vh; width: auto; min-width: 100vw; object-fit: cover;
+    height: 120vh; width: auto; min-width: 100vw; 
+    object-fit: cover; object-position: center 25%; 
     opacity: 0; mix-blend-mode: luminosity; pointer-events: none; z-index: 0;
   }
 
@@ -662,7 +666,13 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
   
   .portrait-wrapper { position: absolute; height: 100vh; width: 100vw; top: 0; left: 0; display: flex; align-items: center; justify-content: center; z-index: 1; transform: translateX(35vw); }
-  .portrait-img { height: 100%; width: 100%; max-width: 800px; object-fit: cover; object-position: center; transition: filter 1s ease; }
+  
+  .portrait-img { 
+    height: 100%; width: 100%; max-width: 800px; 
+    object-fit: cover; object-position: center 25%; 
+    transition: filter 1s ease; 
+  }
+  
   .bio-text { position: absolute; right: 2rem; width: 450px; z-index: 10; opacity: 0; transform: translateX(50px); }
   .bio { color: var(--text-secondary); font-size: var(--step-1); line-height: 1.7; margin-bottom: 1.5rem; }
   .bio-cta { margin-top: 1rem; }
@@ -879,12 +889,10 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     .global-padding { padding: var(--section-gap-mobile) 0; }
 
     .site-header { padding: 1rem 0; }
-    .site-header.is-scrolled { padding: 1rem 0; }
-    .site-header.is-scrolled .header-container { max-width: 90vw; padding: 0.6rem 1.2rem; }
+    .header-container { max-width: 90vw; padding: 0.6rem 1.2rem; }
 
     .nav-links { gap: 0.5rem; }
     .contact-btn { padding: 0.5rem 1rem; }
-    .site-header.is-scrolled .contact-btn { padding: 0.4rem 1rem; }
 
     .intro-text { bottom: 15%; left: 1.5rem; }
     
@@ -892,6 +900,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     .magnetic-target { transform: none !important; }
     
     .portrait-wrapper { transform: translateX(35vw); }
+    .portrait-img { object-position: center; }
+    .ghost-watermark { object-position: center; }
     
     .bio-text { 
       width: 85%; 
