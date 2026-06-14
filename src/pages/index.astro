@@ -449,9 +449,11 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
     let mm = gsap.matchMedia();
 
-    // --- Desktop GSAP & Pill Logic ---
+    // ==========================================
+    // --- DESKTOP GSAP LOGIC ---
+    // ==========================================
     mm.add("(min-width: 768px)", () => {
-      // 1. Pin the Hero/Bio section
+      
       let tl = gsap.timeline({
         scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" }
       });
@@ -462,9 +464,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
       tl.to({}, { duration: 1.5 });
 
-      // 2. STRATEGIC FIX: Execute Pill trigger AFTER the pin is established.
-      // This guarantees the browser calculates the 300% spacer offset properly, 
-      // preventing the pill from appearing prematurely in the Bio section.
+      // Trigger Header Pill (Desktop Only)
       ScrollTrigger.create({
         trigger: ".services-sticky-section",
         start: 'top 15%', 
@@ -473,34 +473,33 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       });
     });
 
-    // --- Mobile GSAP ---
+    // ==========================================
+    // --- MOBILE GSAP LOGIC ---
+    // ==========================================
     mm.add("(max-width: 767px)", () => {
+      
       let mobileTl = gsap.timeline({
         scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" }
       });
-      mobileTl.to(".intro-text", { opacity: 0, y: 30, duration: 1 }, 0)
+      
+      // Horizontal slide out for intro text
+      mobileTl.to(".intro-text", { opacity: 0, x: -30, duration: 1 }, 0)
         .to(".scroll-icon-wrapper", { opacity: 0, duration: 0.5 }, 0)
         .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
       
-      mobileTl.to(".portrait-wrapper", { x: "-15vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
-        .to(".bio-text", { opacity: 1, y: 0, duration: 1, ease: "power1.out" }, 1.5);
+      // Portrait shifts further left to make room, bio text slides in from right
+      mobileTl.to(".portrait-wrapper", { x: "-35vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
+        .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
         
       mobileTl.to({}, { duration: 1.5 });
-      
-      // Notice: The Pill logic is explicitly omitted from the Mobile GSAP block.
     });
 
+    // --- GLOBAL SERVICE CARDS FADE UP (Runs on Desktop & Mobile) ---
     const serviceCards = gsap.utils.toArray(".service-anim-card");
     serviceCards.forEach((card) => {
       gsap.from(card as Element, {
-        opacity: 0,
-        y: 50,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: card as Element,
-          start: "top 85%"
-        }
+        opacity: 0, y: 50, duration: 0.8, ease: "power2.out",
+        scrollTrigger: { trigger: card as Element, start: "top 85%" }
       });
     });
 
@@ -588,7 +587,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     display: flex; justify-content: space-between; align-items: center; 
     transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     pointer-events: auto; 
-    /* STRATEGIC FIX: Removed transparent borders/radius from initial state to guarantee zero boxing */
   }
 
   .logo img { height: 35px; width: auto; display: block; transition: height 0.4s ease; }
@@ -903,12 +901,13 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     .portrait-img { object-position: center; }
     .ghost-watermark { object-position: center; }
     
+    /* --- FIX: Restored proper right-side anchor and slide-in for mobile text --- */
     .bio-text { 
-      width: 85%; 
-      right: auto; 
-      left: 1.5rem; 
+      width: 80%; 
+      right: 1.5rem; 
+      left: auto; 
       text-align: left; 
-      transform: translateY(30px); 
+      transform: translateX(30px); 
     }
     
     .sticky-editorial-layout { flex-direction: column; gap: 4rem; }
