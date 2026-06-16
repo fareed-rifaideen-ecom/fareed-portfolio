@@ -3,7 +3,7 @@
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import profileImg from '../assets/profile.jpg'; 
-import ethosImg from '../assets/ethos-portrait.jpg'; // The new Ethos image
+import ethosImg from '../assets/ethos-portrait.jpg';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -22,7 +22,7 @@ const ethosEntries = await getCollection('ethos');
 const ethosData = ethosEntries[0];
 const { Content: EthosContent } = await render(ethosData);
 
-let fetchedServices = [];
+let fetchedServices: any[] = [];
 try {
   fetchedServices = await getCollection('services');
 } catch (e) {
@@ -30,12 +30,12 @@ try {
 }
 
 const fallbackServices = [
-  { data: { title: "Full-Stack SEO", command: "execute_seo", summary: "I align your digital infrastructure with exactly what search engines demand and what your target market is actively looking for. From server-side technical health to frontend semantic structure, I eliminate roadblocks to drive high-intent, organic traffic directly to your storefront.", order: 1 } },
-  { data: { title: "Data-Driven Marketing", command: "execute_marketing", summary: "Paid media requires strict financial discipline. I design and manage highly targeted campaigns across Meta and Google, leveraging real-time analytics to immediately cut wasted spend and aggressively scale the strategies that generate verified returns.", order: 2 } },
-  { data: { title: "Custom Web Development", command: "execute_development", summary: "Off-the-shelf templates rarely scale. I build custom, lightning-fast WordPress and WooCommerce platforms tailored specifically to your sales funnels. I focus on clean PHP backend development and intuitive UI design to ensure a completely frictionless experience from the landing page to the checkout.", order: 3 } }
+  { id: "full-stack-seo", data: { title: "Full-Stack SEO", command: "execute_seo", summary: "I align your digital infrastructure with exactly what search engines demand and what your target market is actively looking for. From server-side technical health to frontend semantic structure, I eliminate roadblocks to drive high-intent, organic traffic directly to your storefront.", order: 1 } },
+  { id: "data-driven-marketing", data: { title: "Data-Driven Marketing", command: "execute_marketing", summary: "Paid media requires strict financial discipline. I design and manage highly targeted campaigns across Meta and Google, leveraging real-time analytics to immediately cut wasted spend and aggressively scale the strategies that generate verified returns.", order: 2 } },
+  { id: "custom-web-development", data: { title: "Custom Web Development", command: "execute_development", summary: "Off-the-shelf templates rarely scale. I build custom, lightning-fast WordPress and WooCommerce platforms tailored specifically to your sales funnels. I focus on clean PHP backend development and intuitive UI design to ensure a completely frictionless experience from the landing page to the checkout.", order: 3 } }
 ];
 
-const allServices = (fetchedServices && fetchedServices.length > 0) ? fetchedServices : fallbackServices;
+let allServices: any[] = (fetchedServices && fetchedServices.length > 0) ? fetchedServices : fallbackServices;
 allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 ---
 
@@ -117,6 +117,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
               <div class="service-card-body">
                 <div class="service-card-body-inner">
                   <p class="service-pitch">{service.data.summary}</p>
+                  <a href={`/services/${service.id}`} class="service-read-more">Explore Capability <span class="arrow">↗</span></a>
                 </div>
               </div>
             </div>
@@ -300,34 +301,46 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         </div>
 
         <div class="ethos-image-wrapper glass-panel" id="ethos-interact-zone">
-          
           <Image src={ethosImg} alt="Ethos Portrait" class="ethos-base-img" loading="lazy" />
-          
           <div class="ethos-color-layer" id="ethos-color-reveal">
             <Image src={ethosImg} alt="" class="ethos-reveal-img" loading="lazy" />
           </div>
-
           <div class="haptic-prompt" id="haptic-hint">
             <div class="haptic-ring"></div>
             <svg class="fingerprint-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm2-8.5c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2zm-4.5 3c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm9 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5z" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </div>
-
         </div>
 
       </div>
     </div>
   </section>
 
-  <footer class="site-footer">
-    <div class="container footer-content">
-      <p>© {new Date().getFullYear()} Fareed M. Rifaideen. All rights reserved.</p>
-      <div class="social-links">
+  <footer class="site-footer global-padding">
+    <div class="container footer-grid">
+      
+      <div class="footer-col brand-col">
+        <img src="/favicon.svg" alt="Fareed Logo" class="footer-logo" />
+        <p class="footer-desc">Architecting high-performance digital ecosystems. Focus on ROI and execution.</p>
+        <p class="copyright">© {new Date().getFullYear()} Fareed M. Rifaideen.</p>
+      </div>
+
+      <div class="footer-col link-col">
+        <h4>Capabilities</h4>
+        {allServices.map((service: any) => (
+          <a href={`/services/${service.id}`}>{service.data.title}</a>
+        ))}
+        <a href="/projects" class="projects-link">View All Projects ↗</a>
+      </div>
+
+      <div class="footer-col link-col">
+        <h4>Connect</h4>
         <a href="https://wa.me/9717775962" target="_blank" rel="noopener noreferrer">WhatsApp</a>
         <a href="https://www.linkedin.com/in/fareed03" target="_blank" rel="noopener noreferrer">LinkedIn</a>
         <a href="https://github.com/fareed-rifaideen-ecom" target="_blank" rel="noopener noreferrer">GitHub</a>
       </div>
+
     </div>
   </footer>
 
@@ -390,21 +403,9 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         const distance = Math.sqrt(distX * distX + distY * distY);
         
         if (distance < 600) {
-          gsap.to(magTarget, {
-            x: distX * 0.3,
-            y: distY * 0.3,
-            rotate: distX * 0.05, 
-            duration: 0.4,
-            ease: "power2.out"
-          });
+          gsap.to(magTarget, { x: distX * 0.3, y: distY * 0.3, rotate: distX * 0.05, duration: 0.4, ease: "power2.out" });
         } else {
-          gsap.to(magTarget, {
-            x: 0,
-            y: 0,
-            rotate: 0,
-            duration: 0.8,
-            ease: "elastic.out(1, 0.4)"
-          });
+          gsap.to(magTarget, { x: 0, y: 0, rotate: 0, duration: 0.8, ease: "elastic.out(1, 0.4)" });
         }
       });
       
@@ -415,8 +416,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
     // --- Lenis Anchor Interceptor ---
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        const targetId = this.getAttribute('href');
+      anchor.addEventListener('click', (e) => {
+        const targetId = anchor.getAttribute('href');
         if (targetId && targetId !== '#contact-modal' && targetId !== '#') {
           e.preventDefault();
           lenis.scrollTo(targetId, { duration: 1.5, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
@@ -426,32 +427,14 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
     // --- Ghost Watermark Background Fade ---
     gsap.to("#bg-portrait", {
-      opacity: 0.03,
-      scrollTrigger: {
-        trigger: ".services-sticky-section",
-        start: "top 80%", 
-        end: "top 20%",
-        scrub: true
-      }
+      opacity: 0.03, scrollTrigger: { trigger: ".services-sticky-section", start: "top 80%", end: "top 20%", scrub: true }
     });
 
     // --- 3D Flip Track Carousel Logic ---
     new Swiper('.flip-projects-swiper', {
-      modules: [Pagination, Autoplay],
-      slidesPerView: 'auto',
-      centeredSlides: true,
-      spaceBetween: 80, 
-      loop: true,
-      speed: 1000, 
-      autoplay: { 
-        delay: 3000, 
-        disableOnInteraction: false, 
-        pauseOnMouseEnter: true 
-      },
-      pagination: { 
-        el: '.flip-pagination', 
-        clickable: true 
-      }
+      modules: [Pagination, Autoplay], slidesPerView: 'auto', centeredSlides: true, spaceBetween: 80, loop: true, speed: 1000, 
+      autoplay: { delay: 3000, disableOnInteraction: false, pauseOnMouseEnter: true },
+      pagination: { el: '.flip-pagination', clickable: true }
     });
 
     const flipCards = document.querySelectorAll('.flip-project-card');
@@ -475,29 +458,17 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     let hintDismissed = false;
 
     if (ethosZone && colorReveal) {
-      
-      // 1. DESKTOP LOGIC (Mouse Spotlight)
       ethosZone.addEventListener('mousemove', (e: Event) => {
         const mouseEvent = e as MouseEvent;
-        // Only run mouse logic on desktop
         if (window.innerWidth > 768) {
           if (!hintDismissed && hapticHint) {
             gsap.to(hapticHint, { opacity: 0, duration: 0.5, onComplete: () => hapticHint.style.display = 'none' });
             hintDismissed = true;
           }
-          
           const rect = ethosZone.getBoundingClientRect();
           const x = mouseEvent.clientX - rect.left;
           const y = mouseEvent.clientY - rect.top;
-          
-          // Using quickTo for buttery smooth cursor tracking without layout thrashing
-          gsap.to(colorReveal, {
-            '--x': `${x}px`,
-            '--y': `${y}px`,
-            '--size': '150px', // The size of the desktop spotlight
-            duration: 0.3,
-            ease: "power2.out"
-          });
+          gsap.to(colorReveal, { '--x': `${x}px`, '--y': `${y}px`, '--size': '150px', duration: 0.3, ease: "power2.out" });
         }
       });
 
@@ -507,47 +478,29 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         }
       });
 
-      // 2. MOBILE LOGIC (Touch & Hold Ink Drop)
       let isTouching = false;
-
       const triggerInkDrop = (e: Event) => {
         const touchEvent = e as TouchEvent;
         if (window.innerWidth <= 768) {
-          // Prevent screen from scrolling while they hold
           if (e.cancelable) e.preventDefault(); 
           isTouching = true;
-
           if (!hintDismissed && hapticHint) {
             gsap.to(hapticHint, { opacity: 0, duration: 0.5, onComplete: () => hapticHint.style.display = 'none' });
             hintDismissed = true;
           }
-
           const rect = ethosZone.getBoundingClientRect();
           const touch = touchEvent.touches[0];
           const x = touch.clientX - rect.left;
           const y = touch.clientY - rect.top;
-
-          // Instantly move the 0px circle to the thumb location
           gsap.set(colorReveal, { '--x': `${x}px`, '--y': `${y}px`, '--size': '0px' });
-          
-          // Animate the circle massive enough to cover the whole image
-          gsap.to(colorReveal, {
-            '--size': '1200px', 
-            duration: 1.2, 
-            ease: "power2.inOut"
-          });
+          gsap.to(colorReveal, { '--size': '1200px', duration: 1.2, ease: "power2.inOut" });
         }
       };
 
       const reverseInkDrop = () => {
         if (window.innerWidth <= 768 && isTouching) {
           isTouching = false;
-          // Collapse the color back into the touch point
-          gsap.to(colorReveal, {
-            '--size': '0px', 
-            duration: 0.5, 
-            ease: "power2.in"
-          });
+          gsap.to(colorReveal, { '--size': '0px', duration: 0.5, ease: "power2.in" });
         }
       };
 
@@ -562,10 +515,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     // --- DESKTOP GSAP LOGIC ---
     // ==========================================
     mm.add("(min-width: 768px)", () => {
-      
-      let tl = gsap.timeline({
-        scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" }
-      });
+      let tl = gsap.timeline({ scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" } });
       tl.to(".intro-text", { opacity: 0, x: -50, duration: 1 }, 0)
         .to(".scroll-icon-wrapper", { opacity: 0, y: 20, duration: 0.5 }, 0)
         .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
@@ -573,21 +523,14 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
       tl.to({}, { duration: 1.5 });
 
-      // Trigger Header Pill 
-      ScrollTrigger.create({
-        trigger: ".services-sticky-section",
-        start: 'top 15%', 
-        end: 'max', 
-        toggleClass: { className: 'is-scrolled', targets: '.site-header' }
-      });
+      ScrollTrigger.create({ trigger: ".services-sticky-section", start: 'top 15%', end: 'max', toggleClass: { className: 'is-scrolled', targets: '.site-header' } });
 
-      // --- DESKTOP TERMINAL TYPEWRITER LOGIC ---
       const desktopCmds = document.querySelectorAll('.desktop-cmd');
       const desktopOutput = document.getElementById('desktop-terminal-output');
 
       desktopCmds.forEach(cmd => {
-        cmd.addEventListener('mouseenter', function() {
-          const el = this as HTMLElement;
+        cmd.addEventListener('mouseenter', () => {
+          const el = cmd as HTMLElement;
           desktopCmds.forEach(c => c.classList.remove('active-cmd'));
           el.classList.add('active-cmd');
 
@@ -596,7 +539,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
           const company = el.getAttribute('data-company');
           const problem = el.getAttribute('data-problem');
 
-          // Dynamically parsing both the Job Title and the Company
           const logHTML = `
             <span class="term-date">[ ${date} ]</span><br/>
             <span class="term-process">TARGET_ORG:</span> <span class="term-title">${company}</span><br/>
@@ -607,11 +549,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
           if (desktopOutput) {
             gsap.killTweensOf(desktopOutput);
-            gsap.to(desktopOutput, {
-              text: { value: logHTML },
-              duration: 1.2,
-              ease: "none"
-            });
+            gsap.to(desktopOutput, { text: { value: logHTML }, duration: 1.2, ease: "none" });
           }
         });
       });
@@ -621,27 +559,20 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     // --- MOBILE GSAP LOGIC ---
     // ==========================================
     mm.add("(max-width: 767px)", () => {
-      
-      let mobileTl = gsap.timeline({
-        scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" }
-      });
-      
+      let mobileTl = gsap.timeline({ scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" } });
       mobileTl.to(".intro-text", { opacity: 0, x: -30, duration: 1 }, 0)
         .to(".scroll-icon-wrapper", { opacity: 0, duration: 0.5 }, 0)
         .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
-      
       mobileTl.to(".portrait-wrapper", { x: "-35vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
         .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
-        
       mobileTl.to({}, { duration: 1.5 });
 
-      // --- MOBILE TERMINAL ACCORDION LOGIC ---
       const mobileCmds = document.querySelectorAll('.mobile-cmd');
       let activeMobileIndex = -1;
 
       mobileCmds.forEach((cmd, index) => {
-        cmd.addEventListener('click', function() {
-          const el = this as HTMLElement;
+        cmd.addEventListener('click', () => {
+          const el = cmd as HTMLElement;
           if (activeMobileIndex === index) return; 
           
           if (activeMobileIndex !== -1) {
@@ -679,12 +610,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
           if(content && wrapper && cursor) {
             gsap.set(content, { text: "" }); 
             (cursor as HTMLElement).style.display = 'inline-block';
-            
-            gsap.to(wrapper, { 
-              height: "auto", 
-              duration: 0.4, 
-              ease: "power2.inOut", 
-              onComplete: () => {
+            gsap.to(wrapper, { height: "auto", duration: 0.4, ease: "power2.inOut", onComplete: () => {
                 gsap.to(content, { text: { value: logHTML }, duration: 1.2, ease: "none" });
               }
             });
@@ -693,19 +619,14 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       });
     });
 
-    // --- GLOBAL SERVICE CARDS FADE UP (Runs on Desktop & Mobile) ---
     const serviceCards = gsap.utils.toArray(".service-anim-card");
     serviceCards.forEach((card) => {
-      gsap.from(card as Element, {
-        opacity: 0, y: 50, duration: 0.8, ease: "power2.out",
-        scrollTrigger: { trigger: card as Element, start: "top 85%" }
-      });
+      gsap.from(card as Element, { opacity: 0, y: 50, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: card as Element, start: "top 85%" } });
     });
 
     gsap.from(".projects-flip-track-section", { opacity: 0, y: 40, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".projects-flip-track-section", start: "top 85%" } });
     gsap.from(".bento-card", { opacity: 0, y: 40, stagger: 0.15, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".bento-grid", start: "top 85%" } });
 
-    // --- Contact Modal Logic ---
     const modal = document.getElementById("contactModal");
     const openBtns = document.querySelectorAll(".modal-trigger");
     const closeBtn = document.getElementById("closeModal");
@@ -725,16 +646,13 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     closeBtn?.addEventListener("click", closeModal);
     modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
-    // --- Dynamic Subtitle ---
     const subtitles = ["Full-Stack Digital Marketer & Web Developer", "SEO Marketing Specialist", "Bespoke WordPress Architect", "Precision Paid Media Strategist", "Data-Driven Growth Engineer"];
     let subIndex = 0;
     const dynamicSubtitle = document.querySelector(".dynamic-subtitle");
 
     if (dynamicSubtitle) {
       gsap.delayedCall(3, function changeText() {
-        gsap.to(dynamicSubtitle, {
-          y: -15, opacity: 0, duration: 0.5, ease: "power2.in",
-          onComplete: () => {
+        gsap.to(dynamicSubtitle, { y: -15, opacity: 0, duration: 0.5, ease: "power2.in", onComplete: () => {
             subIndex = (subIndex + 1) % subtitles.length;
             dynamicSubtitle.textContent = subtitles[subIndex];
             gsap.fromTo(dynamicSubtitle, { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" });
@@ -752,8 +670,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     --text-primary: #F5F5F5;
     --text-secondary: #A3A3A3;
     --accent: #fff;
-
-    /* THE GOLDEN TYPOGRAPHIC SCALE */
     --step--2: 0.75rem; 
     --step--1: 0.85rem; 
     --step-0: 1rem;     
@@ -762,85 +678,36 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     --step-3: 2.5rem;   
     --step-4: 3rem;     
     --step-5: clamp(3rem, 5vw, 4.5rem); 
-
     --section-gap-desktop: 8rem;
     --section-gap-mobile: 4rem;
   }
 
   body { background-color: var(--bg-color); color: var(--text-primary); font-family: 'Hanken Grotesk', sans-serif; margin: 0; overflow-x: hidden; }
   .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
-
   .global-padding { padding: var(--section-gap-desktop) 0; }
 
   /* --- HEADER --- */
-  .site-header { 
-    position: fixed; top: 0; left: 0; width: 100%; 
-    padding: 2rem 0; z-index: 100; 
-    transition: padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    pointer-events: none; 
-  }
-  
-  .header-container { 
-    max-width: 1200px; margin: 0 auto; padding: 0 2rem; 
-    display: flex; justify-content: space-between; align-items: center; 
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    pointer-events: auto; 
-  }
-
+  .site-header { position: fixed; top: 0; left: 0; width: 100%; padding: 2rem 0; z-index: 100; transition: padding 0.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; }
+  .header-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: auto; }
   .logo img { height: 35px; width: auto; display: block; transition: height 0.4s ease; }
 
   @media (min-width: 769px) {
-    .site-header.is-scrolled {
-      padding: 1.5rem 0; 
-    }
-    .site-header.is-scrolled .header-container {
-      max-width: 800px; 
-      padding: 0.8rem 1.5rem;
-      background: rgba(10, 10, 10, 0.65); 
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 50px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
-    }
+    .site-header.is-scrolled { padding: 1.5rem 0; }
+    .site-header.is-scrolled .header-container { max-width: 800px; padding: 0.8rem 1.5rem; background: rgba(10, 10, 10, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8); }
     .site-header.is-scrolled .logo img { height: 28px; }
     .site-header.is-scrolled .contact-btn { padding: 0.5rem 1.2rem; }
   }
 
   .nav-links { display: flex; gap: 1rem; align-items: center; }
-  
-  .whatsapp-icon-link {
-    color: var(--text-primary);
-    opacity: 0.7;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  .whatsapp-icon-link { color: var(--text-primary); opacity: 0.7; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
   .whatsapp-icon-link:hover { opacity: 1; transform: scale(1.1); }
-  
-  .contact-btn {
-    font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; color: #fff; text-decoration: none;
-    text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid #fff; padding: 0.6rem 1.5rem;
-    border-radius: 50px; font-size: var(--step--1); transition: all 0.3s ease; cursor: pointer; background: transparent;
-  }
+  .contact-btn { font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; color: #fff; text-decoration: none; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid #fff; padding: 0.6rem 1.5rem; border-radius: 50px; font-size: var(--step--1); transition: all 0.3s ease; cursor: pointer; background: transparent; }
   .contact-btn:hover { background-color: #fff; color: #000; }
 
-  .glow-breathe {
-    animation: neon-breathe 4s infinite ease-in-out;
-  }
-  
-  @keyframes neon-breathe {
-    0%, 100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
-    50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 8px rgba(255, 255, 255, 0.2); }
-  }
+  .glow-breathe { animation: neon-breathe 4s infinite ease-in-out; }
+  @keyframes neon-breathe { 0%, 100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 8px rgba(255, 255, 255, 0.2); } }
 
-  .ghost-watermark {
-    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    height: 120vh; width: auto; min-width: 100vw; 
-    object-fit: cover; object-position: center 25%; 
-    opacity: 0; mix-blend-mode: luminosity; pointer-events: none; z-index: 0;
-  }
+  .ghost-watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 120vh; width: auto; min-width: 100vw; object-fit: cover; object-position: center 25%; opacity: 0; mix-blend-mode: luminosity; pointer-events: none; z-index: 0; }
 
   /* Cinematic Section */
   .cinematic-hero { height: 100vh; width: 100vw; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; z-index: 1;}
@@ -855,16 +722,10 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .magnetic-text { font-family: 'Hanken Grotesk', sans-serif; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); opacity: 0.8; }
   .icon-bounce-wrapper { animation: bounce 2s infinite; }
   .scroll-icon { width: 24px; height: auto; opacity: 0.7; }
-  
   @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
   
   .portrait-wrapper { position: absolute; height: 100vh; width: 100vw; top: 0; left: 0; display: flex; align-items: center; justify-content: center; z-index: 1; transform: translateX(35vw); }
-  
-  .portrait-img { 
-    height: 100%; width: 100%; max-width: 800px; 
-    object-fit: cover; object-position: center 25%; 
-    transition: filter 1s ease; 
-  }
+  .portrait-img { height: 100%; width: 100%; max-width: 800px; object-fit: cover; object-position: center 25%; transition: filter 1s ease; }
   
   .bio-text { position: absolute; right: 2rem; width: 450px; z-index: 10; opacity: 0; transform: translateX(50px); }
   .bio { color: var(--text-secondary); font-size: var(--step-1); line-height: 1.7; margin-bottom: 1.5rem; }
@@ -874,52 +735,22 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
   .glass-panel { background: linear-gradient(135deg, rgba(25, 25, 25, 0.4) 0%, rgba(10, 10, 10, 0.8) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.02); border-right: 1px solid rgba(255, 255, 255, 0.02); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); border-radius: 16px; }
 
-  .btn-solid { 
-    position: relative; overflow: hidden; font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; 
-    letter-spacing: 0.05em; font-size: var(--step--1); background: #fff; color: #000; 
-    padding: 0.8rem 2.5rem; border-radius: 50px; text-decoration: none; 
-    border: 1px solid #fff; display: inline-flex; align-items: center; justify-content: center; 
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  
+  .btn-solid { position: relative; overflow: hidden; font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: var(--step--1); background: #fff; color: #000; padding: 0.8rem 2.5rem; border-radius: 50px; text-decoration: none; border: 1px solid #fff; display: inline-flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
   .btn-solid .btn-text { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2; position: relative; }
-  .btn-solid::after {
-    content: '↗'; position: absolute; right: 1.2rem; opacity: 0;
-    transform: translate(-10px, 10px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 2; font-weight: 800;
-  }
+  .btn-solid::after { content: '↗'; position: absolute; right: 1.2rem; opacity: 0; transform: translate(-10px, 10px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2; font-weight: 800; }
   .btn-solid:hover { background: transparent; color: #fff; padding-right: 3.2rem; padding-left: 1.8rem; }
   .btn-solid:hover .btn-text { transform: translateX(-5px); }
   .btn-solid:hover::after { opacity: 1; transform: translate(0, 0); }
-
-  .btn-solid::before {
-    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-    background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0) 100%);
-    transform: skewX(-25deg); animation: liquid-sheen 4s infinite cubic-bezier(0.16, 1, 0.3, 1); z-index: 1;
-  }
+  .btn-solid::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0) 100%); transform: skewX(-25deg); animation: liquid-sheen 4s infinite cubic-bezier(0.16, 1, 0.3, 1); z-index: 1; }
   .btn-solid:hover::before { display: none; }
-  
-  @keyframes liquid-sheen {
-    0% { left: -100%; }
-    20% { left: 200%; }
-    100% { left: 200%; }
-  }
+  @keyframes liquid-sheen { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
 
-  .btn-outline {
-    font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; 
-    letter-spacing: 0.05em; font-size: var(--step--1); background: transparent; color: #fff; 
-    padding: 0.8rem 2.5rem; border-radius: 50px; text-decoration: none; 
-    border: 1px solid rgba(255,255,255,0.3); display: inline-flex; align-items: center; justify-content: center; 
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
+  .btn-outline { font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: var(--step--1); background: transparent; color: #fff; padding: 0.8rem 2.5rem; border-radius: 50px; text-decoration: none; border: 1px solid rgba(255,255,255,0.3); display: inline-flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
   .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.05); }
 
   .bounce-arrow { display: inline-block; margin-left: 0.5rem; transition: transform 0.3s ease; }
   .bio-cta:hover .bounce-arrow { animation: gentle-bounce 1s infinite; }
-  @keyframes gentle-bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(4px); }
-  }
+  @keyframes gentle-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
 
   /* --- Sticky Editorial Services Section --- */
   .sticky-editorial-layout { display: flex; justify-content: space-between; align-items: flex-start; }
@@ -936,47 +767,38 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .service-number { font-family: 'Syne', sans-serif; font-size: 5rem; color: rgba(255, 255, 255, 0.05); font-weight: 800; line-height: 0.8; margin-left: -5px; }
   .service-title { font-family: 'Syne', sans-serif; font-size: var(--step-3); color: var(--text-primary); margin: 0; }
   
-  /* Layout handled by inner wrapper for safety */
   .service-card-body-inner { display: flex; flex-direction: column; gap: 2rem; }
-  
   .service-pitch { color: var(--text-secondary); font-size: var(--step-1); line-height: 1.7; margin: 0; }
+  
+  .service-read-more { display: inline-flex; align-items: center; gap: 0.5rem; font-family: 'Hanken Grotesk', sans-serif; color: var(--text-primary); text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: var(--step--1); transition: color 0.3s ease; margin-top: 1rem; }
+  .service-read-more .arrow { transition: transform 0.3s ease; }
+  .service-read-more:hover { color: var(--text-secondary); }
+  .service-read-more:hover .arrow { transform: translate(3px, -3px); }
   
   /* --- 3D FLIP TRACK SECTION --- */
   .projects-flip-track-section { position: relative; z-index: 5; overflow: hidden; }
-  
   .projects-header-wrapper { text-align: left; margin-bottom: 4rem; display: flex; flex-direction: column; align-items: flex-start; }
   .label-pill { display: inline-flex; align-items: center; gap: 0.5rem; border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; padding: 0.4rem 1.2rem; font-size: var(--step--1); color: var(--text-secondary); margin-bottom: 1.5rem; }
   .pill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-primary); }
   .massive-projects-title { font-family: 'Syne', sans-serif; font-size: var(--step-5); color: var(--text-primary); margin: 0; line-height: 1.1; }
 
   .flip-projects-swiper { width: 100%; padding-bottom: 4rem; overflow: visible; }
-  
   .flip-project-card { width: 340px; height: 320px; perspective: 1000px; cursor: pointer; z-index: 1; }
   .flip-project-card:hover { z-index: 10; }
-  
   .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1); transform-style: preserve-3d; }
   
-  @media (min-width: 769px) {
-    .flip-project-card:hover .flip-card-inner { transform: rotateY(180deg); }
-  }
-  
+  @media (min-width: 769px) { .flip-project-card:hover .flip-card-inner { transform: rotateY(180deg); } }
   .flip-project-card.is-flipped { z-index: 10; }
   .flip-project-card.is-flipped .flip-card-inner { transform: rotateY(180deg); }
 
-  .flip-card-front, .flip-card-back { 
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%; backface-visibility: hidden; 
-    border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; box-sizing: border-box; margin: 0;
-  }
-  
+  .flip-card-front, .flip-card-back { position: absolute; top: 0; left: 0; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; box-sizing: border-box; margin: 0; }
   .flip-card-front { justify-content: flex-start; }
   .proj-front-title { font-family: 'Syne', sans-serif; font-size: var(--step-2); color: var(--text-primary); margin: 0 0 1rem 0; line-height: 1.2; }
-  
   .proj-front-summary { font-size: var(--step-0); color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
   
   .tech-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .pill-tag { font-family: 'Hanken Grotesk', sans-serif; padding: 0.4rem 0.8rem; border-radius: 50px; background: #fff; color: #000; border: none; font-weight: 700; font-size: var(--step--2); text-transform: uppercase; letter-spacing: 0.05em; }
   .tag { font-family: 'Hanken Grotesk', sans-serif; font-size: var(--step--2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.4rem 0.8rem; border: 1px solid rgba(255, 255, 255, 0.15); color: var(--text-secondary); transition: all 0.3s ease; }
-
   
   .flip-card-back { transform: rotateY(180deg); align-items: center; justify-content: center; text-align: center; }
   .project-logo { max-width: 80%; max-height: 90px; object-fit: contain; margin-bottom: 2rem; }
@@ -991,50 +813,22 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   /* ==========================================
      NEW: TERMINAL UX STYLING 
   ========================================== */
-  .terminal-window {
-    background: rgba(8, 8, 8, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    overflow: hidden;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-  }
-
-  .terminal-header {
-    background: rgba(25, 25, 25, 1);
-    padding: 0.8rem 1.5rem;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
+  .terminal-window { background: rgba(8, 8, 8, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; overflow: hidden; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+  .terminal-header { background: rgba(25, 25, 25, 1); padding: 0.8rem 1.5rem; display: flex; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
   .terminal-buttons { display: flex; gap: 8px; }
   .term-btn { width: 12px; height: 12px; border-radius: 50%; }
   .term-btn.red { background: #ff5f56; }
   .term-btn.yellow { background: #ffbd2e; }
   .term-btn.green { background: #27c93f; }
-
-  .terminal-title { 
-    margin: 0 auto; 
-    color: var(--text-secondary); 
-    font-size: 0.85rem; 
-    letter-spacing: 0.05em; 
-  }
-
+  .terminal-title { margin: 0 auto; color: var(--text-secondary); font-size: 0.85rem; letter-spacing: 0.05em; }
   .term-comment { color: #666; margin-bottom: 1.5rem; font-size: 0.95rem; }
   
-  .term-command {
-    background: transparent; border: none; color: #A3A3A3; text-align: left;
-    font-family: inherit; font-size: 0.95rem; width: 100%; padding: 0.6rem 0;
-    cursor: pointer; transition: all 0.3s ease; text-transform: lowercase;
-  }
+  .term-command { background: transparent; border: none; color: #A3A3A3; text-align: left; font-family: inherit; font-size: 0.95rem; width: 100%; padding: 0.6rem 0; cursor: pointer; transition: all 0.3s ease; text-transform: lowercase; }
   .term-command:hover, .term-command.active-cmd { color: #00e5ff; }
   .prompt-arrow { color: #27c93f; margin-right: 0.5rem; }
-
   .blinking-cursor { animation: blink 1s step-end infinite; color: #f5f5f5; }
   @keyframes blink { 50% { opacity: 0; } }
 
-  /* Syntax Highlighting Colors */
   .term-date { color: #888; }
   .term-process { color: #ffbd2e; font-weight: 600; }
   .term-title { color: #fff; font-weight: 600; }
@@ -1042,14 +836,12 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .term-desc { color: #e0e0e0; line-height: 1.6; display: block; margin-top: 0.5rem; }
   .term-success { color: #27c93f; }
 
-  /* Desktop Terminal View */
   .desktop-terminal { display: grid; grid-template-columns: 35% 65%; min-height: 400px; }
   .terminal-sidebar { border-right: 1px solid rgba(255,255,255,0.05); padding: 2rem; background: rgba(5,5,5,0.5); }
   .terminal-main { padding: 2.5rem; display: flex; flex-direction: column; justify-content: stretch; }
   .terminal-output-wrapper { font-size: 1rem; color: #f5f5f5; line-height: 1.6; }
   .terminal-output { display: inline; }
 
-  /* Mobile Terminal View */
   .mobile-terminal { display: none; padding: 1.5rem; }
   .mobile-term-group { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 1rem 0; }
   .mobile-term-group:last-child { border-bottom: none; }
@@ -1074,111 +866,42 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   /* ==========================================
      NEW: ETHOS X-RAY INTERACTION STYLING 
   ========================================== */
-  .ethos-split-layout {
-    display: grid;
-    grid-template-columns: 1fr 400px; 
-    gap: 2rem;
-    align-items: stretch;
-  }
-
-  .ethos-box { 
-    border: 1px solid #333; 
-    padding: 4rem; 
-    background: rgba(8,8,8,0.8); 
-    backdrop-filter: blur(10px); 
-    border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  
+  .ethos-split-layout { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; align-items: stretch; }
+  .ethos-box { border: 1px solid #333; padding: 4rem; background: rgba(8,8,8,0.8); backdrop-filter: blur(10px); border-radius: 16px; display: flex; flex-direction: column; justify-content: center; }
   .ethos-box h2 { font-family: 'Syne', sans-serif; font-size: var(--step-3); color: var(--text-primary); margin: 0 0 2rem 0; }
   .ethos-content p { color: var(--text-secondary); font-size: var(--step-1); line-height: 1.7; margin: 0 0 1.5rem 0; }
   .ethos-content p:last-child { margin: 0; }
   .ethos-btn { margin-top: 2.5rem; display: inline-flex; }
 
-  /* The Interactive Image Container */
-  .ethos-image-wrapper {
-    position: relative;
-    border-radius: 16px;
-    overflow: hidden;
-    cursor: crosshair; 
-    /* CSS Variables controlled by GSAP */
-    --x: 50%;
-    --y: 50%;
-    --size: 0px; 
-  }
+  .ethos-image-wrapper { position: relative; border-radius: 16px; overflow: hidden; cursor: crosshair; --x: 50%; --y: 50%; --size: 0px; }
+  .ethos-base-img { width: 100%; height: 100%; object-fit: cover; object-position: center; filter: grayscale(100%) contrast(1.1); display: block; }
+  .ethos-color-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; clip-path: circle(var(--size) at var(--x) var(--y)); -webkit-clip-path: circle(var(--size) at var(--x) var(--y)); pointer-events: none; z-index: 2; }
+  .ethos-reveal-img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 
-  /* Layer 1: Grayscale Base */
-  .ethos-base-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    filter: grayscale(100%) contrast(1.1); 
-    display: block;
-  }
-
-  /* Layer 2: The Color Reveal Spotlight */
-  .ethos-color-layer {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    /* The Magic: A circle drawn at the X/Y coordinates fed by JavaScript */
-    clip-path: circle(var(--size) at var(--x) var(--y));
-    -webkit-clip-path: circle(var(--size) at var(--x) var(--y));
-    pointer-events: none; 
-    z-index: 2;
-  }
-  
-  .ethos-reveal-img {
-    width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;
-  }
-
-  /* Layer 3: The Haptic Fingerprint Overlay */
-  .haptic-prompt {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 5;
-    pointer-events: none;
-    opacity: 0.8;
-  }
-
-  .fingerprint-icon {
-    width: 30px;
-    height: 30px;
-    color: rgba(255, 255, 255, 0.9);
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
-    z-index: 2;
-  }
-
-  /* The Pulsing Ring */
-  .haptic-ring {
-    position: absolute;
-    top: 50%; left: 50%; transform: translate(-50%, -50%);
-    width: 100%; height: 100%;
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-radius: 50%;
-    animation: pulse-ring 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
-  }
+  .haptic-prompt { position: absolute; bottom: 20px; right: 20px; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; z-index: 5; pointer-events: none; opacity: 0.8; }
+  .fingerprint-icon { width: 30px; height: 30px; color: rgba(255, 255, 255, 0.9); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); z-index: 2; }
+  .haptic-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%; border: 1px solid rgba(255, 255, 255, 0.6); border-radius: 50%; animation: pulse-ring 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1); }
 
   @keyframes pulse-ring {
     0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; border-width: 2px; }
     100% { transform: translate(-50%, -50%) scale(2); opacity: 0; border-width: 0; }
   }
 
-  /* Footer */
-  .site-footer { border-top: 1px solid #1a1a1a; padding: 3rem 0; }
-  .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-  .footer-content p { color: var(--text-secondary); font-size: var(--step-0); margin: 0; }
-  .social-links { display: flex; gap: 2rem; }
-  .social-links a { color: var(--text-primary); text-decoration: none; font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: var(--step--1); transition: color 0.3s ease; }
-  .social-links a:hover { color: var(--text-secondary); }
+  /* ==========================================
+     NEW: STRUCTURED FOOTER NAVIGATION 
+  ========================================== */
+  .site-footer { border-top: 1px solid #1a1a1a; padding: 4rem 0; background: #000; margin-top: 2rem; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4rem; align-items: start; }
+  
+  .footer-col { display: flex; flex-direction: column; gap: 1rem; }
+  .footer-logo { height: 35px; width: auto; margin-bottom: 0.5rem; align-self: flex-start; }
+  .footer-desc { color: var(--text-secondary); font-size: var(--step-0); line-height: 1.6; max-width: 300px; margin: 0; }
+  .copyright { color: #666; font-size: var(--step--1); margin-top: auto; padding-top: 1.5rem; }
+
+  .link-col h4 { font-family: 'Syne', sans-serif; font-size: var(--step-1); color: var(--text-primary); margin: 0 0 0.5rem 0; }
+  .link-col a { color: var(--text-secondary); text-decoration: none; font-family: 'Hanken Grotesk', sans-serif; font-weight: 500; font-size: var(--step-0); transition: color 0.3s ease; }
+  .link-col a:hover { color: var(--text-primary); }
+  .projects-link { margin-top: 1rem; color: #fff !important; font-weight: 700 !important; }
 
   /* Modal */
   .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(8px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; }
@@ -1198,39 +921,21 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
   /* Mobile Adjustments */
   @media (max-width: 768px) {
-    :root {
-      --step-2: 1.3rem; 
-      --step-3: 2rem;   
-      --step-4: 2.5rem; 
-    }
-
+    :root { --step-2: 1.3rem; --step-3: 2rem; --step-4: 2.5rem; }
     .global-padding { padding: var(--section-gap-mobile) 0; }
-
     .site-header { padding: 1rem 0; }
     .header-container { max-width: 90vw; padding: 0.6rem 1.2rem; }
-
     .nav-links { gap: 0.5rem; }
     .contact-btn { padding: 0.5rem 1rem; }
-
     .intro-text { bottom: 15%; left: 1.5rem; }
     
     .scroll-icon-wrapper { left: 50%; transform: translateX(-50%); bottom: 12%; }
     .magnetic-target { transform: none !important; }
-    
     .portrait-wrapper { transform: translateX(35vw); }
+    .portrait-img { object-position: 85% 25%; }
+    .ghost-watermark { object-position: 85% 25%; }
     
-    /* --- Pan Mobile Image Crop to perfectly offset the 35vw container shift --- */
-    .portrait-img { object-position: 30% 25%; }
-    .ghost-watermark { object-position: 30% 25%; }
-    
-    .bio-text { 
-      width: 80%; 
-      right: 1.5rem; 
-      left: auto; 
-      text-align: left; 
-      transform: translateX(30px); 
-    }
-    
+    .bio-text { width: 80%; right: 1.5rem; left: auto; text-align: left; transform: translateX(30px); }
     .sticky-editorial-layout { flex-direction: column; gap: 4rem; }
     .sticky-sidebar, .scrolling-cards-container { width: 100%; }
     .sticky-sidebar { position: relative; top: 0; margin-bottom: 2rem; }
@@ -1239,25 +944,20 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     .service-number { font-size: 4rem; }
 
     .flip-project-card { width: 85vw; height: 320px; } 
-
     #global-tooltip { position: fixed; }
     .mobile-modal { top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; width: 90vw; pointer-events: auto !important; box-shadow: 0 0 50px rgba(0,0,0,0.9); border-color: rgba(255,255,255,0.3); }
-
     .skills-card { grid-column: span 1; }
-    .footer-content { flex-direction: column; text-align: center; }
     .modal-box { padding: 2rem; }
     
     /* Mobile Ethos Adjustments */
-    .ethos-split-layout {
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
+    .ethos-split-layout { grid-template-columns: 1fr; gap: 1.5rem; }
     .ethos-box { padding: 2.5rem; }
     .ethos-image-wrapper { height: 400px; } 
     
-    /* ACTIVATE FINGERPRINT ONLY ON MOBILE */
-    .haptic-prompt {
-      display: flex; 
-    }
+    /* Footer Mobile Adjustments */
+    .footer-grid { grid-template-columns: 1fr; gap: 3rem; text-align: center; }
+    .footer-logo { align-self: center; }
+    .footer-desc { max-width: 100%; margin: 0 auto; }
+    .copyright { padding-top: 0; }
   }
 </style>
