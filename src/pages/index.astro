@@ -58,9 +58,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     <div class="cinematic-container">
       <div class="intro-text">
         <h1 class="sr-only">Fareed M. Rifaideen - Full-Stack Digital Marketer & Web Developer in Dubai</h1>
-        
-        <span class="hero-title" aria-hidden="true">Fareed M.<br/>Rifaideen</span>
-        
+        <div class="hero-title" aria-hidden="true">Fareed M.<br/>Rifaideen</div>
         <h2 class="dynamic-subtitle-wrapper">I'm a <span class="dynamic-subtitle">Full-Stack Digital Marketer & Web Developer</span></h2>
       </div>
       
@@ -74,8 +72,12 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       </div>
 
       <div class="portrait-wrapper">
-        <Image src={profileImg} alt="Fareed Profile" class="portrait-img hero-portrait" loading="eager" /> 
+        <div class="portrait-inner">
+          <Image src={profileImg} alt="Fareed Profile" class="portrait-img hero-portrait" loading="eager" /> 
+          <div class="portrait-shadow-overlay"></div>
+        </div>
       </div>
+
       <div class="bio-text">
         <p class="bio">
           I build digital ecosystems engineered for one specific metric: ROI. With a decade of experience in financial operations, I treat your marketing budget as a direct investment rather than an operational expense.
@@ -462,9 +464,10 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     // ==========================================
     mm.add("(min-width: 768px)", () => {
       let tl = gsap.timeline({ scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" } });
+      
       tl.to(".intro-text", { opacity: 0, x: -50, duration: 1 }, 0)
         .to(".scroll-icon-wrapper", { opacity: 0, y: 20, duration: 0.5 }, 0)
-        .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
+        .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0); // GSAP ORIGINAL ANIMATION RESTORED
       tl.to(".portrait-wrapper", { x: "-25vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
         .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
       tl.to({}, { duration: 1.5 });
@@ -506,9 +509,10 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     // ==========================================
     mm.add("(max-width: 767px)", () => {
       let mobileTl = gsap.timeline({ scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" } });
-      mobileTl.to(".intro-text", { opacity: 0, x: -30, duration: 1 }, 0)
+      
+      mobileTl.to(".intro-text", { opacity: 0, y: -20, duration: 1 }, 0)
         .to(".scroll-icon-wrapper", { opacity: 0, duration: 0.5 }, 0)
-        .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0);
+        .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0); // GSAP ORIGINAL ANIMATION RESTORED
       mobileTl.to(".portrait-wrapper", { x: "-35vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
         .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
       mobileTl.to({}, { duration: 1.5 });
@@ -643,7 +647,9 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .cinematic-hero { height: 100vh; width: 100vw; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; z-index: 1;}
   .cinematic-container { position: relative; width: 100%; max-width: 1200px; height: 100%; margin: 0 auto; display: flex; align-items: center; }
   .intro-text { position: absolute; left: 2rem; z-index: 10; }
-  .intro-text .hero-title { display: block; font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3rem, 7vw, 6.5rem); letter-spacing: -0.02em; margin: 0; line-height: 1.1; }
+  
+  .intro-text .hero-title { display: block; font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3rem, 7vw, 6.5rem); letter-spacing: -0.02em; margin: 0; line-height: 1.1; color: var(--text-primary); }
+  
   .dynamic-subtitle-wrapper { font-family: 'Hanken Grotesk', sans-serif; font-weight: 400; font-size: clamp(1rem, 2vw, 1.5rem); color: var(--text-secondary); margin-top: 1rem; display: flex; align-items: center; gap: 0.4rem;}
   .dynamic-subtitle { display: inline-block; color: var(--text-primary); font-weight: 600; }
   
@@ -654,9 +660,18 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .scroll-icon { width: 24px; height: auto; opacity: 0.7; }
   @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
   
+  /* FIXED: 100% Restoration of Original Layout (No Masks, No Cropping) */
   .portrait-wrapper { position: absolute; height: 100vh; width: 100vw; top: 0; left: 0; display: flex; align-items: center; justify-content: center; z-index: 1; transform: translateX(35vw); }
-  .portrait-img { height: 100%; width: 100%; max-width: 800px; object-fit: cover; object-position: center 25%; transition: filter 1s ease; }
   
+  /* NEW: The CSS Shadow Wrap (Protects the edge without touching the photo) */
+  .portrait-inner { position: relative; height: 100%; width: 100%; max-width: 800px; display: flex; }
+  
+  /* RESTORED: Exact original image styling */
+  .portrait-img { height: 100%; width: 100%; object-fit: cover; object-position: center 25%; transition: filter 1s ease; }
+  
+  /* NEW: Target the far-left boundary specifically */
+  .portrait-shadow-overlay { position: absolute; top: 0; left: -2px; width: 15vw; max-width: 120px; height: 100%; background: linear-gradient(to right, #050505 0%, rgba(5, 5, 5, 0.9) 15%, rgba(5, 5, 5, 0) 100%); z-index: 2; pointer-events: none; }
+
   .bio-text { position: absolute; right: 2rem; width: 450px; z-index: 10; opacity: 0; transform: translateX(50px); }
   .bio { color: var(--text-secondary); font-size: var(--step-1); line-height: 1.7; margin-bottom: 1.5rem; }
   .bio-cta { margin-top: 1rem; }
@@ -825,19 +840,21 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   @media (max-width: 768px) {
     :root { --step-2: 1.3rem; --step-3: 2rem; --step-4: 2.5rem; }
     .global-padding { padding: var(--section-gap-mobile) 0; }
-    /* Mobile GPU Optimization */
+    
     .glass-panel {
       backdrop-filter: blur(4px) !important;
       -webkit-backdrop-filter: blur(4px) !important;
       background: linear-gradient(135deg, rgba(25, 25, 25, 0.8) 0%, rgba(10, 10, 10, 0.95) 100%) !important;
     }
+    
     .intro-text { bottom: 15%; left: 1.5rem; }
     
     .scroll-icon-wrapper { left: 50%; transform: translateX(-50%); bottom: 12%; }
     .magnetic-target { transform: none !important; }
+    
+    /* RESTORED: Original exact mobile math is back! */
     .portrait-wrapper { transform: translateX(35vw); }
-    .portrait-img { object-position: 85% 25%; }
-    .ghost-watermark { object-position: 85% 25%; }
+    .portrait-shadow-overlay { width: 25vw; max-width: 100px; } /* Slightly wider shadow on mobile to blend beautifully */
     
     .bio-text { width: 80%; right: 1.5rem; left: auto; text-align: left; transform: translateX(30px); }
     .sticky-editorial-layout { flex-direction: column; gap: 4rem; }
