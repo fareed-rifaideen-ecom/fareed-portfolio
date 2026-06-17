@@ -6,7 +6,7 @@
     <button class="modal-close" id="closeModal">✕</button>
     <h3 class="modal-title">Start a Conversation</h3>
     <p class="modal-desc">What primary business objective are we tackling today?</p>
-    <form name="project-inquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/success" class="brutalist-form">
+    <form id="inquiryForm" name="project-inquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/success" class="brutalist-form">
       <p class="hidden">
         <label>Don’t fill this out if you're human: <input name="bot-field" /></label>
       </p>
@@ -22,7 +22,7 @@
         <textarea name="message" id="message" rows="4" required placeholder=" "></textarea>
         <label for="message">Project Details</label>
       </div>
-      <button type="submit" class="contact-btn submit-btn">Send Brief</button>
+      <button type="submit" id="submitBtn" class="contact-btn submit-btn">Send Brief</button>
     </form>
   </div>
 </div>
@@ -52,17 +52,15 @@
 <script>
   import gsap from 'gsap';
 
-  // Component-scoped logic
   document.addEventListener("DOMContentLoaded", () => {
     const modal = document.getElementById("contactModal");
-    const openBtns = document.querySelectorAll(".modal-trigger");
     const closeBtn = document.getElementById("closeModal");
 
     if(modal) {
       const openModal = (e: Event) => {
         e.preventDefault();
         
-        // Lenis-aware scroll locking to prevent homepage scroll from breaking
+        // Lenis-aware scroll locking
         if ((window as any).lenis) { (window as any).lenis.stop(); } 
         else { document.body.style.overflow = "hidden"; }
         
@@ -78,9 +76,28 @@
         else { document.body.style.overflow = "auto"; }
       };
 
-      openBtns.forEach(btn => btn.addEventListener("click", openModal));
+      // EVENT DELEGATION: Allows dynamic terminal links to open the modal
+      document.body.addEventListener("click", (e) => {
+        const target = e.target as HTMLElement;
+        if (target.closest(".modal-trigger")) {
+          openModal(e);
+        }
+      });
+
       closeBtn?.addEventListener("click", closeModal);
-      modal?.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+      modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+    }
+
+    // --- Form Submission Feedback ---
+    const inquiryForm = document.getElementById("inquiryForm");
+    const submitBtn = document.getElementById("submitBtn");
+
+    if (inquiryForm && submitBtn) {
+      inquiryForm.addEventListener("submit", () => {
+        submitBtn.innerHTML = "Transmitting...";
+        submitBtn.style.opacity = "0.7";
+        submitBtn.style.pointerEvents = "none";
+      });
     }
   });
 </script>

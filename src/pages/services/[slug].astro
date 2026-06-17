@@ -6,26 +6,29 @@ import SubPageHeader from '../../components/SubPageHeader.astro';
 import GlobalFooter from '../../components/GlobalFooter.astro';
 import ContactModal from '../../components/ContactModal.astro';
 
-// 1. Tell Astro to generate a route for every file in the 'services' collection
+// 1. Safely generate a route for every file in the 'services' collection
 export async function getStaticPaths() {
-  const serviceEntries = await getCollection('services');
-  return serviceEntries.map(entry => ({
-    params: { slug: entry.id },
-    props: { entry },
-  }));
+  try {
+    const serviceEntries = await getCollection('services');
+    if (!serviceEntries || serviceEntries.length === 0) return []; 
+
+    return serviceEntries.map((entry: any) => ({
+      params: { slug: entry.id || entry.slug },
+      props: { entry },
+    }));
+  } catch (error) {
+    console.warn("Services collection missing. Skipping dynamic route generation.");
+    return [];
+  }
 }
 
 // 2. Extract the data for the specific page
 const { entry } = Astro.props;
-
-// 3. Fetch all services for the global footer loop
-const allServices = await getCollection('services');
-allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 ---
 
 <BaseLayout 
-  title={`${entry.data.title} | Fareed M. Rifaideen`} 
-  description={entry.data.summary}
+  title={`${entry?.data?.title || 'Service'} | Fareed M. Rifaideen`} 
+  description={entry?.data?.summary || 'Service details and SOPs.'}
 >
   <SubPageHeader />
 
@@ -35,11 +38,11 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         <span class="pill-dot"></span>
         <span>Service Overview</span>
       </div>
-      <h1 class="massive-service-title">{entry.data.title}</h1>
-      <p class="service-lead">{entry.data.summary}</p>
+      <h1 class="massive-service-title">{entry?.data?.title}</h1>
+      <p class="service-lead">{entry?.data?.summary}</p>
       
       <div class="tech-tags service-hero-tags">
-        {entry.data.techStack && entry.data.techStack.map((tech: string) => (
+        {entry?.data?.techStack && entry.data.techStack.map((tech: string) => (
           <span class="tag">{tech}</span>
         ))}
       </div>
@@ -58,7 +61,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         <h2 class="massive-launch-title" id="decrypt-text">Structuring SOPs...</h2>
         
         <p class="launch-desc">
-          Comprehensive technical breakdowns, execution logs, and case studies for <strong>{entry.data.title}</strong> are currently being formatted for public release.
+          Comprehensive technical breakdowns, execution logs, and case studies for <strong>{entry?.data?.title}</strong> are currently being formatted for public release.
         </p>
 
         <div class="terminal-progress">
@@ -100,7 +103,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255,255,255,0.1);
-    border-radius: 24px; padding: 4rem; width: 100%; text-align: left; position: relative; overflow: hidden;
+    border-radius: 24px; padding: 4rem; width: 100%;
+    text-align: left; position: relative; overflow: hidden;
   }
 
   .status-wrapper { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem; }
