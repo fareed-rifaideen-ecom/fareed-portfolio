@@ -155,7 +155,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
                 </div>
               </div>
 
-              <div class="flip-card-back glass-panel">
+              <div class="flip-card-back glass-panel" aria-hidden="true">
                 <img src={project.data.image} alt={`${project.data.title} Logo`} class="project-logo bw-logo" loading="lazy" decoding="async" />
                 <a href={project.data.liveUrl} target="_blank" rel="noopener noreferrer" class="btn-solid view-project-btn"><span class="btn-text">View Live Project</span></a>
               </div>
@@ -349,7 +349,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       <button class="modal-close" id="closeModal">✕</button>
       <h3 class="modal-title">Start a Conversation</h3>
       <p class="modal-desc">What primary business objective are we tackling today?</p>
-      <form name="project-inquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="brutalist-form">
+      <form id="inquiryForm" name="project-inquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="brutalist-form">
         <p class="hidden">
           <label>Don’t fill this out if you're human: <input name="bot-field" /></label>
         </p>
@@ -365,7 +365,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
           <textarea name="message" id="message" rows="4" required placeholder=" "></textarea>
           <label for="message">Project Details</label>
         </div>
-        <button type="submit" class="contact-btn submit-btn">Send Brief</button>
+        <button type="submit" id="submitBtn" class="contact-btn submit-btn">Send Brief</button>
       </form>
     </div>
   </div>
@@ -661,6 +661,18 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         });
       });
     }
+
+    // --- Form Submission Feedback ---
+    const inquiryForm = document.getElementById("inquiryForm");
+    const submitBtn = document.getElementById("submitBtn");
+
+    if (inquiryForm && submitBtn) {
+      inquiryForm.addEventListener("submit", () => {
+        submitBtn.innerHTML = "Transmitting...";
+        submitBtn.style.opacity = "0.7";
+        submitBtn.style.pointerEvents = "none"; // Locks the button to prevent double-clicks
+      });
+    }
   </script>
 </BaseLayout>
 
@@ -733,7 +745,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   
   .section-title { font-family: 'Syne', sans-serif; font-size: var(--step-4); margin-bottom: 4rem; color: var(--text-primary); }
 
-  .glass-panel { background: linear-gradient(135deg, rgba(25, 25, 25, 0.4) 0%, rgba(10, 10, 10, 0.8) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.02); border-right: 1px solid rgba(255, 255, 255, 0.02); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); border-radius: 16px; }
+  .glass-panel { background: linear-gradient(135deg, rgba(25, 25, 25, 0.4) 0%, rgba(10, 10, 10, 0.8) 100%); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.1); border-left: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.02); border-right: 1px solid rgba(255, 255, 255, 0.02); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); border-radius: 16px; will-change: transform; }
 
   .btn-solid { position: relative; overflow: hidden; font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: var(--step--1); background: #fff; color: #000; padding: 0.8rem 2.5rem; border-radius: 50px; text-decoration: none; border: 1px solid #fff; display: inline-flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
   .btn-solid .btn-text { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2; position: relative; }
@@ -923,6 +935,12 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   @media (max-width: 768px) {
     :root { --step-2: 1.3rem; --step-3: 2rem; --step-4: 2.5rem; }
     .global-padding { padding: var(--section-gap-mobile) 0; }
+    /* Mobile GPU Optimization */
+    .glass-panel {
+      backdrop-filter: blur(4px) !important;
+      -webkit-backdrop-filter: blur(4px) !important;
+      background: linear-gradient(135deg, rgba(25, 25, 25, 0.8) 0%, rgba(10, 10, 10, 0.95) 100%) !important;
+    }
     .site-header { padding: 1rem 0; }
     .header-container { max-width: 90vw; padding: 0.6rem 1.2rem; }
     .nav-links { gap: 0.5rem; }
