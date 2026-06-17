@@ -1,12 +1,11 @@
 ---
 // src/components/ContactModal.astro
 ---
-<div class="modal-overlay" id="subpageContactModal">
+<div class="modal-overlay" id="contactModal">
   <div class="modal-box">
-    <button class="modal-close" id="subpageCloseModal">✕</button>
+    <button class="modal-close" id="closeModal">✕</button>
     <h3 class="modal-title">Start a Conversation</h3>
     <p class="modal-desc">What primary business objective are we tackling today?</p>
-    <!-- Notice action="/success" is already added here for Phase 4 deployment -->
     <form name="project-inquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/success" class="brutalist-form">
       <p class="hidden">
         <label>Don’t fill this out if you're human: <input name="bot-field" /></label>
@@ -53,22 +52,30 @@
 <script>
   import gsap from 'gsap';
 
+  // Component-scoped logic
   document.addEventListener("DOMContentLoaded", () => {
-    const modal = document.getElementById("subpageContactModal");
+    const modal = document.getElementById("contactModal");
     const openBtns = document.querySelectorAll(".modal-trigger");
-    const closeBtn = document.getElementById("subpageCloseModal");
+    const closeBtn = document.getElementById("closeModal");
 
     if(modal) {
       const openModal = (e: Event) => {
         e.preventDefault();
-        document.body.style.overflow = "hidden"; // Locks background scroll
+        
+        // Lenis-aware scroll locking to prevent homepage scroll from breaking
+        if ((window as any).lenis) { (window as any).lenis.stop(); } 
+        else { document.body.style.overflow = "hidden"; }
+        
         gsap.to(modal, { opacity: 1, pointerEvents: "auto", duration: 0.4, ease: "power2.out" });
         gsap.fromTo(".modal-box", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, delay: 0.1, ease: "power2.out" });
       };
 
       const closeModal = () => {
         gsap.to(modal, { opacity: 0, pointerEvents: "none", duration: 0.4, ease: "power2.in" });
-        document.body.style.overflow = "auto"; // Restores background scroll
+        
+        // Lenis-aware scroll unlocking
+        if ((window as any).lenis) { (window as any).lenis.start(); } 
+        else { document.body.style.overflow = "auto"; }
       };
 
       openBtns.forEach(btn => btn.addEventListener("click", openModal));
