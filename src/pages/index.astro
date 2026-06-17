@@ -65,7 +65,10 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   <section class="cinematic-hero">
     <div class="cinematic-container">
       <div class="intro-text">
-        <h1>Fareed M.<br/>Rifaideen</h1>
+        <h1 class="sr-only">Fareed M. Rifaideen - Full-Stack Digital Marketer & Web Developer in Dubai</h1>
+        
+        <span class="hero-title" aria-hidden="true">Fareed M.<br/>Rifaideen</span>
+        
         <h2 class="dynamic-subtitle-wrapper">I'm a <span class="dynamic-subtitle">Full-Stack Digital Marketer & Web Developer</span></h2>
       </div>
       
@@ -677,6 +680,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 </BaseLayout>
 
 <style is:global>
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
+
   :root {
     --bg-color: #050505;
     --text-primary: #F5F5F5;
@@ -725,7 +730,7 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .cinematic-hero { height: 100vh; width: 100vw; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; z-index: 1;}
   .cinematic-container { position: relative; width: 100%; max-width: 1200px; height: 100%; margin: 0 auto; display: flex; align-items: center; }
   .intro-text { position: absolute; left: 2rem; z-index: 10; }
-  .intro-text h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3rem, 7vw, 6.5rem); letter-spacing: -0.02em; margin: 0; line-height: 1.1; }
+  .intro-text .hero-title { display: block; font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3rem, 7vw, 6.5rem); letter-spacing: -0.02em; margin: 0; line-height: 1.1; }
   .dynamic-subtitle-wrapper { font-family: 'Hanken Grotesk', sans-serif; font-weight: 400; font-size: clamp(1rem, 2vw, 1.5rem); color: var(--text-secondary); margin-top: 1rem; display: flex; align-items: center; gap: 0.4rem;}
   .dynamic-subtitle { display: inline-block; color: var(--text-primary); font-weight: 600; }
   
