@@ -1,0 +1,361 @@
+---
+// src/pages/404.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubPageHeader from '../components/SubPageHeader.astro';
+---
+
+<BaseLayout 
+  title="404: System Fragmented | Fareed M. Rifaideen" 
+  description="Apologies. The requested digital ecosystem has decentralized."
+>
+  <SubPageHeader />
+
+  <section class="void-section">
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="void-content" id="ui-safe-zone">
+      <h1 class="sr-only">404</h1>
+      <p class="void-subtitle">
+        <span class="apology-text">Apologies. A routing anomaly occurred.</span><br/>
+        The requested ecosystem has decentralized into raw data.
+      </p>
+      
+      <div class="void-actions">
+        <a href="/" class="btn-solid glow-breathe"><span class="btn-text">Execute Fallback Protocol</span></a>
+        <a href="/projects" class="secondary-link">Or view active deployments ↗</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .void-section {
+    position: relative;
+    height: 100vh;
+    height: 100dvh; 
+    width: 100vw;
+    background-color: var(--bg-color);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #particle-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: auto;
+    touch-action: none; 
+  }
+
+  .void-content {
+    position: absolute;
+    bottom: max(10vh, 50px);
+    z-index: 10;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+    pointer-events: none; 
+    width: 100%;
+    padding: 0 2rem;
+  }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
+  }
+
+  .void-subtitle {
+    font-family: 'Hanken Grotesk', sans-serif;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    line-height: 1.8;
+    margin: 0;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.9);
+  }
+
+  .apology-text { color: #ff5f56; font-weight: 600; }
+
+  .void-actions {
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .btn-solid {
+    position: relative; overflow: hidden; font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; background: #fff; color: #000; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; border: 1px solid #fff; display: inline-flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); width: 100%;
+  }
+  .btn-solid .btn-text { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2; position: relative; }
+  .btn-solid::after { content: '↗'; position: absolute; right: 1.2rem; opacity: 0; transform: translate(-10px, 10px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2; font-weight: 800; }
+  .btn-solid:hover { background: transparent; color: #fff; padding-right: 3.7rem; padding-left: 1.3rem; }
+  .btn-solid:hover .btn-text { transform: translateX(-5px); }
+  .btn-solid:hover::after { opacity: 1; transform: translate(0, 0); }
+
+  .glow-breathe { animation: neon-breathe 4s infinite ease-in-out; }
+  @keyframes neon-breathe { 0%, 100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.2), 0 0 8px rgba(255, 255, 255, 0.1); } }
+
+  .secondary-link { 
+    display: block; margin-top: 1.5rem; color: var(--text-secondary); font-family: 'Hanken Grotesk', sans-serif; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; text-decoration: none; transition: color 0.3s ease; 
+  }
+  .secondary-link:hover { color: #fff; }
+
+  @media (max-width: 1024px) {
+    .void-subtitle { font-size: 1rem; }
+  }
+
+  @media (max-width: 768px) {
+    .void-subtitle { font-size: 0.85rem; line-height: 1.6; }
+    .btn-solid { padding: 1rem 2rem; font-size: 0.8rem; }
+    .secondary-link { font-size: 0.8rem; margin-top: 1rem; }
+    .void-content { gap: 1.5rem; } 
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const canvas = document.getElementById('particle-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return;
+
+    let particleArray: Particle[] = [];
+    let mouse = { x: -1000, y: -1000, radius: 120 };
+    
+    // NEW: Interaction Flags & State
+    let userHasInteracted = false;
+    let isTouchDevice = false;
+    let lastHapticTime = 0;
+    
+    // NEW: Gyroscope Gravity Values
+    let tiltX = 0;
+    let tiltY = 0;
+
+    // --- EVENT LISTENERS ---
+    window.addEventListener('mousemove', (event) => { 
+      userHasInteracted = true;
+      mouse.x = event.x; mouse.y = event.y; 
+    });
+    
+    window.addEventListener('mouseout', () => { 
+      mouse.x = -1000; mouse.y = -1000; 
+    });
+    
+    window.addEventListener('touchstart', (event) => { 
+      userHasInteracted = true;
+      isTouchDevice = true;
+      mouse.x = event.touches[0].clientX; mouse.y = event.touches[0].clientY; 
+    });
+    
+    window.addEventListener('touchmove', (event) => { 
+      mouse.x = event.touches[0].clientX; mouse.y = event.touches[0].clientY; 
+    });
+    
+    window.addEventListener('touchend', () => { 
+      mouse.x = -1000; mouse.y = -1000; 
+    });
+
+    // NEW: Gyroscope Listener (Device Orientation)
+    window.addEventListener('deviceorientation', (event) => {
+      if (event.gamma !== null && event.beta !== null) {
+        // gamma is left/right tilt. beta is front/back tilt.
+        tiltX = event.gamma * 0.8; 
+        // Offset beta by 40 so holding phone normally doesn't pull particles downward
+        tiltY = (event.beta - 40) * 0.8; 
+      }
+    });
+
+    // NEW: Haptic Engine
+    function triggerHaptic() {
+      if (!isTouchDevice || !navigator.vibrate) return;
+      
+      const now = Date.now();
+      // Throttle vibrations so it feels like a subtle texture, not an alarm
+      if (now - lastHapticTime > 80) {
+        navigator.vibrate(10); // 10ms micro-tick
+        lastHapticTime = now;
+      }
+    }
+
+    class Particle {
+      x: number;
+      y: number;
+      size: number;
+      baseX: number;
+      baseY: number;
+      density: number;
+
+      constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 2 + 1;
+        this.baseX = this.x;
+        this.baseY = this.y;
+        this.density = (Math.random() * 30) + 5; 
+      }
+
+      draw() {
+        if(!ctx) return;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      update() {
+        let dx = mouse.x - this.x;
+        let dy = mouse.y - this.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+        
+        let forceDirectionX = dx / distance;
+        let forceDirectionY = dy / distance;
+        
+        let force = (mouse.radius - distance) / mouse.radius;
+        let directionX = forceDirectionX * force * this.density;
+        let directionY = forceDirectionY * force * this.density;
+
+        if (distance < mouse.radius) {
+          this.x -= directionX;
+          this.y -= directionY;
+          
+          // Trigger the haptic "texture" feel when particles are disrupted
+          if (force > 0.5) triggerHaptic();
+        } else {
+          // Snap back to base position PLUS the gyroscope gravity offset
+          let targetX = this.baseX + tiltX;
+          let targetY = this.baseY + tiltY;
+          
+          if (this.x !== targetX) { this.x -= (this.x - targetX) / 10; }
+          if (this.y !== targetY) { this.y -= (this.y - targetY) / 10; }
+        }
+      }
+    }
+
+    let targetY = 0; // Store globally for the ghost sweep
+
+    function init() {
+      particleArray = [];
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const uiElement = document.getElementById('ui-safe-zone');
+      let safeZoneHeight = canvas.height * 0.6; 
+      if (uiElement) {
+        safeZoneHeight = uiElement.getBoundingClientRect().top; 
+      }
+      targetY = safeZoneHeight / 2;
+
+      let fontSize = 350;
+      let step = 7;
+      let isVertical = false;
+
+      if (window.innerWidth <= 800) {
+        isVertical = true;
+        fontSize = Math.min(window.innerWidth * 0.5, 160); 
+        step = 6; 
+        mouse.radius = 90; 
+      } else {
+        fontSize = Math.min(window.innerWidth * 0.3, 250); 
+        step = 6;
+      }
+
+      ctx!.font = `900 ${fontSize}px "Syne", sans-serif`;
+      ctx!.fillStyle = 'white';
+      ctx!.textAlign = 'center';
+      ctx!.textBaseline = 'middle';
+      
+      if (isVertical) {
+        let lineHeight = fontSize * 0.85;
+        ctx!.fillText('4', canvas.width / 2, targetY - lineHeight);
+        ctx!.fillText('0', canvas.width / 2, targetY);
+        ctx!.fillText('4', canvas.width / 2, targetY + lineHeight);
+      } else {
+        ctx!.fillText('404', canvas.width / 2, targetY);
+      }
+
+      const textCoordinates = ctx!.getImageData(0, 0, canvas.width, canvas.height);
+      ctx!.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let y = 0, y2 = textCoordinates.height; y < y2; y += step) {
+        for (let x = 0, x2 = textCoordinates.width; x < x2; x += step) {
+          if (textCoordinates.data[(y * 4 * textCoordinates.width) + (x * 4) + 3] > 128) {
+            particleArray.push(new Particle(x, y));
+          }
+        }
+      }
+    }
+
+    function animate() {
+      ctx!.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < particleArray.length; i++) {
+        particleArray[i].draw();
+        particleArray[i].update();
+      }
+      requestAnimationFrame(animate);
+    }
+
+    // NEW: The Ghost Sweep Sequence
+    function triggerGhostSweep() {
+      if (userHasInteracted) return; // Cancel if user already figured it out
+      
+      let sweepProgress = 0;
+      const startX = canvas.width * 0.1;
+      const endX = canvas.width * 0.9;
+      // Temporarily increase radius for a massive visual disruption
+      const originalRadius = mouse.radius;
+      mouse.radius = window.innerWidth <= 768 ? 150 : 250; 
+
+      function sweepFrame() {
+        if (userHasInteracted) {
+           // Abort sweep instantly if user touches/moves mouse mid-sweep
+           mouse.radius = originalRadius;
+           return; 
+        }
+        
+        sweepProgress += window.innerWidth <= 768 ? 0.015 : 0.01; // Sweep speed
+        mouse.x = startX + ((endX - startX) * sweepProgress);
+        mouse.y = targetY; // Sweep directly through the center of the 404
+
+        if (sweepProgress < 1) {
+          requestAnimationFrame(sweepFrame);
+        } else {
+          mouse.x = -1000;
+          mouse.y = -1000;
+          mouse.radius = originalRadius; // Restore normal physics radius
+        }
+      }
+      sweepFrame();
+    }
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => { 
+        init(); 
+        animate(); 
+        setTimeout(triggerGhostSweep, 1200); // Trigger the ghost sweep 1.2s after load
+      });
+    } else {
+      setTimeout(() => { 
+        init(); 
+        animate(); 
+        setTimeout(triggerGhostSweep, 1200);
+      }, 500);
+    }
+
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => { init(); }, 150);
+    });
+  });
+</script>

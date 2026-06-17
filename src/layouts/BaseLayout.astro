@@ -89,5 +89,59 @@ const url = Astro.url.href;
   <body>
     <!-- The content of your pages will be injected here -->
     <slot />
+
+    <!-- GLOBAL STYLES (Applies to every page using this layout) -->
+    <style is:global>
+      :root {
+        --bg-color: #050505;
+        --text-primary: #F5F5F5;
+        --text-secondary: #A3A3A3;
+        --accent: #fff;
+
+        /* THE GOLDEN TYPOGRAPHIC SCALE */
+        --step--2: 0.75rem; 
+        --step--1: 0.85rem; 
+        --step-0: 1rem;     
+        --step-1: 1.15rem;  
+        --step-2: 1.5rem;   
+        --step-3: 2.5rem;   
+        --step-4: 3rem;     
+        --step-5: clamp(3rem, 5vw, 4.5rem); 
+
+        --section-gap-desktop: 8rem;
+        --section-gap-mobile: 4rem;
+      }
+
+      body { 
+        background-color: var(--bg-color); 
+        color: var(--text-primary); 
+        font-family: 'Hanken Grotesk', sans-serif; 
+        margin: 0; 
+        overflow-x: hidden; 
+      }
+      
+      .container { 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        padding: 0 2rem; 
+        position: relative; 
+        z-index: 2; 
+      }
+      
+      .global-padding { 
+        padding: var(--section-gap-desktop) 0; 
+      }
+
+      @media (max-width: 768px) {
+        :root { 
+          --step-2: 1.3rem; 
+          --step-3: 2rem;   
+          --step-4: 2.5rem; 
+        }
+        .global-padding { 
+          padding: var(--section-gap-mobile) 0; 
+        }
+      }
+    </style>
   </body>
 </html>

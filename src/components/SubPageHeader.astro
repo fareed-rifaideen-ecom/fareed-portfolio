@@ -1,0 +1,41 @@
+---
+// src/components/SubPageHeader.astro
+---
+<header class="site-header is-scrolled">
+  <div class="header-container">
+    <a href="/" class="logo">
+      <img src="/favicon.svg" alt="Fareed Logo" />
+    </a>
+    <nav class="nav-links">
+      <a href="https://wa.me/9717775962" class="whatsapp-icon-link" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.472 14.38c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.305-.883-.653-1.48-1.459-1.653-1.756-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51h-.57c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.445 4.439-9.884 9.884-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.006 5.45-4.439 9.885-9.881 9.885m8.413-18.297A11.815 11.815 0 0012.052 0C5.495 0 .104 5.384.104 11.933c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652c1.73.943 3.682 1.44 5.711 1.44h.004c6.558 0 11.956-5.384 11.96-11.937A11.812 11.812 0 0020.464 3.486z"/>
+        </svg>
+      </a>
+      <a href="#contact-modal" class="contact-btn modal-trigger glow-breathe">Let's Talk</a>
+      <a href="/" class="contact-btn back-btn" style="background: transparent; color: #fff;">Back to Home</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header.is-scrolled { position: fixed; top: 0; left: 0; width: 100%; padding: 1.5rem 0; z-index: 100; pointer-events: auto; }
+  .header-container { max-width: 800px; margin: 0 auto; padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center; background: rgba(10, 10, 10, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 50px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8); }
+  .logo img { height: 28px; width: auto; display: block; }
+  
+  .nav-links { display: flex; gap: 1rem; align-items: center; }
+  .whatsapp-icon-link { color: #F5F5F5; opacity: 0.7; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+  .whatsapp-icon-link:hover { opacity: 1; transform: scale(1.1); }
+  
+  .contact-btn { font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid #fff; padding: 0.5rem 1.2rem; border-radius: 50px; font-size: 0.85rem; transition: all 0.3s ease; text-decoration: none; color: #fff; }
+  .contact-btn:hover { background-color: #fff !important; color: #000 !important; }
+  
+  .glow-breathe { animation: neon-breathe 4s infinite ease-in-out; }
+  @keyframes neon-breathe { 0%, 100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 8px rgba(255, 255, 255, 0.2); } }
+
+  @media (max-width: 768px) {
+    .header-container { max-width: 90vw; padding: 0.6rem 1.2rem; }
+    .nav-links { gap: 0.6rem; }
+    .back-btn { display: none; } /* Hide back button on mobile to save space */
+  }
+</style>

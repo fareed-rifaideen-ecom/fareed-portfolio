@@ -1,0 +1,73 @@
+---
+// src/pages/success.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubPageHeader from '../components/SubPageHeader.astro';
+---
+
+<BaseLayout 
+  title="Transmission Successful | Fareed M. Rifaideen" 
+  description="Your project brief has been securely transmitted."
+>
+  <SubPageHeader />
+
+  <section class="utility-section global-padding">
+    <div class="container utility-container">
+      <div class="glass-vault">
+        
+        <!-- Green Success Status Indicator -->
+        <div class="status-wrapper">
+          <div class="status-dot success-dot"></div>
+          <span class="status-text success-text">Transmission Successful</span>
+        </div>
+
+        <h1 class="massive-utility-title">Brief<br/>Received.</h1>
+        
+        <p class="utility-desc">
+          Your project parameters have been securely logged. I will review the data and initiate contact shortly.
+        </p>
+
+        <div class="utility-actions">
+          <a href="/" class="btn-solid glow-breathe"><span class="btn-text">Return to Main Console</span></a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .utility-section { height: 100vh; width: 100vw; display: flex; align-items: center; justify-content: center; position: relative; z-index: 2; overflow: hidden; margin-top: -5vh; }
+  .utility-container { width: 100%; display: flex; justify-content: center; padding: 0 2rem; }
+
+  .glass-vault {
+    background: linear-gradient(135deg, rgba(25, 25, 25, 0.6) 0%, rgba(10, 10, 10, 0.9) 100%);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255,255,255,0.1);
+    border-radius: 24px; padding: 5rem 4rem; max-width: 700px; width: 100%; text-align: left;
+  }
+
+  .status-wrapper { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 2rem; }
+  .status-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .success-dot { background-color: #27c93f; box-shadow: 0 0 10px #27c93f; animation: pulse-success 1.5s infinite alternate; }
+  .status-text { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  .success-text { color: #27c93f; }
+
+  @keyframes pulse-success { 0% { opacity: 0.4; box-shadow: 0 0 5px #27c93f; } 100% { opacity: 1; box-shadow: 0 0 15px #27c93f; } }
+
+  .massive-utility-title { font-family: 'Syne', sans-serif; font-size: clamp(3rem, 6vw, 4.5rem); color: var(--text-primary); margin: 0 0 1.5rem 0; line-height: 1.1; letter-spacing: -0.02em; }
+  .utility-desc { font-family: 'Hanken Grotesk', sans-serif; font-size: 1.1rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 3rem; max-width: 550px; }
+  .utility-actions { margin-top: 1rem; }
+
+  .btn-solid { position: relative; overflow: hidden; font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; background: #fff; color: #000; padding: 1rem 2.5rem; border-radius: 50px; text-decoration: none; border: 1px solid #fff; display: inline-flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+  .btn-solid .btn-text { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2; position: relative; }
+  .btn-solid::after { content: '↗'; position: absolute; right: 1.2rem; opacity: 0; transform: translate(-10px, 10px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2; font-weight: 800; }
+  .btn-solid:hover { background: transparent; color: #fff; padding-right: 3.2rem; padding-left: 1.8rem; }
+  .btn-solid:hover .btn-text { transform: translateX(-5px); }
+  .btn-solid:hover::after { opacity: 1; transform: translate(0, 0); }
+
+  .glow-breathe { animation: neon-breathe 4s infinite ease-in-out; }
+  @keyframes neon-breathe { 0%, 100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.2), 0 0 8px rgba(255, 255, 255, 0.1); } }
+
+  @media (max-width: 768px) { .glass-vault { padding: 3rem 2rem; } }
+</style>
