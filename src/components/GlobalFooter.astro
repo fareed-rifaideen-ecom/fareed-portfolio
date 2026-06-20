@@ -1,49 +1,55 @@
 ---
 // src/components/GlobalFooter.astro
-import { getCollection } from 'astro:content';
-
-const allServices = await getCollection('services');
-allServices.sort((a: any, b: any) => a.data.order - b.data.order);
+const currentYear = new Date().getFullYear();
 ---
+
 <footer class="site-footer global-padding">
   <div class="container footer-grid">
-    <div class="footer-col brand-col">
-      <img src="/favicon.svg" alt="Fareed Logo" class="footer-logo" />
-      <p class="footer-desc">Architecting high-performance digital ecosystems. Focus on ROI and execution.</p>
-      <p class="copyright">© {new Date().getFullYear()} Fareed M. Rifaideen.</p>
+    <div class="footer-brand">
+      <a href="/" class="logo">
+        <img src="/favicon.svg" alt="Fareed Logo" class="footer-logo" />
+      </a>
+      <p class="footer-mission">Architecting high-performance digital ecosystems. Focus on ROI and execution.</p>
+      <p class="copyright">&copy; {currentYear} Fareed M. Rifaideen.</p>
     </div>
-    <div class="footer-col link-col">
-      <h4>Capabilities</h4>
-      {allServices.map((service: any) => (
-        <a href={`/services/${service.id}`}>{service.data.title}</a>
-      ))}
-      <a href="/projects" class="projects-link">View All Projects ↗</a>
-    </div>
-    <div class="footer-col link-col">
-      <h4>Connect</h4>
-      <a href="https://wa.me/9717775962" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-      <a href="https://www.linkedin.com/in/fareed03" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-      <a href="https://github.com/fareed-rifaideen-ecom" target="_blank" rel="noopener noreferrer">GitHub</a>
+
+    <div class="footer-links">
+      <div class="link-group">
+        <h4>Capabilities</h4>
+        <a href="/services/full-stack-seo">Full-Stack SEO</a>
+        <a href="/services/data-driven-marketing">Data-Driven Digital Marketing</a>
+        <a href="/services/custom-web-development">Web Design & Custom Development</a>
+        <a href="/projects" class="view-all-link">View All Projects ↗</a>
+      </div>
+      <div class="link-group">
+        <h4>Connect</h4>
+        <a href="https://wa.me/9717775962" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        <a href="https://www.linkedin.com/in/fareed03" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <a href="https://github.com/fareed-rifaideen-ecom" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
     </div>
   </div>
 </footer>
 
 <style>
-  .site-footer { border-top: 1px solid #1a1a1a; padding: 4rem 0; background: #000; margin-top: 2rem; }
-  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4rem; align-items: start; }
-  .footer-col { display: flex; flex-direction: column; gap: 1rem; }
-  .footer-logo { height: 35px; width: auto; margin-bottom: 0.5rem; align-self: flex-start; }
-  .footer-desc { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; max-width: 300px; margin: 0; }
-  .copyright { color: #666; font-size: 0.85rem; margin-top: auto; padding-top: 1.5rem; }
-  .link-col h4 { font-family: 'Syne', sans-serif; font-size: 1.15rem; color: var(--text-primary); margin: 0 0 0.5rem 0; }
-  .link-col a { color: var(--text-secondary); text-decoration: none; font-family: 'Hanken Grotesk', sans-serif; font-weight: 500; font-size: 1rem; transition: color 0.3s ease; }
-  .link-col a:hover { color: var(--text-primary); }
-  .projects-link { margin-top: 1rem; color: #fff !important; font-weight: 700 !important; }
+  /* FIXED: Rigorous Background Override */
+  .site-footer { border-top: 1px solid var(--glass-border); background-color: var(--bg-color) !important; transition: background-color 0s; }
+  .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+  
+  .footer-brand { display: flex; flex-direction: column; gap: 1.5rem; }
+  .footer-logo { height: 40px; width: auto; filter: var(--logo-invert); transition: filter 0s; }
+  .footer-mission { color: var(--text-secondary); font-size: var(--step-0); line-height: 1.6; max-width: 350px; margin: 0; }
+  .copyright { color: var(--text-secondary); font-size: var(--step--2); margin-top: auto; opacity: 0.6; }
+
+  .footer-links { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .link-group { display: flex; flex-direction: column; gap: 1.2rem; }
+  .link-group h4 { font-family: 'Syne', sans-serif; font-size: var(--step-1); color: var(--text-primary); margin: 0 0 0.5rem 0; }
+  .link-group a { color: var(--text-secondary); text-decoration: none; font-size: var(--step-0); transition: color 0.3s ease; }
+  .link-group a:hover { color: var(--text-primary); }
+  .view-all-link { margin-top: 1rem; font-weight: 600; color: var(--text-primary) !important; }
 
   @media (max-width: 768px) {
-    .footer-grid { grid-template-columns: 1fr; gap: 3rem; text-align: center; }
-    .footer-logo { align-self: center; }
-    .footer-desc { max-width: 100%; margin: 0 auto; }
-    .copyright { padding-top: 0; }
+    .footer-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .footer-links { grid-template-columns: 1fr; gap: 2.5rem; }
   }
 </style>

@@ -326,13 +326,11 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
     gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
-    // --- Smooth Scrolling ---
     const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
     (window as any).lenis = lenis; 
     function raf(time: number) { lenis.raf(time); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
 
-    // --- Magnetic Scroll Indicator Logic (Desktop Only) ---
     const magTarget = document.querySelector('.magnetic-target');
     const heroSection = document.querySelector('.cinematic-hero');
     
@@ -341,10 +339,8 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         const mouseEvent = e as MouseEvent;
         const wrapper = magTarget.parentElement as HTMLElement;
         const rect = wrapper.getBoundingClientRect();
-        
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
-        
         const distX = mouseEvent.clientX - centerX;
         const distY = mouseEvent.clientY - centerY;
         const distance = Math.sqrt(distX * distX + distY * distY);
@@ -355,13 +351,11 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
           gsap.to(magTarget, { x: 0, y: 0, rotate: 0, duration: 0.8, ease: "elastic.out(1, 0.4)" });
         }
       });
-      
       heroSection.addEventListener('mouseleave', () => {
         gsap.to(magTarget, { x: 0, y: 0, rotate: 0, duration: 0.8, ease: "elastic.out(1, 0.4)" });
       });
     }
 
-    // --- Lenis Anchor Interceptor ---
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', (e) => {
         const targetId = anchor.getAttribute('href');
@@ -372,14 +366,11 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       });
     });
 
-    // --- Ghost Watermark Background Fade ---
-    // FIXED: GSAP now animates native opacity, mapping cleanly to CSS variables
     gsap.to("#bg-portrait", {
       opacity: "var(--watermark-opacity)", 
       scrollTrigger: { trigger: ".services-sticky-section", start: "top 80%", end: "top 20%", scrub: true }
     });
 
-    // --- 3D Flip Track Carousel Logic ---
     new Swiper('.flip-projects-swiper', {
       modules: [Pagination, Autoplay], slidesPerView: 'auto', centeredSlides: true, spaceBetween: 80, loop: true, speed: 1000, 
       autoplay: { delay: 3000, disableOnInteraction: false, pauseOnMouseEnter: true },
@@ -398,9 +389,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       });
     });
 
-    // ==========================================
-    // --- ETHOS X-RAY / INK DROP ENGINE ---
-    // ==========================================
     const ethosZone = document.getElementById('ethos-interact-zone');
     const colorReveal = document.getElementById('ethos-color-reveal');
     const hapticHint = document.getElementById('haptic-hint');
@@ -420,13 +408,9 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
           gsap.to(colorReveal, { '--x': `${x}px`, '--y': `${y}px`, '--size': '150px', duration: 0.3, ease: "power2.out" });
         }
       });
-
       ethosZone.addEventListener('mouseleave', () => {
-        if (window.innerWidth > 768) {
-          gsap.to(colorReveal, { '--size': '0px', duration: 0.5, ease: "power2.out" });
-        }
+        if (window.innerWidth > 768) { gsap.to(colorReveal, { '--size': '0px', duration: 0.5, ease: "power2.out" }); }
       });
-
       let isTouching = false;
       const triggerInkDrop = (e: Event) => {
         const touchEvent = e as TouchEvent;
@@ -445,14 +429,12 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
           gsap.to(colorReveal, { '--size': '1200px', duration: 1.2, ease: "power2.inOut" });
         }
       };
-
       const reverseInkDrop = () => {
         if (window.innerWidth <= 768 && isTouching) {
           isTouching = false;
           gsap.to(colorReveal, { '--size': '0px', duration: 0.5, ease: "power2.in" });
         }
       };
-
       ethosZone.addEventListener('touchstart', triggerInkDrop, { passive: false });
       ethosZone.addEventListener('touchend', reverseInkDrop);
       ethosZone.addEventListener('touchcancel', reverseInkDrop);
@@ -460,9 +442,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
     let mm = gsap.matchMedia();
 
-    // ==========================================
-    // --- DESKTOP GSAP LOGIC ---
-    // ==========================================
     mm.add("(min-width: 768px)", () => {
       let tl = gsap.timeline({ scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" } });
       
@@ -473,22 +452,20 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
         .to(".bio-text", { opacity: 1, x: 0, duration: 1, ease: "power1.out" }, 1.5);
       tl.to({}, { duration: 1.5 });
 
+      // RESTORED: This is the GSAP magic that makes the header shrink at the exact right moment on the homepage!
       ScrollTrigger.create({ trigger: ".services-sticky-section", start: 'top 15%', end: 'max', toggleClass: { className: 'is-scrolled', targets: '.site-header' } });
 
       const desktopCmds = document.querySelectorAll('.desktop-cmd');
       const desktopOutput = document.getElementById('desktop-terminal-output');
-
       desktopCmds.forEach(cmd => {
         cmd.addEventListener('mouseenter', () => {
           const el = cmd as HTMLElement;
           desktopCmds.forEach(c => c.classList.remove('active-cmd'));
           el.classList.add('active-cmd');
-
           const date = el.getAttribute('data-date');
           const title = el.getAttribute('data-title');
           const company = el.getAttribute('data-company');
           const problem = el.getAttribute('data-problem');
-
           const logHTML = `
             <span class="term-date">[ ${date} ]</span><br/>
             <span class="term-process">TARGET_ORG:</span> <span class="term-title">${company}</span><br/>
@@ -496,7 +473,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
             <span class="term-info">OUTPUT LOG:</span><br/><span class="term-desc">${problem}</span><br/><br/>
             <span class="term-success">> [ exit code 0 ] process execution successful. <a href="#contact-modal" class="terminal-cta modal-trigger">Deploy this strategy ↗</a></span>
           `;
-
           if (desktopOutput) {
             gsap.killTweensOf(desktopOutput);
             gsap.to(desktopOutput, { text: { value: logHTML }, duration: 1.2, ease: "none" });
@@ -505,13 +481,10 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
       });
     });
 
-    // ==========================================
-    // --- MOBILE GSAP LOGIC ---
-    // ==========================================
     mm.add("(max-width: 767px)", () => {
       let mobileTl = gsap.timeline({ scrollTrigger: { trigger: ".cinematic-hero", pin: true, scrub: 1.5, start: "top top", end: "+=300%" } });
       
-      mobileTl.to(".intro-text", { opacity: 0, x: -30, duration: 1 }, 0)
+      mobileTl.to(".intro-text", { opacity: 0, y: -20, duration: 1 }, 0)
         .to(".scroll-icon-wrapper", { opacity: 0, duration: 0.5 }, 0)
         .to(".portrait-wrapper", { x: "0vw", duration: 1.2, ease: "power1.inOut" }, 0); 
       mobileTl.to(".portrait-wrapper", { x: "-35vw", duration: 1.2, ease: "power1.inOut" }, 1.5)
@@ -520,12 +493,10 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 
       const mobileCmds = document.querySelectorAll('.mobile-cmd');
       let activeMobileIndex = -1;
-
       mobileCmds.forEach((cmd, index) => {
         cmd.addEventListener('click', () => {
           const el = cmd as HTMLElement;
           if (activeMobileIndex === index) return; 
-          
           if (activeMobileIndex !== -1) {
              const prevWrapper = document.getElementById(`mobile-output-${activeMobileIndex}`);
              const prevContent = prevWrapper?.querySelector('.mobile-output-content');
@@ -537,19 +508,15 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
                mobileCmds[activeMobileIndex].classList.remove('active-cmd');
              }
           }
-
           activeMobileIndex = index;
           el.classList.add('active-cmd');
-
           const wrapper = document.getElementById(`mobile-output-${index}`);
           const content = wrapper?.querySelector('.mobile-output-content');
           const cursor = wrapper?.querySelector('.mobile-cursor');
-          
           const date = el.getAttribute('data-date');
           const title = el.getAttribute('data-title');
           const company = el.getAttribute('data-company');
           const problem = el.getAttribute('data-problem');
-
           const logHTML = `
             <span class="term-date">[ ${date} ]</span><br/>
             <span class="term-process">TARGET_ORG:</span> <span class="term-title">${company}</span><br/>
@@ -557,7 +524,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
             <span class="term-info">OUTPUT:</span> <span class="term-desc">${problem}</span><br/><br/>
             <span class="term-success">> execution successful. <a href="#contact-modal" class="terminal-cta modal-trigger">Deploy this strategy ↗</a></span>
           `;
-
           if(content && wrapper && cursor) {
             gsap.set(content, { text: "" }); 
             (cursor as HTMLElement).style.display = 'inline-block';
@@ -574,14 +540,12 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     serviceCards.forEach((card) => {
       gsap.from(card as Element, { opacity: 0, y: 50, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: card as Element, start: "top 85%" } });
     });
-
     gsap.from(".projects-flip-track-section", { opacity: 0, y: 40, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".projects-flip-track-section", start: "top 85%" } });
     gsap.from(".bento-card", { opacity: 0, y: 40, stagger: 0.15, duration: 0.8, ease: "power2.out", scrollTrigger: { trigger: ".bento-grid", start: "top 85%" } });
 
     const subtitles = ["Full-Stack Digital Marketer & Web Developer", "SEO Marketing Specialist", "Bespoke WordPress Architect", "Precision Paid Media Strategist", "Data-Driven Growth Engineer"];
     let subIndex = 0;
     const dynamicSubtitle = document.querySelector(".dynamic-subtitle");
-
     if (dynamicSubtitle) {
       gsap.delayedCall(3, function changeText() {
         gsap.to(dynamicSubtitle, { y: -15, opacity: 0, duration: 0.5, ease: "power2.in", onComplete: () => {
@@ -597,77 +561,37 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
 </BaseLayout>
 
 <style is:global>
-  /* FIXED: Removed all duplicate `:root`, `body`, `.container`, and `.global-padding` styles 
-    that were overriding BaseLayout.astro. 
-  */
-
   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
 
-  /* --- HEADER --- */
-  .site-header { position: fixed; top: 0; left: 0; width: 100%; padding: 2rem 0; z-index: 100; transition: padding 0.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; }
-  .header-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: auto; }
-  .logo img { height: 35px; width: auto; display: block; transition: height 0.4s ease; }
-
-  @media (min-width: 769px) {
-    .site-header.is-scrolled { padding: 1.5rem 0; }
-    /* FIXED: Variables applied to glass header */
-    .site-header.is-scrolled .header-container { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 50px; box-shadow: var(--glass-shadow); }
-    .site-header.is-scrolled .logo img { height: 28px; }
-    .site-header.is-scrolled .contact-btn { padding: 0.5rem 1.2rem; }
-  }
-
-  .nav-links { display: flex; gap: 1rem; align-items: center; }
-  .whatsapp-icon-link { color: var(--text-primary); opacity: 0.7; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
-  .whatsapp-icon-link:hover { opacity: 1; transform: scale(1.1); }
-  
-  /* FIXED: Contact Button Variable Mapping */
-  .contact-btn { font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; color: var(--text-primary); text-decoration: none; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid var(--text-primary); padding: 0.6rem 1.5rem; border-radius: 50px; font-size: var(--step--1); transition: all 0.3s ease; cursor: pointer; background: transparent; }
-  .contact-btn:hover { background-color: var(--text-primary); color: var(--bg-color); }
-
-  .glow-breathe { animation: neon-breathe 4s infinite ease-in-out; }
-  @keyframes neon-breathe { 0%, 100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); } 50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 8px rgba(255, 255, 255, 0.2); } }
-
-  /* FIXED: Ghost Watermark dynamic blending */
-  .ghost-watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); height: 120vh; width: auto; min-width: 100vw; object-fit: cover; object-position: center 25%; opacity: 0; mix-blend-mode: var(--watermark-blend); pointer-events: none; z-index: 0; }
-
-  /* Cinematic Section */
   .cinematic-hero { height: 100vh; width: 100vw; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; z-index: 1;}
   .cinematic-container { position: relative; width: 100%; max-width: 1200px; height: 100%; margin: 0 auto; display: flex; align-items: center; }
   .intro-text { position: absolute; left: 2rem; z-index: 10; }
   
-  .intro-text .hero-title { display: block; font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3rem, 7vw, 6.5rem); letter-spacing: -0.02em; margin: 0; line-height: 1.1; color: var(--text-primary); }
-  
-  .dynamic-subtitle-wrapper { font-family: 'Hanken Grotesk', sans-serif; font-weight: 400; font-size: clamp(1rem, 2vw, 1.5rem); color: var(--text-secondary); margin-top: 1rem; display: flex; align-items: center; gap: 0.4rem;}
+  .intro-text .hero-title { display: block; font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(3rem, 7vw, 6.5rem); letter-spacing: -0.02em; margin: 0; line-height: 1.1; color: var(--text-primary); text-shadow: 0 0 25px var(--bg-color), 0 0 45px var(--bg-color); }
+  .dynamic-subtitle-wrapper { font-family: 'Hanken Grotesk', sans-serif; font-weight: 400; font-size: clamp(1rem, 2vw, 1.5rem); color: var(--text-secondary); margin-top: 1rem; display: flex; align-items: center; gap: 0.4rem; text-shadow: 0 0 15px var(--bg-color); }
   .dynamic-subtitle { display: inline-block; color: var(--text-primary); font-weight: 600; }
   
   .scroll-icon-wrapper { position: absolute; bottom: 3rem; left: 2.5rem; z-index: 10; display: flex; justify-content: center; align-items: flex-end; width: 60px; height: 100px; }
   .magnetic-target { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
   .magnetic-text { font-family: 'Hanken Grotesk', sans-serif; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); opacity: 0.8; }
   .icon-bounce-wrapper { animation: bounce 2s infinite; }
-  
-  /* FIXED: Filter applied to scroll SVG to flip color */
   .scroll-icon { width: 24px; height: auto; opacity: 0.7; filter: var(--logo-invert); }
   @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } 60% { transform: translateY(-5px); } }
   
   .portrait-wrapper { position: absolute; height: 100vh; width: 100vw; top: 0; left: 0; display: flex; align-items: center; justify-content: center; z-index: 1; transform: translateX(35vw); }
   .portrait-inner { position: relative; height: 100%; width: 100%; max-width: 800px; display: flex; }
   .portrait-img { height: 100%; width: 100%; object-fit: cover; object-position: center 25%; transition: filter 1s ease; }
-  
-  /* FIXED: The Shadow Overlay now pulls the exact background color to blend perfectly in both modes */
-  .portrait-shadow-overlay { position: absolute; top: 0; left: -2px; width: 15vw; max-width: 120px; height: 100%; background: linear-gradient(to right, var(--bg-color) 0%, rgba(5, 5, 5, 0.9) 15%, rgba(5, 5, 5, 0) 100%); z-index: 2; pointer-events: none; }
-  /* Override specifically for light mode shadow gradient */
-  :global([data-theme="light"]) .portrait-shadow-overlay { background: linear-gradient(to right, var(--bg-color) 0%, rgba(247, 247, 248, 0.9) 15%, rgba(247, 247, 248, 0) 100%); }
+  .portrait-shadow-overlay { position: absolute; top: 0; left: -2px; width: 30vw; max-width: 250px; height: 100%; background: linear-gradient(to right, var(--bg-color) 0%, rgba(5, 5, 5, 0) 100%); z-index: 2; pointer-events: none; }
+  :global([data-theme="light"]) .portrait-shadow-overlay { background: linear-gradient(to right, var(--bg-color) 0%, rgba(247, 247, 248, 0) 100%); }
 
-  .bio-text { position: absolute; right: 2rem; width: 450px; z-index: 10; opacity: 0; transform: translateX(50px); }
+  .bio-text { position: absolute; right: 2rem; width: 450px; z-index: 10; opacity: 0; transform: translateX(50px); background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid var(--glass-border); padding: 2.5rem; border-radius: 16px; box-shadow: var(--glass-shadow); }
   .bio { color: var(--text-secondary); font-size: var(--step-1); line-height: 1.7; margin-bottom: 1.5rem; }
   .bio-cta { margin-top: 1rem; }
   
   .section-title { font-family: 'Syne', sans-serif; font-size: var(--step-4); margin-bottom: 4rem; color: var(--text-primary); }
 
-  /* FIXED: Universal Glass Panel mapping */
   .glass-panel { background: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid var(--glass-border); border-left: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); border-right: 1px solid var(--glass-border); box-shadow: var(--glass-shadow); border-radius: 16px; will-change: transform; }
 
-  /* FIXED: Button mapping */
   .btn-solid { position: relative; overflow: hidden; font-family: 'Hanken Grotesk', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-size: var(--step--1); background: var(--text-primary); color: var(--bg-color); padding: 0.8rem 2.5rem; border-radius: 50px; text-decoration: none; border: 1px solid var(--text-primary); display: inline-flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
   .btn-solid .btn-text { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2; position: relative; }
   .btn-solid::after { content: '↗'; position: absolute; right: 1.2rem; opacity: 0; transform: translate(-10px, 10px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 2; font-weight: 800; }
@@ -685,7 +609,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .bio-cta:hover .bounce-arrow { animation: gentle-bounce 1s infinite; }
   @keyframes gentle-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(4px); } }
 
-  /* --- Sticky Editorial Services Section --- */
   .sticky-editorial-layout { display: flex; justify-content: space-between; align-items: flex-start; }
   .sticky-sidebar { width: 35%; position: sticky; top: 25vh; }
   .sticky-content { display: flex; flex-direction: column; align-items: flex-start; }
@@ -708,7 +631,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .service-read-more:hover { color: var(--text-secondary); }
   .service-read-more:hover .arrow { transform: translate(3px, -3px); }
   
-  /* --- 3D FLIP TRACK SECTION --- */
   .projects-flip-track-section { position: relative; z-index: 5; overflow: hidden; }
   .projects-header-wrapper { text-align: left; margin-bottom: 4rem; display: flex; flex-direction: column; align-items: flex-start; }
   .label-pill { display: inline-flex; align-items: center; gap: 0.5rem; border: 1px solid var(--glass-border); border-radius: 50px; padding: 0.4rem 1.2rem; font-size: var(--step--1); color: var(--text-secondary); margin-bottom: 1.5rem; }
@@ -735,7 +657,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   
   .flip-card-back { transform: rotateY(180deg); align-items: center; justify-content: center; text-align: center; }
   .project-logo { max-width: 80%; max-height: 90px; object-fit: contain; margin-bottom: 2rem; }
-  /* FIXED: Automatic Logo Inversion */
   .bw-logo { filter: var(--logo-invert); transition: all 0.4s ease; opacity: 0.8; }
   .flip-card-back:hover .bw-logo { opacity: 1; }
   .view-project-btn { width: 100%; margin-top: auto; }
@@ -744,9 +665,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .swiper-pagination-bullet { background: var(--text-secondary); opacity: 0.3; transition: all 0.3s ease; width: 8px; height: 8px; }
   .swiper-pagination-bullet-active { background: var(--text-primary); opacity: 1; transform: scale(1.3); }
 
-  /* ==========================================
-     FIXED: TERMINAL UX LOCKED TO DARK MODE
-  ========================================== */
   .terminal-window { background: rgba(8, 8, 8, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; overflow: hidden; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; box-shadow: 0 20px 50px rgba(0,0,0,0.8); color: #F5F5F5; }
   .terminal-header { background: rgba(25, 25, 25, 1); padding: 0.8rem 1.5rem; display: flex; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
   .terminal-buttons { display: flex; gap: 8px; }
@@ -791,7 +709,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     .mobile-output-wrapper { padding-left: 1rem; border-left: 1px solid rgba(255,255,255,0.1); margin-top: 0.5rem; margin-left: 0.5rem;}
   }
 
-  /* Bento Grid */
   .bento-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
   .bento-card { border: 1px solid var(--glass-border); padding: 2.5rem; display: flex; flex-direction: column; justify-content: center; transition: border-color 0.3s ease; background: var(--glass-bg); backdrop-filter: blur(10px); }
   .bento-card:hover { border-color: var(--text-primary); }
@@ -800,9 +717,6 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
   .bento-card p { color: var(--text-secondary); font-size: var(--step-0); line-height: 1.5; margin: 0 0 1rem 0; }
   .bento-meta { font-size: var(--step--1); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-top: auto; }
 
-  /* ==========================================
-     NEW: ETHOS X-RAY INTERACTION STYLING 
-  ========================================== */
   .ethos-split-layout { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; align-items: stretch; }
   .ethos-box { border: 1px solid var(--glass-border); padding: 4rem; background: var(--glass-bg); backdrop-filter: blur(10px); border-radius: 16px; display: flex; flex-direction: column; justify-content: center; }
   .ethos-box h2 { font-family: 'Syne', sans-serif; font-size: var(--step-3); color: var(--text-primary); margin: 0 0 2rem 0; }
@@ -824,37 +738,30 @@ allServices.sort((a: any, b: any) => a.data.order - b.data.order);
     100% { transform: translate(-50%, -50%) scale(2); opacity: 0; border-width: 0; }
   }
 
-  /* Mobile Adjustments */
   @media (max-width: 768px) {
-    /* REMOVED DUPLICATE ROOT VARIABLES OVERRIDE */
-
+    :root { --step-2: 1.3rem; --step-3: 2rem; --step-4: 2.5rem; }
+    .global-padding { padding: var(--section-gap-mobile) 0; }
+    
     .glass-panel {
       backdrop-filter: blur(4px);
       -webkit-backdrop-filter: blur(4px);
-      /* Background is now safely handled by var(--glass-bg) above */
     }
     
     .intro-text { bottom: 15%; left: 1.5rem; }
-    
     .scroll-icon-wrapper { left: 50%; transform: translateX(-50%); bottom: 12%; }
     .magnetic-target { transform: none !important; }
-    
     .portrait-wrapper { transform: translateX(35vw); }
-    .portrait-shadow-overlay { width: 25vw; max-width: 100px; } 
-    
-    .bio-text { width: 80%; right: 1.5rem; left: auto; text-align: left; transform: translateX(30px); }
+    .portrait-shadow-overlay { width: 45vw; max-width: 150px; } 
+    .bio-text { width: 85%; right: 1.5rem; left: auto; text-align: left; transform: translateX(30px); padding: 1.5rem; }
     .sticky-editorial-layout { flex-direction: column; gap: 4rem; }
     .sticky-sidebar, .scrolling-cards-container { width: 100%; }
     .sticky-sidebar { position: relative; top: 0; margin-bottom: 2rem; }
     .scrolling-cards-container { gap: 3rem; padding-bottom: 0; }
     .editorial-service-card { padding: 2.5rem; gap: 1.5rem; }
     .service-number { font-size: 4rem; }
-
     .flip-project-card { width: 85vw; height: 320px; } 
     #global-tooltip { position: fixed; }
     .skills-card { grid-column: span 1; }
-    
-    /* Mobile Ethos Adjustments */
     .ethos-split-layout { grid-template-columns: 1fr; gap: 1.5rem; }
     .ethos-box { padding: 2.5rem; }
     .ethos-image-wrapper { height: 400px; } 
