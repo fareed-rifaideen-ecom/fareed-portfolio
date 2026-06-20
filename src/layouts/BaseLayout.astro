@@ -25,40 +25,52 @@ const {
 const url = Astro.url.href;
 ---
 
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- Primary Meta Tags -->
     <title>{title}</title>
     <meta name="title" content={title} />
     <meta name="description" content={description} />
     <meta name="keywords" content="Full-Stack Digital Marketer, Comprehensive SEO, Web Developer Dubai, Meta Ads Expert, PPC Management, Fareed M. Rifaideen" />
     <meta name="author" content="Fareed M. Rifaideen" />
     
-    <!-- Canonical URL -->
     <link rel="canonical" href={url} />
 
-    <!-- Open Graph / LinkedIn / Facebook / WhatsApp -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={url} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
 
-    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={url} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={image} />
 
-    <!-- Theme Color for Mobile Browsers -->
     <meta name="theme-color" content="#050505" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <!-- Technical SEO JSON-LD Schema -->
+    <script is:inline>
+      const theme = (() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+          return 'light';
+        }
+        return 'dark'; // Default fallback
+      })();
+    
+      if (theme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    </script>
+
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -87,16 +99,25 @@ const url = Astro.url.href;
     </script>
   </head>
   <body>
-    <!-- The content of your pages will be injected here -->
     <slot />
 
-    <!-- GLOBAL STYLES (Applies to every page using this layout) -->
     <style is:global>
       :root {
+        /* ========================================= */
+        /* DARK MODE VARIABLES (DEFAULT)             */
+        /* ========================================= */
         --bg-color: #050505;
         --text-primary: #F5F5F5;
         --text-secondary: #A3A3A3;
         --accent: #fff;
+        
+        /* Glass & Overlay Variables */
+        --glass-bg: linear-gradient(135deg, rgba(25, 25, 25, 0.4) 0%, rgba(10, 10, 10, 0.8) 100%);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --glass-shadow: 0 15px 35px rgba(0, 0, 0, 0.8);
+        --watermark-blend: luminosity;
+        --watermark-opacity: 0.03;
+        --logo-invert: grayscale(100%) brightness(1.5);
 
         /* THE GOLDEN TYPOGRAPHIC SCALE */
         --step--2: 0.75rem; 
@@ -112,12 +133,32 @@ const url = Astro.url.href;
         --section-gap-mobile: 4rem;
       }
 
+      /* ========================================= */
+      /* LIGHT MODE VARIABLES (ALABASTER & NAVY)   */
+      /* ========================================= */
+      [data-theme="light"] {
+        --bg-color: #F7F7F8; /* Alabaster Off-White */
+        --text-primary: #0A1128; /* Midnight Navy */
+        --text-secondary: #4A5568; /* Slate Blue */
+        --accent: #0A1128;
+        
+        /* Glass & Overlay Variables */
+        --glass-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(240, 240, 245, 0.8) 100%);
+        --glass-border: rgba(10, 17, 40, 0.08);
+        --glass-shadow: 0 15px 35px rgba(10, 17, 40, 0.05);
+        --watermark-blend: multiply;
+        --watermark-opacity: 0.06;
+        --logo-invert: grayscale(100%) brightness(0);
+      }
+
+      /* Smooth transition for background and text colors */
       body { 
         background-color: var(--bg-color); 
         color: var(--text-primary); 
         font-family: 'Hanken Grotesk', sans-serif; 
         margin: 0; 
         overflow-x: hidden; 
+        transition: background-color 0s, color 0s; /* Handled by GSAP later */
       }
       
       .container { 
