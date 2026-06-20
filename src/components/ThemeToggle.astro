@@ -1,0 +1,139 @@
+---
+// src/components/ThemeToggle.astro
+---
+
+<button id="theme-toggle" class="theme-toggle curiosity-pulse" aria-label="Toggle Dark/Light Mode">
+  <svg class="icon sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"></circle>
+    <line x1="12" y1="1" x2="12" y2="3"></line>
+    <line x1="12" y1="21" x2="12" y2="23"></line>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+    <line x1="1" y1="12" x2="3" y2="12"></line>
+    <line x1="21" y1="12" x2="23" y2="12"></line>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+  </svg>
+  
+  <svg class="icon moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </svg>
+</button>
+
+<style>
+  .theme-toggle {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--text-primary);
+    color: var(--bg-color);
+    border: none;
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .theme-toggle:hover {
+    transform: scale(1.1);
+  }
+
+  /* The Curiosity Pulse - Stops once clicked */
+  .curiosity-pulse {
+    animation: theme-pulse 2.5s infinite;
+  }
+  @keyframes theme-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+  }
+
+  /* Handle Icon Swapping */
+  .icon {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  /* Dark Mode State */
+  :global([data-theme="dark"]) .sun-icon { opacity: 0; transform: rotate(-90deg) scale(0.5); }
+  :global([data-theme="dark"]) .moon-icon { opacity: 1; transform: rotate(0) scale(1); }
+
+  /* Light Mode State */
+  :global([data-theme="light"]) .sun-icon { opacity: 1; transform: rotate(0) scale(1); }
+  :global([data-theme="light"]) .moon-icon { opacity: 0; transform: rotate(90deg) scale(0.5); }
+
+  @media (max-width: 768px) {
+    .theme-toggle {
+      bottom: 1.5rem;
+      right: 1.5rem;
+      width: 45px;
+      height: 45px;
+    }
+  }
+</style>
+
+<script>
+  import gsap from 'gsap';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('theme-toggle');
+    if (!toggleBtn) return;
+
+    toggleBtn.addEventListener('click', (e) => {
+      // 1. Remove pulse animation permanently on first click
+      toggleBtn.classList.remove('curiosity-pulse');
+
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const newTheme = isDark ? 'light' : 'dark';
+      const oldBgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim();
+
+      // 2. Capture mouse click coordinates
+      const clickEvent = e as MouseEvent;
+      const x = clickEvent.clientX;
+      const y = clickEvent.clientY;
+
+      // 3. Create the temporary Eclipse overlay
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = '0';
+      overlay.style.left = '0';
+      overlay.style.width = '100vw';
+      overlay.style.height = '100vh';
+      overlay.style.backgroundColor = oldBgColor;
+      overlay.style.zIndex = '9998'; // Just below the button
+      overlay.style.pointerEvents = 'none'; // Prevent blocking clicks
+      document.body.appendChild(overlay);
+
+      // Calculate the maximum distance to a screen corner to ensure full coverage
+      const maxRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
+
+      // 4. Instantly switch the global CSS variables underneath the overlay
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+
+      // 5. Animate the eclipse shrinking away from the cursor
+      gsap.fromTo(overlay, 
+        { clipPath: `circle(${maxRadius}px at ${x}px ${y}px)` },
+        {
+          clipPath: `circle(0px at ${x}px ${y}px)`,
+          duration: 0.8,
+          ease: 'power3.inOut',
+          onComplete: () => {
+            overlay.remove(); // Destroy overlay to keep DOM clean
+          }
+        }
+      );
+    });
+  });
+</script>
